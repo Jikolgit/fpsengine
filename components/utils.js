@@ -2,7 +2,7 @@ import cryptoJs from "crypto-js";
 
 export class CustomCounter
 {
-    constructor(timer,repetitionLimit,callBackFunc)
+    constructor(timer,repetitionLimit,callBackFunc,callBackFunc2)
     {
         this.startEffect=false;
         this.repetition = 0;
@@ -10,6 +10,8 @@ export class CustomCounter
         this.initialTimer = timer;
         this.timer=timer;
         this.callBackFunc = callBackFunc;
+        this.callBackFunc2 = callBackFunc2;
+        this.counterOver = null;
         this.animationContainer = null
     }
     start = ()=>
@@ -20,11 +22,33 @@ export class CustomCounter
         {
             this.repetition ++;
             this.timer = this.initialTimer;
-            this.callBackFunc();
-            if(this.repetition<this.repetitionLimit)
-            {
-                this.animationContainer =  window.requestAnimationFrame(this.start)
+            
+            if(this.repetitionLimit == 0)
+            {   
+                this.counterOver = this.callBackFunc();
+                if(!this.counterOver)
+                {   
+                    this.animationContainer =  window.requestAnimationFrame(this.start)
+                }
+                else
+                {  
+                    this.cancelCounter()
+                }
             }
+            else
+            {
+                this.callBackFunc();
+                if(this.repetition<this.repetitionLimit)
+                    {
+                        this.animationContainer =  window.requestAnimationFrame(this.start)
+                    }
+                    else
+                    {
+                        this.cancelCounter();
+                        this.callBackFunc2();
+                    }
+            }
+            
            
            
         }
@@ -38,9 +62,12 @@ export class CustomCounter
     }
     cancelCounter()
     {
+       
         window.cancelAnimationFrame(this.animationContainer)
     }
 }
+
+
 
 //UTIL
 

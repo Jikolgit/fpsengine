@@ -35,6 +35,7 @@ export function Mob_2(props)
     let mobEffectCounterStart = false;
     let mobEffectCounter = 100;
     let mobDeadCallBack; 
+    
     let startMobEffectCounter = ()=>
         {
             mobEffectCounter --;
@@ -63,6 +64,7 @@ export function Mob_2(props)
                                 _position={[enemyPositionOnMap.x,0.5,enemyPositionOnMap.z]}  />
                             
     }
+
     let updateMobInfo = (state,_numb)=>
         {
             if(state == 'dead')
@@ -74,7 +76,7 @@ export function Mob_2(props)
 
             }
             else if(state == 'Update-Mob-Life')
-            {
+            {  
                 enemyFunc.current('MOB-TOUCHED')
                 lifeBarFunc.current(_numb)
             }
@@ -133,16 +135,26 @@ export function Mob_2(props)
                 let findNextBulletPlatform = GameMap.find((elem)=> {return elem.xPose == mobBulletInfo[index].posX && elem.zPose == mobBulletInfo[index].posZ});
 
                 if(findNextBulletPlatform)
-                {
+                {   
                     if(findNextBulletPlatform.object)
-                    {
+                    {   
                         if(findNextBulletPlatform.isOnScene)
-                        {
+                        {   
                             if(findNextBulletPlatform.objectType == 'wall')
-                            {
-                                return 'STOP'
+                            {  
+                                if(findNextBulletPlatform.objectType == 'wall' && findNextBulletPlatform.objectDesc.haswall)
+                                {
+                                    return 'STOP'
+                                } 
+                                else
+                                {
+                                    return 'GO'
+                                }
+                                
                             }
-                            if(findNextBulletPlatform.objectType == 'barier')
+                            else if(findNextBulletPlatform.objectType == 'door'){return 'STOP'}
+                            else if(findNextBulletPlatform.objectType == 'decor'){return 'STOP'}
+                            else
                             {
                                 return 'GO'
                             }
@@ -331,10 +343,10 @@ export function Mob_2(props)
                     {
                         // EST SUR L'AXIS
                         
-                        if(checkDirection == 'FRONT'){playerDirectionToMob = "FRONT";}
-                        else if(checkDirection == 'BACK'){playerDirectionToMob = "BACK"}
-                        else if(checkDirection == 'LEFT'){playerDirectionToMob = "LEFT"}
-                        else if(checkDirection == 'RIGHT'){playerDirectionToMob = "RIGHT"}
+                        if(checkDirection == 'FRONT'){playerDirectionToMob = "FRONT";  enemyFunc.current('MOB-ROTATE-FRONT')}
+                        else if(checkDirection == 'BACK'){playerDirectionToMob = "BACK"; enemyFunc.current('MOB-ROTATE-BACK')}
+                        else if(checkDirection == 'LEFT'){playerDirectionToMob = "LEFT"; enemyFunc.current('MOB-ROTATE-LEFT')}
+                        else if(checkDirection == 'RIGHT'){playerDirectionToMob = "RIGHT"; enemyFunc.current('MOB-ROTATE-RIGHT')}
                         
                         if(playerDirectionToMob == "FRONT")
                         {
@@ -481,13 +493,13 @@ export function Mob_2(props)
             
                 
             
-            {props._mobSkin == 'dummy' && <Dummy_1_model
+            {props._attack == false && <Dummy_1_model
                 
                 name="ENEMY"
                 x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
             >
             </Dummy_1_model>}
-            {props._mobSkin == 'mob2' && <Mob_1_model
+            {props._attack && <Mob_1_model
               
                 name="ENEMY"
                 x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}

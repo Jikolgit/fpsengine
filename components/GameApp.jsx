@@ -54,19 +54,25 @@ export function GameApp(props)
     let objetDirection = useRef([false,false,false,false]);
     let bulletGroupRef = useRef(null);
     let itemController = {value:[]};
+    let wallController = {value:[]};
+    let exitDoorController = {value:[]};
     let spearModelIndexArr = {value:[]};
+    let bulletModelController = {value:[]};
     let exitDoorModelIndexArr = {value:[]};
     let exitDoorMapIndexArr = {value:[]};
     let mobIndexArr = {value:[]};
     let barierMapIndexArr = {value:[]};
     let barierModelIndexArr = {value:[]};
-    let playerCanShoot = _appContext.level.current == 1? false : true;
+    let playerCanShoot = true;
+    // let playerCanShoot = _appContext.level.current == 1? false : true;
     let currentObjectInFront={effect:'none',objectInfo:null};
     let passedTime = 0;
     let walkEffectTimer = {value:0};
-    let weaponReload = {time:0,timeLimite:60,start:false};
+    let totalBullet = {value:20};
+    let weaponReload = {time:0,timeLimite:5,start:false};
     let nextBulletToShoot={value:null};
     let exitDoorVisible={value:false};
+    let showWeapon3DModel = {value:_appContext.playerStats.current.showWeapon}
     let directionToGo = {value:'FRONT'};
     let gloBalObject;
 
@@ -113,16 +119,17 @@ export function GameApp(props)
         }
     let openExitDoor = ()=>
         {
-            if(exitDoorVisible.value)
+            for(let i = 0; i< exitDoorController.value.length;i++)
             {
-                for(let i = 0; i< exitDoorModelIndexArr.value.length;i++)
+                if(exitDoorController.value[i])
                 {
-                    exitDoorModelIndexArr.value[i].modelFunc('hide');
+                    exitDoorController.value[i]('OPEN-DOOR')
                 }
+                
             }
-            
             for(let i = 0; i< exitDoorMapIndexArr.value.length;i++)
             {
+                
                 GameMap[exitDoorMapIndexArr.value[i]].objectDesc.open = true;
             }
 
@@ -189,7 +196,9 @@ export function GameApp(props)
             bulletRefInfo.current[_index] = {_index:_index,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
             bulletRef.current[_index].position.x = playerPositionOnMap.x
             bulletRef.current[_index].position.z = playerPositionOnMap.z
-            bulletRef.current[_index].children[0].material.visible = false;
+            // bulletRef.current[_index].children[0].material.visible = false;
+            bulletModelController.value[_index]('HIDE-BULLET')
+            prepareNextBullet(gloBalObject);
         }
     let checkPlatform = (elem)=>
         {
@@ -480,40 +489,54 @@ export function GameApp(props)
                         aKeyisPressed.current = true;
                         if(currentObjectInFront.effect == 'none')
                             {
-                                if(!weaponReload.start)
-                                {   
-                                    //SHOOT
-                                    if(playerCanShoot)
-                                    {
-                                        AudioManage.play("shoot")
-                                        for(let i =0;i<bulletRef.current.length;i++)
-                                        {
-                                            if(!bulletRefInfo.current[i].isShooted)
+                                if(nextBulletToShoot.value)
+                                {
+                                    if(!weaponReload.start)
+                                        {   
+                                            //SHOOT
+                                            if(playerCanShoot)
                                             {
-                                                bulletRef.current[i].position.x = playerPositionOnMap.x;
-                                                bulletRef.current[i].position.z = playerPositionOnMap.z;
-                                                bulletPositionOnMap[i].x = playerPositionOnMap.x;
-                                                bulletPositionOnMap[i].z = playerPositionOnMap.z;
+                                                
+                                                AudioManage.play("shoot")
+                                                for(let i =0;i<bulletRef.current.length;i++)
+                                                {
+                                                    if(!bulletRefInfo.current[i].isShooted)
+                                                    {
+                                                        
+                                                        bulletRef.current[i].position.x = playerPositionOnMap.x;
+                                                        bulletRef.current[i].position.z = playerPositionOnMap.z;
+                                                        bulletPositionOnMap[i].x = playerPositionOnMap.x;
+                                                        bulletPositionOnMap[i].z = playerPositionOnMap.z;
+                                                    }
+                                                    
+                                                }
+        
+                                                if(!showWeapon3DModel.value)
+                                                    {   
+                                                        bulletModelController.value[nextBulletToShoot.value._index]('SHOW-BULLET')
+                                                        // bulletRef.current[nextBulletToShoot.value._index].children[1].material.visible = true;
+                                                    }
+                                                
+        
+                                                nextBulletToShoot.value.isShooted = true;
+                                                nextBulletToShoot.value.prepareMove = true;
+                                                nextBulletToShoot.value.direction = playerDirection.value;
+                                                bulletRefInfo.current[nextBulletToShoot.value._index].direction = playerDirection.value;
+                                                weaponReload.start = true
+                                            }
+                                            else
+                                            {
+                                                _appContext.gameNotifFunc.current('Take your Weapon !','player');
+                                                // console.log('pas de lance')
                                             }
                                             
                                         }
-                                        nextBulletToShoot.value.isShooted = true;
-                                        nextBulletToShoot.value.prepareMove = true;
-                                        nextBulletToShoot.value.direction = playerDirection.value;
-        
-                                        weaponReload.start = true
-                                    }
-                                    else
-                                    {
-                                        _appContext.gameNotifFunc.current('Take your Spear !','player');
-                                        // console.log('pas de lance')
-                                    }
-                                    
+                                        else
+                                        {
+                                            // console.log('rechargement')
+                                        }
                                 }
-                                else
-                                {
-                                    // console.log('rechargement')
-                                }
+                                
                                 
                             }
                             else if (currentObjectInFront.effect == 'Exit')
@@ -539,7 +562,7 @@ export function GameApp(props)
                             else if (currentObjectInFront.effect == 'CAURIS')
                             {
                                 AudioManage.play('coin')
-                                console.log(currentObjectInFront.objectInfo)
+                              
                                 if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()} 
                                 managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
                                 currentObjectInFront.objectInfo.isOnScene = false;
@@ -626,7 +649,7 @@ export function GameApp(props)
                 aKeyisPressed.current = false;
             }
     }
-    for(let i = 0;i<6;i++)
+    for(let i = 0;i<totalBullet.value;i++)
     {
         bulletContainer[i] = <mesh
                                 key={i}
@@ -637,8 +660,7 @@ export function GameApp(props)
                                     <sphereGeometry args={[0.05,10,10]} />
                                     <meshBasicMaterial visible={false}  />
 
-                                    
-                                    <SpearModel _rotation={[Math.PI*0.5,0,0]}  _visible={false} posX={-0.1} posY={0.25} posZ={0} />
+                                    <SpearModel controller={{bulletModelController:bulletModelController,index:i}} _rotation={[Math.PI*0.5,0,0]}  _visible={false} posX={-0.1} posY={0.25} posZ={0} />
                             </mesh>
         bulletRefInfo.current[i] = {_index:i,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
         bulletPositionOnMap[i] = {x:playerPoseVar.x,y:0.6,z:playerPoseVar.z};
@@ -678,29 +700,7 @@ export function GameApp(props)
         },[])
     useEffect(()=>
         {   
-            // _appContext.StoryScreenFunc.current("update");
-            // if(speechTimeline[_appContext.level.current-1][0] != 'none')
-            // {   
-            //     _appContext.StoryScreenFunc.current("show");
-            // }
-
-            // if(_appContext.helpMode.current)
-            // {
-            //     // if(level.current == 1){_appContext.HelpScreenFunc.current("show")}
-            //     if(level.current == 1){_appContext.StoryScreenFunc.current("show")}
-            // }
-            // if(level.current == 2)
-            //     {
-            //         let customCounter = new CustomCounter(10,1,()=>{_appContext.gameNotifFunc.current('Détruisez les barils pour avancer','system');});
-            //         customCounter.start();
-                    
-            //     }
-            // if(level.current == 4)
-            //     {
-            //         let customCounter = new CustomCounter(10,1,()=>{_appContext.gameNotifFunc.current('Récuperez les cauris pour avancer','system');});
-            //         customCounter.start();
-                    
-            //     }
+            
             
             prepareNextBullet(gloBalObject);
             _appContext.playerStats.current.keyCollected = 0
@@ -751,7 +751,8 @@ export function GameApp(props)
             playerMoveIsActive,getNextPlatformInfo,playerDirection,aKeyisPressed,objetDirection,GameMap,playerPositionOnMap,
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
-            barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController
+            barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
+            wallController,exitDoorController,showWeapon3DModel,bulletModelController
 
             }
         placeModelOnScene(gloBalObject)
@@ -761,7 +762,7 @@ export function GameApp(props)
                     value={{GameMap,playerPositionOnMap,playerMoveIsActive,enemyLifePoint,reducePlayerLife,mobUpdateFunc,barierModelIndexArr,exitDoorModelIndexArr}}
                 >
                         
-                        {/* {_appContext.devMode.current?
+                        {_appContext.devMode.current?
                             <>
                              <PerspectiveCamera position={[15,35,-2]} ref={camRef} makeDefault />
                              <OrbitControls target={[playerPoseVar.x+15,0.8,playerPoseVar.z]} ref={orbitRef} />
@@ -771,9 +772,9 @@ export function GameApp(props)
                             <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
                             <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} />
                             </>
-                        } */}
-                        <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
-                        <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} />
+                        }
+                        {/* <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
+                        <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} /> */}
                         
                         <axesHelper args={[15]} />
                         <GroundModel />
@@ -813,7 +814,7 @@ export function GameApp(props)
                         </group>
                         
                         {/* {mapBorderContainer} */}
-                        {/* <PlatformIndex /> */}
+                        {_appContext.devMode.current && <PlatformIndex />}
                         <fog attach={'fog'} args={[gameMapInfo.fogColor,gameMapInfo.fogNear,gameMapInfo.fogFar]} />
                         
                 </gameAppContext.Provider>

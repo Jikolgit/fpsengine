@@ -157,6 +157,19 @@ export function GameController()
               )
 }
 
+export function ActionIcon()
+{
+    useEffect(()=>
+        {
+            
+        },[])
+    return(
+            <div className=" border-[5px] border-gray-500 bg-black w-[60px] h-[60px] absolute z-[3] left-0 right-0 top-[10px] mx-auto ">
+                    <img src="spear_1_icon.png" alt="icon" className="w-full h-full" />
+            </div>
+    )
+}
+
 export function PauseIcon()
 {
     let _appContext = useContext(appContext);
@@ -759,11 +772,11 @@ export function StoryScreen()
                 speechTotalPart.current = speech.current.length;
                 speechPartCounter.current = 1;
                 setSpeechPartToShow(speech.current[speechPartCounter.current-1]);
-                customCounter = new CustomCounter(35,1,()=>
+                customCounter = new CustomCounter(35,0,()=>
                 {
                     _appContext.actualGameScreen.current = 'STORY-SCREEN'
                     setStoryScreenActive(c => c = true);
-                });
+                },null);
                 customCounter.start();
             }
             else
@@ -781,11 +794,12 @@ export function StoryScreen()
                 if(state == 'show')
                 {
                     _appContext.gamePause.current = true;
-                    customCounter = new CustomCounter(35,1,()=>
+                    customCounter = new CustomCounter(35,0,()=>
                         {
                             _appContext.actualGameScreen.current = 'STORY-SCREEN'
                             setStoryScreenActive(c => c = true);
-                        });
+                            return true;
+                        },null);
                     customCounter.start();
                     
                     

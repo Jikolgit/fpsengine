@@ -113,41 +113,22 @@ export function createObject(map_level,objectType,objectIndexArr,index)
         if(objectIndexArr[i].position == index)
         {
 
-            // if(objectType == 'wall')
-            // {
-            //     map_level[index].active = true,map_level[index].objectType ='wall' ,map_level[index].object = true;map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
+            
             if(objectType == 'barier')
             {
                 map_level[index].active = true,map_level[index].objectType ='barier', map_level[index].objectDesc={pass:objectIndexArr[i].pass}, map_level[index].object = true;map_level[index].objectId = objectIdValue;
                 objectIdValue ++;
             }
-            // else if(objectType == 'dummy_mob_2')
-            // {
-            //     map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='dummy_mob_2' ,
-            //     map_level[index].objectDesc={mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,hasObject:objectIndexArr[i].hasObject,fromMob:objectIndexArr[i].fromMob,skin:objectIndexArr[i].skin,isImportant:objectIndexArr[i].isImportant},
-            //     map_level[index].object = true;map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
-            // else if(objectType == 'mob_1')
-            // {
-            //     map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob_1' ,
-            //     map_level[index].objectDesc={mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,hasObject:objectIndexArr[i].hasObject,fromMob:objectIndexArr[i].fromMob,skin:objectIndexArr[i].skin,isImportant:objectIndexArr[i].isImportant},
-            //     map_level[index].object = true;map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
-            // else if(objectType == 'mob_2')
-            // {
-            //     map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob_2' ,
-            //     map_level[index].objectDesc={mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,hasObject:objectIndexArr[i].hasObject,fromMob:objectIndexArr[i].fromMob,skin:objectIndexArr[i].skin,isImportant:objectIndexArr[i].isImportant},map_level[index].object = true;map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
-            // else if(objectType == 'heal_item')
-            // {   console.log('ici')
-            //     map_level[index].active = true,map_level[index].objectType ='heal_item', map_level[index].objectDesc ={isImportant:objectIndexArr[i].isImportant,heal:objectIndexArr[i].heal,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
-            //     objectIdValue ++;
-            // }
+            
+            else if(objectType == 'mob')
+            {   
+                map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob' ,
+                map_level[index].objectDesc={mobType:objectIndexArr[i].mobType,mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,hasObject:objectIndexArr[i].hasObject,fromMob:objectIndexArr[i].fromMob,skin:objectIndexArr[i].skin,isImportant:objectIndexArr[i].isImportant},
+                map_level[index].object = true;map_level[index].objectId = objectIdValue;
+                objectIdValue ++;
+            }
+            
+            
             else if(objectType == 'item')
             {   
                 map_level[index].active = true,map_level[index].objectType = objectType, 
@@ -155,11 +136,14 @@ export function createObject(map_level,objectType,objectIndexArr,index)
                 objectIdValue ++;
                 
             }
-            // else if(objectType == 'cauris_item')
-            // {
-            //     map_level[index].active = true,map_level[index].objectType ='cauris_item', map_level[index].objectDesc ={value:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
-            //     objectIdValue ++;
-            // }
+            else if(objectType == 'wall')
+            {   
+                map_level[index].active = true,map_level[index].objectType = objectType, 
+                map_level[index].objectDesc ={haswall:true,objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,life:objectIndexArr[i].life,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
+                objectIdValue ++;
+                
+            }
+            
             else if(objectType == 'decor')
             {
                 map_level[index].active = true,map_level[index].objectType ='decor',map_level[index].objectDesc={decorType:objectIndexArr[i].decorType} ,map_level[index].object = true
@@ -168,21 +152,7 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             {
                 map_level[index].active = true,map_level[index].objectType ='final_exitDoor',map_level[index].object = true
             }
-            // else if(objectType == 'coin')
-            // {
-            //     map_level[index].active = true,map_level[index].objectType ='coin' , map_level[index].objectDesc ={value:objectIndexArr[i].value},map_level[index].object = true,map_level[index].objectId = objectIdValue
-            //     objectIdValue ++;
-            // }
-            // else if(objectType == 'chest')
-            // {
-            //     map_level[index].active = true,map_level[index].objectType ='chest' , map_level[index].objectDesc ={life:objectIndexArr[i].life,hasKey:false},map_level[index].object = true,map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
-            // else if(objectType == 'weapon')
-            // {
-            //     map_level[index].active = true,map_level[index].objectType ='weapon' , map_level[index].objectDesc ={skin:objectIndexArr[i].skin,isImportant:objectIndexArr[i].isImportant},map_level[index].object = true,map_level[index].objectId = objectIdValue;
-            //     objectIdValue ++;
-            // }
+            
             else if(objectType == 'Exitdoor')
             {
                 map_level[index].active = true,map_level[index].objectType ='Exitdoor', map_level[index].objectDesc ={open:objectIndexArr[i].open},map_level[index].object = true,map_level[index].objectId = objectIdValue;

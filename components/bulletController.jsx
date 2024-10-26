@@ -18,10 +18,10 @@ export function moveBullet(gloBalObject)
     {
         
         if(gloBalObject.bulletRefInfo.current[i].prepareMove)
-        {
+        { 
             if(!gloBalObject.bulletRefInfo.current[i].hasCheckNextPlatform)
             {
-                let checkResult =   checkifBulletCanMoveNextPlatform(i,gloBalObject.playerDirection,gloBalObject)
+                let checkResult =   checkifBulletCanMoveNextPlatform(i,gloBalObject.bulletRefInfo.current[i].direction,gloBalObject)
 
                 gloBalObject.bulletRefInfo.current[i].hasCheckNextPlatform = true;
                 gloBalObject.bulletRefInfo.current[i].moveDistance = 2;
@@ -34,7 +34,7 @@ export function moveBullet(gloBalObject)
                 if(gloBalObject.bulletRefInfo.current[i].moveDistance > 0)
                 {   
                     gloBalObject.bulletRefInfo.current[i].moveDistance -= Math.round(gloBalObject.bulletSpeed * 100) / 100;
-
+                    
                     if(gloBalObject.bulletRefInfo.current[i].direction == 'FRONT' )
                     {
                         
@@ -99,10 +99,10 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
         }
         let result
 
-                    if(direction.value == 'LEFT'){gloBalObject.bulletPositionOnMap[bulletIndex].x += (gloBalObject.playerDistanceTarget.value);}
-                    if(direction.value == 'RIGHT'){gloBalObject.bulletPositionOnMap[bulletIndex].x -= (gloBalObject.playerDistanceTarget.value);}
-                    if(direction.value == 'FRONT'){gloBalObject.bulletPositionOnMap[bulletIndex].z += (gloBalObject.playerDistanceTarget.value);}
-                    if(direction.value == 'BACK'){gloBalObject.bulletPositionOnMap[bulletIndex].z -= (gloBalObject.playerDistanceTarget.value);}
+                    if(direction == 'LEFT'){gloBalObject.bulletPositionOnMap[bulletIndex].x += (gloBalObject.playerDistanceTarget.value);}
+                    if(direction == 'RIGHT'){gloBalObject.bulletPositionOnMap[bulletIndex].x -= (gloBalObject.playerDistanceTarget.value);}
+                    if(direction == 'FRONT'){gloBalObject.bulletPositionOnMap[bulletIndex].z += (gloBalObject.playerDistanceTarget.value);}
+                    if(direction == 'BACK'){gloBalObject.bulletPositionOnMap[bulletIndex].z -= (gloBalObject.playerDistanceTarget.value);}
                 
                 
                     result = gloBalObject.GameMap.find(checkPlatformForBullet);
@@ -127,15 +127,22 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     {
                                         if(result.objectType == 'item')
                                         {
-                                            
+                                            if(result.objectDesc.objectName == 'wall_1')
+                                            {
+                                                return "move-stop-explode";
+                                            }
+                                            else if(result.objectDesc.objectName == 'heal_item')
+                                            {
+                                                return "move-continue-none"
+                                            }
                                         }
                                         else if(result.objectType == 'decor')
                                         {
-                                           
+                                            return "move-stop-none";
                                         }
-                                        return "move-stop-explode";
+                                        
                                     }
-                                    else if(result.objectType == 'mob_1' || result.objectType == 'mob_2' || result.objectType == 'dummy_mob_2')
+                                    else if(result.objectType == 'mob')
                                     {
                                         if(result.hasEnemy)
                                         {   AudioManage.play('hit')
@@ -183,6 +190,49 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     {   
                                         return "move-continue-none"
                                     }
+                                    else if(result.objectType == "wall")
+                                    {   
+                                            if(result.objectDesc.haswall)
+                                            {   AudioManage.play('hit')
+                                                if(result.objectDesc.life > 1)
+                                                    {
+                                                        result.objectDesc.life --;
+                                                        // gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
+                                                    }
+                                                    else
+                                                    {   
+                                                        result.objectDesc.life --;
+                                                        result.objectDesc.haswall = false;
+                                                        gloBalObject.wallController.value[result.objectId]('REMOVE-WALL');
+                                                        
+                                                       
+                                                        // let effectAfterMobDeath = ()=>
+                                                        //     {
+                                                        //         if(result.objectDesc.hasObject)
+                                                        //             {
+                                                                        
+                                                        //                 result.objectType = result.objectDesc.skin;
+                                                        //                 gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
+                                                        //             }
+                                                        //             else
+                                                        //             {
+                                                        //                 result.isOnScene = false;
+                                                        //             }
+                                                        //     }
+                                                        // gloBalObject.mobUpdateFunc.current[result.objectId]('dead',effectAfterMobDeath);
+                                                        
+                                                        
+                                                        // gloBalObject._appContext.playerStats.current.mobKilled ++;
+                                                        gloBalObject.checkWinCondition();
+                                                    }
+                                                    
+                                                    return "move-stop-explode";
+                                            }
+                                            else
+                                            {
+                                                return "move-stop-none"
+                                            }
+                                    }
                                     else 
                                     {   
                                         return "move-continue-none";
@@ -227,6 +277,10 @@ export function prepareNextBullet(gloBalObject)
             return result;
         }
     gloBalObject.nextBulletToShoot.value = lookForFreeBullet();
+    
+    if(gloBalObject.nextBulletToShoot.value)
+    {
+
     // rotateCam_CallBack();
     if(gloBalObject.playerDirection.value == 'LEFT')
         {
@@ -277,10 +331,13 @@ export function prepareNextBullet(gloBalObject)
                 
             }
         }
-    gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].children[0].material.visible = true;
+    if(gloBalObject.showWeapon3DModel.value){gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].children[0].material.visible = true;}
+    // gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].children[0].material.visible = true;
     gloBalObject.bulletPositionOnMap[gloBalObject.nextBulletToShoot.value._index].x = gloBalObject.playerPositionOnMap.x;
     gloBalObject.bulletPositionOnMap[gloBalObject.nextBulletToShoot.value._index].z = gloBalObject.playerPositionOnMap.z;
     gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].position.x = gloBalObject.playerPositionOnMap.x
     gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].position.z = gloBalObject.playerPositionOnMap.z
+        
+    }
 }
 

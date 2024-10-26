@@ -11,7 +11,6 @@ export function Model(props) {
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.mob_1.geometry} material={nodes.mob_1.material} position={[2.986, 0.241, 0.997]} />
-      <mesh geometry={nodes.spear_1.geometry} material={nodes.spear_1.material} position={[1, 0.802, 1]} rotation={[Math.PI / 2, 0, 0]} />
       <mesh geometry={nodes.healthBox.geometry} material={nodes.healthBox.material} position={[5.105, 0.905, 0.96]}>
         <mesh geometry={nodes.health_1.geometry} material={nodes.health_1.material} position={[-0.004, 0.052, 0.043]} rotation={[0.585, 0, 0]} />
       </mesh>
@@ -22,6 +21,29 @@ export function Model(props) {
       <mesh geometry={nodes.dground.geometry} material={nodes.dground.material} />
       <mesh geometry={nodes.doorTorch.geometry} material={nodes.doorTorch.material} position={[21.102, -0.065, 28.368]} />
       <mesh geometry={nodes.exitDoor.geometry} material={nodes.exitDoor.material} position={[15, 0, 31]} />
+      <mesh geometry={nodes.door_1.geometry} material={nodes.door_1.material} position={[15, 0, 1]}>
+        <mesh geometry={nodes.door_1_face1.geometry} material={nodes.door_1_face1.material} position={[0, 1.018, -0.746]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
+        <mesh geometry={nodes.door_1_face2.geometry} material={nodes.door_1_face2.material} position={[0.752, 1.018, 0.005]} rotation={[0, 0, -Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+        <mesh geometry={nodes.door_1_face3.geometry} material={nodes.door_1_face3.material} position={[-0.748, 1.018, 0.005]} rotation={[-Math.PI, 0, Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+        <mesh geometry={nodes.door_1_face4.geometry} material={nodes.door_1_face4.material} position={[0, 1.018, 0.754]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
+      </mesh>
+      <mesh geometry={nodes.spear_2.geometry} material={nodes.spear_2.material} position={[7.02, 0.356, 1.084]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh geometry={nodes.spear_2_head.geometry} material={nodes.spear_2_head.material} position={[0, 0.79, 0.001]} scale={1.227} />
+      </mesh>
+      <mesh geometry={nodes.spear_1.geometry} material={nodes.spear_1.material} position={[1, 1.775, -0.224]} rotation={[0.842, 0, 0]} />
+      <mesh geometry={nodes.Cube001.geometry} material={nodes.Cube001.material} position={[28, 1, -5]} />
+      <mesh geometry={nodes.pcoin_1.geometry} material={nodes.pcoin_1.material} position={[32, 1.005, -5]} />
+      <mesh geometry={nodes.pdecor_1.geometry} material={nodes.pdecor_1.material} position={[36, 0, -5]}>
+        <mesh geometry={nodes.pdecor_1_leaf.geometry} material={nodes.pdecor_1_leaf.material} />
+      </mesh>
+      <mesh geometry={nodes.pheal_1.geometry} material={nodes.pheal_1.material} position={[38, 0.146, -5]} />
+      <mesh geometry={nodes.playerBullet_1.geometry} material={nodes.playerBullet_1.material} position={[22, 0, -5]} />
+      <mesh geometry={nodes.playerBullet_2.geometry} material={nodes.playerBullet_2.material} position={[26, 1.005, -5]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh geometry={nodes.playerBullet_3.geometry} material={nodes.playerBullet_3.material} position={[40, 1.046, -5]} />
+      <mesh geometry={nodes.pmob_1.geometry} material={nodes.pmob_1.material} position={[34, 0.007, -3]} />
+      <mesh geometry={nodes.pmob_bullet.geometry} material={nodes.pmob_bullet.material} position={[30, 1.005, -5]} />
+      <mesh geometry={nodes.pmob_0.geometry} material={nodes.pmob_0.material} position={[24, 0.005, -5]} />
+      <mesh geometry={nodes.pwall_2.geometry} material={nodes.pwall_2.material} position={[42, -0.019, -5]} />
     </group>
   )
 }

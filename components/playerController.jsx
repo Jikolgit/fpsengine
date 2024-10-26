@@ -219,7 +219,18 @@ function checkifElemCanMoveNextPlatform(objArg)
                                             if(objArg.directionToGo.value == 'BACK'){objetDirection.current[3]=true}
                                             return true;
                                         }
-                                        else if(_result.objectType == 'chest' || _result.objectType == 'wall' || _result.objectType == 'decor')
+                                        else if(_result.objectType == 'wall')
+                                        {
+                                            if(_result.objectType == 'wall' && _result.objectDesc.haswall)
+                                            {
+                                                return false
+                                            } 
+                                            else
+                                            {
+                                                return true
+                                            }
+                                        }
+                                        else if(_result.objectType == 'decor')
                                         {
                                             return false;
                                         }

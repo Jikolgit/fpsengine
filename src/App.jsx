@@ -2,10 +2,10 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
 import { createLevel, createObject } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
-import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameScreenTransition, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen } from '../components/GameUI';
+import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameScreenTransition, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
-import { AddDecorItem, AddExitDoor, AddMobType1, AddMobType2, AddItem, UpdateLevelConfig, UpdatePlayerStat } from '../components/DefaultComponents';
+import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon } from '../components/DefaultComponents';
 
 
 export let appContext = createContext(null)
@@ -13,7 +13,7 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(3);
+  let level = useRef(1);
   let mapHeight = 19;
   let mapWidth = 16;
   let gameMap = createLevel(level.current);
@@ -32,6 +32,7 @@ function App() {
   const HelpScreenFunc = useRef(null);
   const StoryScreenController = useRef(null);
   const KeyBoardManageStory = useRef(null);
+  const ActionIconController = useRef(null);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -42,7 +43,7 @@ function App() {
   let touchEventTouchEndFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let actionButtonRef = useRef(null);
   let GameScreenTransitionRef = useRef(null);
-  let playerStats = useRef({life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0});
+  let playerStats = useRef({life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
   let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0});
 
   let saveGame = ()=>
@@ -241,16 +242,17 @@ function App() {
                 actualGameScreen,helpMode,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
                 touchEventTouchEndFunc,actionButtonRef,level,GameScreenTransitionRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
-                GameUIController,setGameVueActive,mapWidth,mapHeight}}
+                GameUIController,setGameVueActive,mapWidth,mapHeight,ActionIconController}}
       >
           <div 
-              style={{backgroundColor:levelInfo.current.fogColor}}
-              className={`font-times absolute max-w-[700px] left-[0] right-[0] mx-auto  w-full font-gun
+              // style={{backgroundColor:levelInfo.current.fogColor}}
+              className={`bg-black font-times absolute max-w-[700px] left-[0] right-[0] mx-auto  w-full font-gun
                           md1:h-[100%] md1:max-h-[700px] h-[500px] select-none `}
           >
             <Canvas>
             {gameVueActive && <GameApp />}
             </Canvas>
+            {gameVueActive && <ActionIcon/>}
             {gameVueActive && <PauseIcon />}
             {gameVueActive && <GameController />}
             {gameVueActive && <GameNotif />}
@@ -297,42 +299,55 @@ function GameConfig()
   // *MOVE SPEED
   // *BULLET SPEED
   // CHNAGER LE NOM POUR UpdateLevelConfig OU GAMEOPTION
+  // AJOUTER UN COMPOSANT QUI PERMET DE VOIR OU NON LA BARE DES MOB
   const AppCntext = useContext(appContext);
   
   return(
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <UpdatePlayerStat life={2} moveSpeed={0.1} />
-                    <AddItem name={'spear'} position={[135]} />
-                    <AddDecorItem position={[45,66,192,147,126,187]} />
-                    <AddExitDoor position={[240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255]} />
+                    <UpdatePlayerStat life={2} moveSpeed={0.1} showWeapon={false} />
+                    <AddWeapon name={'triangle'} position={[135]} />
+                    <AddDecor position={[45,66,192,147,126,187]} />
+                    <AddDoor position={[295]}  />
                 </>
               }
               {AppCntext.level.current == 2 &&
                 <>
-                    <AddMobType1 position={[146,94]} life={1} />
-                    <AddDecorItem position={[45,66,192,147,126,187]} />
-                    <AddExitDoor position={[240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255]} />
+                    <UpdateLevelConfig  mobToKill={2} />
+                    <AddMob position={[146,94]} life={2} />
+                    <AddDecor position={[45,66,192,147,126,187]} />
+                    <AddDoor position={[295]}  />
                 </>
               }
               {AppCntext.level.current == 3 &&
                 <>
-                    <UpdateLevelConfig mobToKill={2} />
-                    <UpdatePlayerStat life={1} moveSpeed={0.1} />
-                    <AddItem name={'healItem'} position={[135]} value={1} />
-                    <AddItem name={'wallItem'} position={[134,136,137]} value={5} />
-                    <AddMobType2 position={[146,94]} life={1} />
-                    <AddDecorItem position={[46,60,189,122,149,20,65,85]} />
-                    <AddExitDoor position={[240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255]} />
+                    <UpdateLevelConfig  mobToKill={8} />
+                    <UpdatePlayerStat life={5} moveSpeed={0.1} />
+                    {/* <AddItem name={'healItem'} position={[135]} value={1} /> */}
+                    <AddMob position={[153,154,155,156]} life={5} active  />
+                    <AddMob position={[149,148,147,146]} life={5} active />
+
+                    <AddDoor position={[295]}  />
                 </>
               }
               {AppCntext.level.current == 4 &&
                 <>
-                    <UpdateLevelConfig mobToKill={1} />
-                    <AddMobType1 position={[150]} life={1} />
-                    <AddDecorItem position={[46,60,189,122,149,20,65,85]} />
-                    <AddExitDoor position={[240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255]} />
+                    <UpdateLevelConfig  mobToKill={14} />
+                    <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
+                    <AddMob position={[134,149,164,179,194,209]} life={5}  active />
+                    <AddItem name={'healItem'} position={[183]} value={3} />
+                    <AddDoor position={[295]}  />
+                </>
+              }
+              {AppCntext.level.current == 5 &&
+                <>
+                    <UpdateLevelConfig  mobToKill={14} />
+                    <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
+                    <AddMob position={[134,149,164,179,194,209]} life={5}  active />
+                    <AddMob position={[166,167,168]} life={5} active />
+                    <AddItem name={'healItem'} position={[183]} value={3} />
+                    <AddDoor position={[295]}  />
                 </>
               }
           </> 
@@ -345,10 +360,11 @@ export default App
 //CAPACITE QUI FAIT QU'on AVERTI DU DANGER PAR DES FLECHES A L'ECRAN
 // FAIRE DES UI POUR JEUX AVEC DES COULEUR CHANGEABLE
 //CREER UNE FONCTION POUR
-//-AJOUTER FACILEMENT DES NIVEAUX
+//-AJOUTER FACILEMENT DES NIVEAUX***************************************************************OK
 //* LES OBJET PEUVENT AGIR DE 3 FACON SOIT AVEC LENVIRONNEMENT SOIT LE JOUEUR SOIT LES 2
 //-CHANGER FACILEMENT LES MODELES ET LES TEXTURES
 //-CHANGER FACILEMENT LES PARAMETRES COMME
-//*VITESSE DE DEPLACEMENT
+//*VITESSE DE DEPLACEMENT**************************************************OK
 //*NOMBRE DE TIRE POSSIBLE PAR MINUTE
 //*FAIRE CLIGNOTER LES BOUTON DE LECRAN QUAND ON CLIQUE SUR LE CLAVIER
+//*FAIRE DES ASSET DE DEMO UTILISABLE

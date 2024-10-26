@@ -4,17 +4,17 @@ import { createObject } from "./gameMap";
 
 
 
-export function UpdateLevelConfig(props)
+export function UpdateLevelConfig({mobToKill,keyNumber})
 {
   const AppCntext = useContext(appContext);
 
-  AppCntext.levelInfo.current._MobToKillNumber = props.mobToKill? props.mobToKill : 0;
-  AppCntext.levelInfo.current._KeyNumber = props.keyNumber? props.keyNumber : 0;
+  AppCntext.levelInfo.current._MobToKillNumber = mobToKill? mobToKill : 0;
+  AppCntext.levelInfo.current._KeyNumber = keyNumber? keyNumber : 0;
 
   return null
 }
 export function UpdatePlayerStat(props)
-{
+{ //creer une propriété pour ajouter les onfiguration par défaut et elles s'appliqueron au reste des niveau
   const AppCntext = useContext(appContext);
   if(props.moveSpeed == 0.05 || props.moveSpeed == 0.1 || props.moveSpeed == 0.2)
   {
@@ -24,7 +24,14 @@ export function UpdatePlayerStat(props)
   {
     AppCntext.playerStats.current.moveSpeed = 0.1;
   }
-
+  if(props.showWeapon)
+  {
+    AppCntext.playerStats.current.showWeapon = true;
+  }
+  else
+  {
+    AppCntext.playerStats.current.showWeapon = false;
+  }
   if(props.life > 5 || props.life <= 0)
   {
     AppCntext.playerStats.current.life = 5;
@@ -44,11 +51,7 @@ export function AddItem(props)
 
   for(let i = 0;i<props.position.length;i++)
   {
-    if(props.name == 'spear')
-    {
-      objectDetailArr[i] = {position:props.position[i],objectName:'weapon_item',skin:'spear',isImportant:true}
-    }
-    else if(props.name == 'healItem')
+    if(props.name == 'healItem')
     {
       objectDetailArr[i] = {position:props.position[i],objectName:'heal_item',skin:'heal_item_1',value:props.value?props.value:2,isImportant:true}
     }
@@ -68,8 +71,26 @@ export function AddItem(props)
   }
   return null
 }
+export function AddWeapon(props)
+{
+  const AppCntext = useContext(appContext);
+  let objectDetailArr = []
 
-export function AddDecorItem(props)
+  for(let i = 0;i<props.position.length;i++)
+  {
+
+      objectDetailArr[i] = {position:props.position[i],objectName:'weapon_item',skin:props.name,isImportant:true}
+    
+   
+  }
+  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  {   
+      createObject(AppCntext.gameMap,'item',objectDetailArr,i);
+      
+  }
+  return null
+}
+export function AddDecor(props)
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = []
@@ -85,7 +106,7 @@ export function AddDecorItem(props)
   return null
 }
 
-export function AddExitDoor(props)
+export function AddDoor(props)
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = []
@@ -100,42 +121,64 @@ export function AddExitDoor(props)
   }
   return null
 }
-
-export function AddMobType1(props)
+/**
+ * 
+ * @param {{life:number,lootObject:boolean,active:boolean,position: number[]}} param0 
+ * @returns 
+ */
+export function AddMob({life,lootObject,active,position})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = [];
-  let life = props.life? props.life : 2;
-  let lootObject = props.lootObject? props.lootObject : 'none'
-  let hasObject = props.lootObject? true : false;
-  let fromMob = props.lootObject? true : false;
-  for(let i = 0;i<props.position.length;i++)
+  let lifeProps = life? life : 2;
+  let lootObjectProps = lootObject? lootObject : 'none'
+  let hasObject = lootObject? true : false;
+  let fromMob = lootObject? true : false;
+  let type = active? 'mob_2' : 'mob_1'
+  for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {position:props.position[i],life:life,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObject}
+    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObjectProps}
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
   {   
-            createObject(AppCntext.gameMap,'mob_1',objectDetailArr,i);
+            createObject(AppCntext.gameMap,'mob',objectDetailArr,i);
   }
   return null
 }
-
-export function AddMobType2(props)
+export function AddWall(props)
 {
   const AppCntext = useContext(appContext);
-  let objectDetailArr = [];
-  let life = props.life? props.life : 2;
-  let lootObject = props.lootObject? props.lootObject : 'none'
-  let hasObject = props.lootObject? true : false;
-  let fromMob = props.lootObject? true : false;
+  let objectDetailArr = []
+
   for(let i = 0;i<props.position.length;i++)
   {
-    objectDetailArr[i] = {position:props.position[i],life:life,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObject}
+
+      objectDetailArr[i] = {position:props.position[i],objectName:'Wall_type_1',skin:'wall_1',life:props.value?props.value:0,isImportant:false}
+    
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
   {   
-            createObject(AppCntext.gameMap,'dummy_mob_2',objectDetailArr,i);
+      createObject(AppCntext.gameMap,'wall',objectDetailArr,i);
+      
   }
   return null
 }
+// export function AddMobType2(props)
+// {
+//   const AppCntext = useContext(appContext);
+//   let objectDetailArr = [];
+//   let life = props.life? props.life : 2;
+//   let lootObject = props.lootObject? props.lootObject : 'none'
+//   let hasObject = props.lootObject? true : false;
+//   let fromMob = props.lootObject? true : false;
+//   for(let i = 0;i<props.position.length;i++)
+//   {
+//     objectDetailArr[i] = {position:props.position[i],life:life,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObject}
+//   }
+//   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+//   {   
+//             createObject(AppCntext.gameMap,'dummy_mob_2',objectDetailArr,i);
+//   }
+//   return null
+// }
 
