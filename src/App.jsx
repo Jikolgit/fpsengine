@@ -23,16 +23,18 @@ function App() {
   let gameNotifFunc = useRef(null);
   let gamePause = useRef(false);
   let gameControllerVisible = useRef(true);
+  let actionIconVisible = useRef(false);
   let soundOn = useRef(true);
   let gameOverScreenFunc = useRef(null);
   let gameControllerFunc = useRef(null);
+  let actionIconController = useRef(null);
   let gameEndingScreenFunc = useRef(null);
   const PauseScreenController = useRef(null);
   const GameUIController = useRef(null);
   const HelpScreenFunc = useRef(null);
   const StoryScreenController = useRef(null);
   const KeyBoardManageStory = useRef(null);
-  const ActionIconController = useRef(null);
+  
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -242,7 +244,7 @@ function App() {
                 actualGameScreen,helpMode,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
                 touchEventTouchEndFunc,actionButtonRef,level,GameScreenTransitionRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
-                GameUIController,setGameVueActive,mapWidth,mapHeight,ActionIconController}}
+                GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -256,7 +258,7 @@ function App() {
             {gameVueActive && <PauseIcon />}
             {gameVueActive && <GameController />}
             {gameVueActive && <GameNotif />}
-            {gameVueActive && <ToggleTouchScreen />}
+            {/* {gameVueActive && <ToggleTouchScreen />} */}
             {gameVueActive && <PlayerMoney /> }
             {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
 
@@ -306,10 +308,10 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <UpdatePlayerStat life={2} moveSpeed={0.1} showWeapon={false} />
-                    <AddWeapon name={'triangle'} position={[135]} />
+                    <UpdatePlayerStat life={2} moveSpeed={0.1} />
+                    {/* <AddWeapon name={'triangle'} position={[135]} /> */}
                     <AddDecor position={[45,66,192,147,126,187]} />
-                    <AddDoor position={[295]}  />
+                    <AddDoor position={[295]} open  />
                 </>
               }
               {AppCntext.level.current == 2 &&

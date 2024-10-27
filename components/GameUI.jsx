@@ -159,14 +159,22 @@ export function GameController()
 
 export function ActionIcon()
 {
-    useEffect(()=>
+    let _appContext = useContext(appContext);
+    let [actionIconVisible,setActionIconVisible] = useState(false);
+    _appContext.actionIconController.current = ()=>
         {
-            
-        },[])
+            _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
+            setActionIconVisible(_appContext.actionIconVisible.current);
+        }
     return(
-            <div className=" border-[5px] border-gray-500 bg-black w-[60px] h-[60px] absolute z-[3] left-0 right-0 top-[10px] mx-auto ">
+        <>
+            {actionIconVisible &&
+                <div className=" border-[5px] border-gray-500 bg-black w-[60px] h-[60px] absolute z-[2] left-0 right-0 bottom-[10px] mx-auto ">
                     <img src="spear_1_icon.png" alt="icon" className="w-full h-full" />
-            </div>
+                </div>
+
+            }
+        </>
     )
 }
 
@@ -222,6 +230,7 @@ export function PauseScreen()
                 <img src='n_button/btnQuit.png' alt="Quitter" className="w-full h-full" />
             </div>
         </div>
+        <ToggleTouchScreen />
     </div>);
     useEffect(()=>
         {
@@ -684,11 +693,17 @@ export function GameEndingScreen()
 
 export function ToggleTouchScreen()
 {
-    let _appContext = useContext(appContext)
+    let _appContext = useContext(appContext);
+
+    let toggleTouch = ()=>
+        {
+            _appContext.gameControllerFunc.current();
+            _appContext.actionIconController.current()
+        }
     return(
         <>
             <div
-                onClick={ _appContext.gameControllerFunc.current}
+                onClick={toggleTouch}
                 className="cursor-pointer absolute right-[5px] bottom-[5px] z-[2] w-[40px] h-[40px] border-[2px] border-red-500 "
             >
             <svg fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

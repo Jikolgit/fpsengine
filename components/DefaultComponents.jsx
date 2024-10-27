@@ -105,15 +105,19 @@ export function AddDecor(props)
   }
   return null
 }
-
-export function AddDoor(props)
+/**
+ * 
+ * @param {{position : number[],open:boolean}} param0 
+ * @returns 
+ */
+export function AddDoor({position,open})
 {
   const AppCntext = useContext(appContext);
-  let objectDetailArr = []
+  let objectDetailArr = [];
 
-  for(let i = 0;i<props.position.length;i++)
+  for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {open:false,position:props.position[i]}
+    objectDetailArr[i] = {open:open?open:false,position:position[i]}
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
   {   

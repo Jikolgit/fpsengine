@@ -58,7 +58,7 @@ export function placeModelOnScene(gloBalObject)
                 let objectComponents=null;
                 
                 objectComponents = <ExitDoor_model controller={{exitDoorController:gloBalObject.exitDoorController,index:gloBalObject.GameMap[i].objectId}} 
-                skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                skin={gloBalObject.GameMap[i].objectDesc.skin} isOpen={gloBalObject.GameMap[i].objectDesc.open } visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                 
                 let arrElem = gloBalObject.GameMap[i].isOnScene?
                 <group

@@ -465,7 +465,7 @@ export function ExitDoor_model(props)
   let mat = new THREE.ShaderMaterial({transparent:true ,vertexShader:vertex,fragmentShader:frags,side:THREE.DoubleSide
     ,uniforms:{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}
 })
-
+  
   useFrame((clock)=>{
     faceRef.current.material.uniforms.utime.value += 0.05;
 
@@ -473,6 +473,11 @@ export function ExitDoor_model(props)
 
   useEffect(()=>
     { 
+      if(props.isOpen)
+      {
+        faceRef.current.material.uniforms.uColor.value.x = 0.0;
+        faceRef.current.material.uniforms.uColor.value.z = 1.0;
+      }
       props.controller.exitDoorController.value[props.controller.index] = (args)=>
       {
           if(args == 'OPEN-DOOR')

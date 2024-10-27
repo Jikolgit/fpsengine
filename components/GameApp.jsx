@@ -808,7 +808,7 @@ export function GameApp(props)
                         {/* <EnemyComponent /> */}
                         <group
                                 ref={bulletGroupRef}
-                                visible={_appContext.level.current==1? false:true}
+                                visible={true}
                         >
                             {bulletContainer}
                         </group>
