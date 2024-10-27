@@ -66,6 +66,7 @@ const speech_9 =
 
 
 // ]
+let storyText = {value:['none']} ;
 let speechTimeline=[];
 for(let i =0;i<14;i++)
 {
@@ -77,4 +78,4 @@ speechTimeline[3] =speech_3
 speechTimeline[5] =speech_5
 speechTimeline[7] =speech_7
 speechTimeline[9] =speech_9
-export {speechTimeline}
+export {speechTimeline,storyText}

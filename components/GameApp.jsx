@@ -19,7 +19,7 @@ import { speechTimeline } from './gameStory';
 export let gameAppContext = createContext(null);
 export function GameApp(props)
 {
-    
+
     let _appContext = useContext(appContext);
     let level = useRef(_appContext.level.current);
     const GameMap =  _appContext.gameMap;
@@ -78,31 +78,31 @@ export function GameApp(props)
 
 
 
-    
-    
+
+
     let checkWinCondition = ()=>
         {
-            
+
             // IF _KeyNumber > 0 PLAYER MUST COLLECT ALL THE KEY IN THE AREA BEFORE GOING TO THE NEXT LEVEL
             if(gameMapInfo._KeyNumber != 0)
-            {   
+            {
                 if(_appContext.playerStats.current.keyCollected == gameMapInfo._KeyNumber )
                 {
                     openExitDoor();
                 }
                 if(_appContext.playerStats.current.mobKilled == gameMapInfo._MobToKillNumber )
                 {
-                    removeBarrier(); 
+                    removeBarrier();
                 }
             }
             else
-            {   
+            {
                 // PLAYER MUST KILL ALL THE MOB IN THE AREA BEFORE GOING TO THE NEXT LEVEL
                 if(_appContext.playerStats.current.mobKilled == gameMapInfo._MobToKillNumber )
-                    {  
-                        removeBarrier(); 
+                    {
+                        removeBarrier();
                         openExitDoor();
-                        
+
                     }
             }
         }
@@ -125,11 +125,11 @@ export function GameApp(props)
                 {
                     exitDoorController.value[i]('OPEN-DOOR')
                 }
-                
+
             }
             for(let i = 0; i< exitDoorMapIndexArr.value.length;i++)
             {
-                
+
                 GameMap[exitDoorMapIndexArr.value[i]].objectDesc.open = true;
             }
 
@@ -157,7 +157,7 @@ export function GameApp(props)
             {
                 _appContext.setGameOver()
             }
-            
+
         }
     let increasePlayerLife = (_number)=>
         {
@@ -167,7 +167,7 @@ export function GameApp(props)
                 _appContext.playerStats.current.life = _appContext.playerStats.current.maxLife
             }
             _appContext.lifeBarFunc.current(_appContext.playerStats.current.life);
-            
+
         }
     let managePlayerMoney = (_number,operation)=>
         {
@@ -179,10 +179,10 @@ export function GameApp(props)
             {
                 _appContext.playerStats.current.coinCollected -= _number;
             }
-            
+
             _appContext.playerMoneyContainerRef.current.innerText = _appContext.playerStats.current.coinCollected;
             // checkWinCondition()
-        } 
+        }
     let getCurrentBulletPlatform = (bulletIndex)=>
         {
             let result = GameMap.find((elem)=>{return elem.xPose == bulletPositionOnMap[bulletIndex].x && elem.zPose == bulletPositionOnMap[bulletIndex].z })
@@ -192,7 +192,7 @@ export function GameApp(props)
 
     let resetBullet = (_index)=>
         {
-           
+
             bulletRefInfo.current[_index] = {_index:_index,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
             bulletRef.current[_index].position.x = playerPositionOnMap.x
             bulletRef.current[_index].position.z = playerPositionOnMap.z
@@ -202,41 +202,41 @@ export function GameApp(props)
         }
     let checkPlatform = (elem)=>
         {
-            return elem.xPose == playerPositionOnMap.x && elem.zPose == playerPositionOnMap.z 
+            return elem.xPose == playerPositionOnMap.x && elem.zPose == playerPositionOnMap.z
         }
-    
+
     let getNextPlatformInfo = (_playerDirection,_when)=>
         {
-            
-            
+
+
                 if(_playerDirection.value == 'LEFT'){playerPositionOnMap.x += (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'RIGHT'){playerPositionOnMap.x -= (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'FRONT'){playerPositionOnMap.z += (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'BACK'){playerPositionOnMap.z -= (playerDistanceTarget.value);}
-            
-            
+
+
                 let result = GameMap.find(checkPlatform);
-    
+
                 if(_playerDirection.value == 'LEFT'){playerPositionOnMap.x -= (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'RIGHT'){playerPositionOnMap.x += (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'FRONT'){playerPositionOnMap.z -= (playerDistanceTarget.value);}
                 if(_playerDirection.value == 'BACK'){playerPositionOnMap.z += (playerDistanceTarget.value);}
-    
-                
+
+
                 if(_when == 'AfterMove')
                 {
                     if(result)
                     {
                         if(result.objectType=='item')
-                        {  
+                        {
                             if(result.objectDesc.objectName=='weapon_item'){setActionButtonEffect('TAKE-SPEAR',result)}
                             else if(result.objectDesc.objectName=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                             else if(result.objectDesc.objectName=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
                             else if(result.objectDesc.objectName=='wall_1')
                             {
-                                
+
                             }
-                            
+
                         }
                         // else if(result.objectType=='cauris_item')
                         // {
@@ -251,23 +251,23 @@ export function GameApp(props)
                             setActionButtonEffect('Exit',result)
                         }
                         else
-                        {   
+                        {
                             //BULLET
                             setActionButtonEffect('none',result)
                         }
                     }
-                    
+
                 }
-                
+
             // }
-            
+
         }
     let setActionButtonEffect = (effect,objectInfo)=>
         {
             if(effect == 'TAKE-SPEAR')
-            {   
+            {
                 if(objectInfo.isOnScene)
-                {    
+                {
                     if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/interact.png';}
                     currentObjectInFront.effect = 'SPEAR';
                 }
@@ -276,8 +276,8 @@ export function GameApp(props)
                     if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
                     currentObjectInFront.effect ='none';
                 }
-                
-                
+
+
             }
             else if(effect == 'TAKE-CAURIS')
             {
@@ -291,8 +291,8 @@ export function GameApp(props)
                     if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
                     currentObjectInFront.effect ='none';
                 }
-                
-                
+
+
             }
             else if(effect == 'TAKE-HEAL')
             {
@@ -306,8 +306,8 @@ export function GameApp(props)
                     if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
                     currentObjectInFront.effect ='none';
                 }
-                
-                
+
+
             }
             else if(effect =='Exit')
             {
@@ -332,21 +332,21 @@ export function GameApp(props)
                 {
                     bulletRef.current[i].scale.set(value,value,value)
                 }
-                
+
             }
         }
     let playerMovePressedEventHandler = (touchPressed)=>
-    {   
-        if(!aKeyisPressed.current && !playerMoveIsActive.current && !camRotateStart.current 
+    {
+        if(!aKeyisPressed.current && !playerMoveIsActive.current && !camRotateStart.current
             && !weaponReload.start
           )
-            {       
+            {
                     keyPressedName.current = touchPressed;
                 if(!_appContext.gamePause.current)
                 {
 
                     if(touchPressed == 'ArrowLeft' || touchPressed == 'q')
-                    {   
+                    {
                         if(playerDirection.value == 'FRONT')
                             {   directionToGo.value = 'LEFT'
                                 preparePlayerMove(gloBalObject)}
@@ -362,7 +362,7 @@ export function GameApp(props)
                     }
                     else if(touchPressed == 'ArrowRight' || touchPressed == 'd')
                     {
-                        
+
                         if(playerDirection.value == 'FRONT')
                             {   directionToGo.value='RIGHT'
                                 preparePlayerMove(gloBalObject)}
@@ -375,11 +375,11 @@ export function GameApp(props)
                         else if(playerDirection.value == 'BACK')
                             {   directionToGo.value ='LEFT'
                                 preparePlayerMove(gloBalObject)}
-                            
+
                     }
                     else if(touchPressed == 'ArrowUp' || touchPressed == 'z')
                     {
-                        
+
                         if(playerDirection.value == 'FRONT')
                             {   directionToGo.value='FRONT'
                                 preparePlayerMove(gloBalObject)}
@@ -392,11 +392,11 @@ export function GameApp(props)
                         else if(playerDirection.value == 'BACK')
                             {   directionToGo.value='BACK'
                                 preparePlayerMove(gloBalObject)}
-                        
+
                     }
                     else if(touchPressed == 'ArrowDown' || touchPressed == 's')
                     {
-                        
+
                         if(playerDirection.value == 'FRONT')
                             {   directionToGo.value='BACK'
                                 preparePlayerMove(gloBalObject)}
@@ -411,9 +411,9 @@ export function GameApp(props)
                                 preparePlayerMove(gloBalObject)}
                     }
                     else if(touchPressed == 'a')
-                    {  
-                        aKeyisPressed.current = true 
-                        
+                    {
+                        aKeyisPressed.current = true
+
                         camRotateInfo.left.xCamValue = orbitRef.current.target.x;
                         camRotateInfo.left.zCamValue = orbitRef.current.target.z;
                         camRotateStart.current = true;
@@ -423,7 +423,7 @@ export function GameApp(props)
                         else if(playerDirection.value == 'BACK'){playerDirection.value ='RIGHT'}
                         else if(playerDirection.value == 'RIGHT'){playerDirection.value ='FRONT'}
                         if(playerDirection.value == 'LEFT')
-                        {   
+                        {
                             spearScale(0)
                             camRotateInfo.left.x = orbitRef.current.target.x+2;
                             camRotateInfo.left.z = orbitRef.current.target.z-2;
@@ -449,8 +449,8 @@ export function GameApp(props)
                     }
                     else if(touchPressed == 'e')
                         {
-                            aKeyisPressed.current = true 
-                            
+                            aKeyisPressed.current = true
+
                             camRotateInfo.left.xCamValue = orbitRef.current.target.x;
                             camRotateInfo.left.zCamValue = orbitRef.current.target.z;
                             camRotateStart.current = true;
@@ -492,32 +492,32 @@ export function GameApp(props)
                                 if(nextBulletToShoot.value)
                                 {
                                     if(!weaponReload.start)
-                                        {   
+                                        {
                                             //SHOOT
                                             if(playerCanShoot)
                                             {
-                                                
+
                                                 AudioManage.play("shoot")
                                                 for(let i =0;i<bulletRef.current.length;i++)
                                                 {
                                                     if(!bulletRefInfo.current[i].isShooted)
                                                     {
-                                                        
+
                                                         bulletRef.current[i].position.x = playerPositionOnMap.x;
                                                         bulletRef.current[i].position.z = playerPositionOnMap.z;
                                                         bulletPositionOnMap[i].x = playerPositionOnMap.x;
                                                         bulletPositionOnMap[i].z = playerPositionOnMap.z;
                                                     }
-                                                    
+
                                                 }
-        
+
                                                 if(!showWeapon3DModel.value)
-                                                    {   
+                                                    {
                                                         bulletModelController.value[nextBulletToShoot.value._index]('SHOW-BULLET')
                                                         // bulletRef.current[nextBulletToShoot.value._index].children[1].material.visible = true;
                                                     }
-                                                
-        
+
+
                                                 nextBulletToShoot.value.isShooted = true;
                                                 nextBulletToShoot.value.prepareMove = true;
                                                 nextBulletToShoot.value.direction = playerDirection.value;
@@ -529,97 +529,97 @@ export function GameApp(props)
                                                 _appContext.gameNotifFunc.current('Take your Weapon !','player');
                                                 // console.log('pas de lance')
                                             }
-                                            
+
                                         }
                                         else
                                         {
                                             // console.log('rechargement')
                                         }
                                 }
-                                
-                                
+
+
                             }
                             else if (currentObjectInFront.effect == 'Exit')
                             {
-                            
+
                                 if(currentObjectInFront.objectInfo.objectDesc.open)
                                 {
-                                   
+
                                     if(_appContext.level.current == 13){gameEnding()}
                                     else{_appContext.nextLevel()}
-                                    
+
                                 }
                                 else
                                 {
                                     // console.log('FERME !!!');
                                     if(_appContext.level.current == 1){_appContext.gameNotifFunc.current('Récuperez la lance pour avancer','player');}
                                     else{_appContext.gameNotifFunc.current('Fermé','player');}
-                                    
+
                                 }
-                                    
-                                
+
+
                             }
                             else if (currentObjectInFront.effect == 'CAURIS')
                             {
                                 AudioManage.play('coin')
-                              
-                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()} 
+
+                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
                                 managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
                                 currentObjectInFront.objectInfo.isOnScene = false;
-    
+
                                 if(currentObjectInFront.objectInfo.objectDesc.fromMob)
                                 {mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");}
                                 else
                                 {
-                                    
+
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
-    
+
                                 getNextPlatformInfo(playerDirection,'AfterMove');
-    
+
                             }
                             else if (currentObjectInFront.effect == 'HEAL')
                             {
                                 AudioManage.play('heal')
-                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()} 
+                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
                                 increasePlayerLife(currentObjectInFront.objectInfo.objectDesc.value)
                                 currentObjectInFront.objectInfo.isOnScene = false;
                                 if(currentObjectInFront.objectInfo.objectDesc.fromMob){mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");}
                                 else
                                 {
-                                    
+
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
-                                
+
                                 getNextPlatformInfo(playerDirection,'AfterMove');
-    
+
                             }
                             else if (currentObjectInFront.effect == 'SPEAR')
                             {
                                 AudioManage.play('grab');
-                                
-                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()} 
-                                
+
+                                if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
+
                                 currentObjectInFront.objectInfo.isOnScene = false
                                 objectRef.current[currentObjectInFront.objectInfo.objectId].children[0].visible = false;
                                 getNextPlatformInfo(playerDirection,'AfterMove');
-    
+
                                 if(_appContext.level.current == 1)
                                 {
                                     playerCanShoot = true;
                                     bulletGroupRef.current.visible = true
-    
-                                    
+
+
                                 }
                             }
-                         
+
                     }
-                    
+
                 }
                 else
                 {
                         if(touchPressed == ' ')
-                        {   
+                        {
                             aKeyisPressed.current = true;
                             if(_appContext.actualGameScreen.current == 'HELP-SCREEN' || _appContext.actualGameScreen.current == 'STORY-SCREEN')
                             {
@@ -628,18 +628,18 @@ export function GameApp(props)
                             }
                             else
                             {
-                                
+
                             }
-                            
-                            
-    
-                            
-                            
+
+
+
+
+
                         }
                 }
-                
-                        
-            } 
+
+
+            }
     }
 
     let playerMoveUpEventHandler = (touchPressed)=>
@@ -666,42 +666,42 @@ export function GameApp(props)
         bulletPositionOnMap[i] = {x:playerPoseVar.x,y:0.6,z:playerPoseVar.z};
     }
 
-    
+
     useFrame((clock)=>
         {
             if(!_appContext.gamePause.current)
             {
                 passedTime += 1/40;
                 for(let i =0;i< spearModelIndexArr.value.length;i++)
-                {   
+                {
                     // objectRef.current[spearModelIndexArr.value[i]].children[0].position.y += Math.sin(passedTime)/400;
                     // objectRef.current[spearModelIndexArr.value[i]].children[0].rotation.z += (0.1/4);
-                    
+
                 }
-    
+
                 if(camRotateStart.current)
                 {
                     rotateCam(gloBalObject);
                 }
                 if(playerMoveIsActive.current)
-                {   
-                    
+                {
+
                     movePlayer(gloBalObject)
-                       
+
                 }
                 moveBullet(gloBalObject)
             }
-            
+
         })
-      
+
     useEffect(()=>
         {
             _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
         },[])
     useEffect(()=>
-        {   
-            
-            
+        {
+
+
             prepareNextBullet(gloBalObject);
             _appContext.playerStats.current.keyCollected = 0
             _appContext.playerStats.current.mobKilled = 0
@@ -730,16 +730,16 @@ export function GameApp(props)
             _appContext.touchEventTouchEndFunc.current.turnRight = ()=>{playerMoveUpEventHandler('e')}
             _appContext.touchEventTouchEndFunc.current.turnLeft = ()=>{playerMoveUpEventHandler('a')}
             // if(iselemOnScene)
-            // {   
-    
+            // {
+
                 window.addEventListener('keydown',playerMovePressedEventHandlerCallB,true)
                 window.addEventListener('keyup',playerMoveUpEventHandlerCallB,true)
             // }
             // _appContext.GameScreenTransitionRef.current.style.display = 'none';
-            
-            
+
+
             return ()=>
-            {   
+            {
                 // scene.dispose();
                 // gl.dispose();
                 window.removeEventListener('keydown',playerMovePressedEventHandlerCallB,true)
@@ -756,17 +756,17 @@ export function GameApp(props)
 
             }
         placeModelOnScene(gloBalObject)
-     
+
     return <>
                 <gameAppContext.Provider
                     value={{GameMap,playerPositionOnMap,playerMoveIsActive,enemyLifePoint,reducePlayerLife,mobUpdateFunc,barierModelIndexArr,exitDoorModelIndexArr}}
                 >
-                        
+
                         {_appContext.devMode.current?
                             <>
                              <PerspectiveCamera position={[15,35,-2]} ref={camRef} makeDefault />
                              <OrbitControls target={[playerPoseVar.x+15,0.8,playerPoseVar.z]} ref={orbitRef} />
-                            </> 
+                            </>
                         :
                             <>
                             <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
@@ -775,7 +775,7 @@ export function GameApp(props)
                         }
                         {/* <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
                         <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} /> */}
-                        
+
                         <axesHelper args={[15]} />
                         <GroundModel />
                         {objectContainer.current}
@@ -792,7 +792,7 @@ export function GameApp(props)
                                 name="PLAYER BODY"
                                 position={[0,0,0]}
                                 rotation={[Math.PI*1.5,0,0]}
-                                
+
                             >
                                 <boxGeometry args={[0.05,0.05,2]}/>
                                 <meshBasicMaterial color={'blue'} wireframe visible={false}/>
@@ -802,8 +802,8 @@ export function GameApp(props)
                             {/* <SpearModel _ref={(val)=>weaponRef.current.spear=val} owner={'owner'} posX={-0.1} posY={0.25} posZ={0.1} /> */}
                             {/* <PlayerCursor x={0} y={0.15} z={2} /> */}
                             <PlayerCursor x={0} y={0.15} z={1} />
-                           
-                            
+
+
                         </mesh>
                         {/* <EnemyComponent /> */}
                         <group
@@ -812,11 +812,11 @@ export function GameApp(props)
                         >
                             {bulletContainer}
                         </group>
-                        
+
                         {/* {mapBorderContainer} */}
                         {_appContext.devMode.current && <PlatformIndex />}
                         <fog attach={'fog'} args={[gameMapInfo.fogColor,gameMapInfo.fogNear,gameMapInfo.fogFar]} />
-                        
+
                 </gameAppContext.Provider>
             </>
 }

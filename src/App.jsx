@@ -5,7 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameScreenTransition, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
-import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon } from '../components/DefaultComponents';
+import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen } from '../components/DefaultComponents';
 
 
 export let appContext = createContext(null)
@@ -308,8 +308,12 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
+                    <UpdateStroryScreen>
+                        <div className="">Text 1</div>
+                        <div className="">Text 2</div>
+                        <div className="">Text 3</div>
+                    </UpdateStroryScreen>
                     <UpdatePlayerStat life={2} moveSpeed={0.1} />
-                    {/* <AddWeapon name={'triangle'} position={[135]} /> */}
                     <AddDecor position={[45,66,192,147,126,187]} />
                     <AddDoor position={[295]} open  />
                 </>
@@ -324,6 +328,9 @@ function GameConfig()
               }
               {AppCntext.level.current == 3 &&
                 <>
+                    <UpdateStroryScreen>
+                        <div className="">Text 3</div>
+                    </UpdateStroryScreen>
                     <UpdateLevelConfig  mobToKill={8} />
                     <UpdatePlayerStat life={5} moveSpeed={0.1} />
                     {/* <AddItem name={'healItem'} position={[135]} value={1} /> */}
@@ -344,6 +351,12 @@ function GameConfig()
               }
               {AppCntext.level.current == 5 &&
                 <>
+                    <UpdateStroryScreen>
+                        <div className="">Niveau 5 part 1</div>
+                        <div className="">Niveau 5 part 2</div>
+                        <div className="">Niveau 5 part 3</div>
+                        <div className="">Niveau 5 part 4</div>
+                    </UpdateStroryScreen>
                     <UpdateLevelConfig  mobToKill={14} />
                     <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
                     <AddMob position={[134,149,164,179,194,209]} life={5}  active />

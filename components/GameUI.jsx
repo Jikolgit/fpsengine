@@ -5,7 +5,7 @@ import { mobContext } from "./mob_2"
 import { gameAppContext } from "./GameApp"
 import { AudioManage } from "./audioComponents"
 import { CustomCounter } from "./utils"
-import { speechTimeline } from "./gameStory"
+import { speechTimeline, storyText } from "./gameStory"
 
 export function GameUI()
 {
@@ -160,7 +160,7 @@ export function GameController()
 export function ActionIcon()
 {
     let _appContext = useContext(appContext);
-    let [actionIconVisible,setActionIconVisible] = useState(false);
+    let [actionIconVisible,setActionIconVisible] = useState(_appContext.actionIconVisible.current);
     _appContext.actionIconController.current = ()=>
         {
             _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
@@ -720,17 +720,17 @@ export function StoryScreen()
 {
     let _appContext = useContext(appContext)
     let [storyScreenActive,setStoryScreenActive] = useState(false);
-    let speech = useRef(speechTimeline[_appContext.level.current-1]);
+    // let speech = useRef(speechTimeline[_appContext.level.current-1]);
+    let speech = useRef(storyText.value);
     let speechTotalPart = useRef(speech.current.length);
     let speechPartCounter = useRef(1)
     let [speechPartToShow,setSpeechPartToShow] = useState(speech.current[0]) 
     let customCounter = null;
     let removeStoryScreen = ()=>
         {
-            // _appContext.setPause();
+            
             _appContext.gamePause.current = false;
             _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'});
-            // setStoryScreenActive(false);
 
         }
     let nextPart = ()=>
@@ -743,47 +743,25 @@ export function StoryScreen()
         {   
             if(speechPartCounter.current == speechTotalPart.current)
             {
-                _appContext.systemPause(false)
-                setStoryScreenActive(c => c = false);
+                // _appContext.systemPause(false);
+                _appContext.gamePause.current = false;
+                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'});
+                // setStoryScreenActive(c => c = false);
             }
             else
             {
                 nextPart();
             }
         }
-    
-    // let storyScreenDisplay = useRef(<div
-    //                                     className={`select-none w-full h-full top-[0] left-[0] absolute z-[5] bg-black/80 text-white`}
-    //                                 >
-    //                                     <div>
-    //                                         <div className=" text-center text-[1.3rem] text-white mt-[35px] max-w-[350px] mx-auto ">
-    //                                                 {speechPartToShow}
-    //                                         </div>
-                                        
-    //                                         {speechPartCounter.current < speechTotalPart.current && 
-    //                                             <div onClick={nextPart} 
-    //                                             className=" tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[150px] h-[25px] mx-auto bg-blue-500 text-white ">
-    //                                                 CONTINUER
-    //                                             </div>
-    //                                         }
-    //                                         {speechPartCounter.current == speechTotalPart.current && 
-    //                                             <div onClick={removeStoryScreen} 
-    //                                             className=" tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[100px] h-[25px] mx-auto bg-blue-500 text-white ">
-    //                                                 OK
-    //                                             </div>
-    //                                         }
-                                            
-    //                                     </div>
-    //                                 </div>
-    // );
+
 
     useEffect(()=>
         {
-            if(speechTimeline[_appContext.level.current-1][0] != 'none')
+            if(speech.current[0] != 'none')
             {   
                 _appContext.gamePause.current = true;
 
-                speech.current = speechTimeline[_appContext.level.current-1];
+               
                 speechTotalPart.current = speech.current.length;
                 speechPartCounter.current = 1;
                 setSpeechPartToShow(speech.current[speechPartCounter.current-1]);
@@ -821,7 +799,7 @@ export function StoryScreen()
                 }
                 else if(state=='update')
                 {
-                    speech.current = speechTimeline[_appContext.level.current-1];
+                    speech.current = speech.current[_appContext.level.current-1];
                     speechTotalPart.current = speech.current.length;
                     speechPartCounter.current = 1;
                     setSpeechPartToShow(speech.current[speechPartCounter.current-1]);

@@ -1,6 +1,9 @@
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { appContext } from "../src/App";
 import { createObject } from "./gameMap";
+import { storyText } from "./gameStory";
+
+
 
 
 
@@ -167,22 +170,39 @@ export function AddWall(props)
   }
   return null
 }
-// export function AddMobType2(props)
-// {
-//   const AppCntext = useContext(appContext);
-//   let objectDetailArr = [];
-//   let life = props.life? props.life : 2;
-//   let lootObject = props.lootObject? props.lootObject : 'none'
-//   let hasObject = props.lootObject? true : false;
-//   let fromMob = props.lootObject? true : false;
-//   for(let i = 0;i<props.position.length;i++)
-//   {
-//     objectDetailArr[i] = {position:props.position[i],life:life,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObject}
-//   }
-//   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
-//   {   
-//             createObject(AppCntext.gameMap,'dummy_mob_2',objectDetailArr,i);
-//   }
-//   return null
-// }
+/**
+ * 
+ * @param {{htmlContent:React.ReactNode[]}} param0 
+ * @returns 
+ */
+export function UpdateStroryScreen({htmlContent,children})
+{
+  const AppCntext = useContext(appContext);
+  
+    if(children)
+    {
+      if(children.length)
+      {
+        storyText.value = children;
+      }
+      else
+      {
+        storyText.value = [children];
+      }
+      
+    }
+    else
+    {
+      storyText.value = ['none'];
+    }
+   
+  useEffect(()=>
+    {
+      return()=>
+        { 
+          storyText.value = ['none'];
+        }
+    },[])
+  return null
+}
 
