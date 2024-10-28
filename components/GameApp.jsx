@@ -151,6 +151,7 @@ export function GameApp(props)
         }
     let reducePlayerLife = (_number)=>
         {
+            _appContext.ScreenHaloCOntroller.current('GLOW-RED');
             _appContext.playerStats.current.life -= _number;
             _appContext.lifeBarFunc.current(_appContext.playerStats.current.life);
             if(_appContext.playerStats.current.life == 0)
@@ -268,12 +269,14 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/interact.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'SPEAR';
                 }
                 else
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
 
@@ -283,12 +286,14 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/interact.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'CAURIS';
                 }
                 else
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
 
@@ -298,12 +303,14 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/interact.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'HEAL';
                 }
                 else
                 {
-                    if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
 
@@ -311,12 +318,14 @@ export function GameApp(props)
             }
             else if(effect =='Exit')
             {
-                if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/interact.png';}
+                // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                _appContext.toggleActionIcon('INTERACT');
                 currentObjectInFront.effect ='Exit';
             }
             else if(effect =='none')
             {
-                if(_appContext.gameControllerVisible.current){_appContext.actionButtonRef.current.src = 'gameButton/attack.png';}
+                // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                _appContext.toggleActionIcon('SHOOT');
                 currentObjectInFront.effect ='none';
             }
             currentObjectInFront.objectInfo = objectInfo;
@@ -580,7 +589,8 @@ export function GameApp(props)
                             }
                             else if (currentObjectInFront.effect == 'HEAL')
                             {
-                                AudioManage.play('heal')
+                                AudioManage.play('heal');
+                                _appContext.ScreenHaloCOntroller.current('GLOW-GREEN')
                                 if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
                                 increasePlayerLife(currentObjectInFront.objectInfo.objectDesc.value)
                                 currentObjectInFront.objectInfo.isOnScene = false;
@@ -696,7 +706,15 @@ export function GameApp(props)
 
     useEffect(()=>
         {
-            _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
+            if(_appContext.transitionBetweenScreen.current)
+            {   
+                _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
+            }
+            else
+            {   
+                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
+            }
+            
         },[])
     useEffect(()=>
         {

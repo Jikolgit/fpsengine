@@ -159,7 +159,7 @@ export function Dummy_1_model(props) {
     {
       if(!_appContext.gamePause.current)
       {
-        modelRef.current.rotation.y += (1/250);
+        // modelRef.current.rotation.y += (1/250);
         
         if(mobHitManager.startEffect)
         {
@@ -203,8 +203,17 @@ export function Dummy_1_model(props) {
     },[])
   return (
 
-    
-    <mesh ref={modelRef} geometry={nodes.pmob_0.geometry} material={mat} position={[props.x,0.1,props.z]} />
+    <>
+    <mesh ref={modelRef} geometry={nodes.pmob_0.geometry} material={mat} position={[props.x,0.1,props.z]}>
+           
+    </mesh>
+    <mesh position={[props.x,0.1,props.z]} visible={false}
+    >
+        <boxGeometry args={[2,2,2]}  />
+        <meshBasicMaterial wireframe color={'red'} />
+        <BulletCollisionEffect />
+    </mesh>
+    </>
     // <mesh ref={modelRef} geometry={nodes.dummy_1.geometry} material={mat} position={[props.x,0.1,props.z]}>
     //       <mesh geometry={nodes.dummy_1.geometry} visible={false} scale={1}>
     //           <meshBasicMaterial color={'red'}  />
@@ -220,7 +229,7 @@ export function TreeDecor_model(props) {
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
   // let mat = new THREE.MeshBasicMaterial({color:'white',wireframe:true});
   const mat = new THREE.MeshMatcapMaterial({color:'white'})
-  const mat2 = new THREE.MeshMatcapMaterial({color:'blue'})
+  const mat2 = new THREE.MeshMatcapMaterial({color:'green'})
   return (
 
     // <mesh  geometry={nodes.tree.geometry} material={mat} position={[props.x,0,props.z]} />
@@ -270,7 +279,7 @@ export function ItemType2Model(props) {
   let itemGroupRef = useRef(null)
   let containerMat = new THREE.MeshBasicMaterial({visible:false});
   let mat = new THREE.MeshBasicMaterial({map:_texture,visible:true});
-  const healmat = new THREE.MeshMatcapMaterial({color:'blue'})
+  const healmat = new THREE.MeshMatcapMaterial({color:'green'})
   useFrame((clock)=>
   {
     if(!_appContext.gamePause.current)
@@ -502,32 +511,12 @@ export function ExitDoor_model(props)
     
   )
 }
-// export function ExitDoor_model(props)
-// {
-//   const { nodes, materials } = useGLTF('/model.glb');
-//   let _texture = useTexture('texture1.jpg');
-//   _texture.flipY = false;
-//   _texture.colorSpace = THREE.SRGBColorSpace; 
-//   _texture.minFilter = THREE.LinearFilter;
-//   _texture.magFilter = THREE.LinearFilter;
-//   let mat = new THREE.MeshBasicMaterial({map:_texture});
-//   let visibleStatut;
-//   let passedTime = 0;
 
-
-//   return(
-//     <mesh geometry={nodes.exitDoor.geometry} material={mat} position={[props.x, 0,props.z]} />
-//   )
-// }
 export function Mob_1_model(props) {
   let _appContext = useContext(appContext);
   let _mobContext = useContext(mobContext)
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = useTexture('gametexture.jpg');
-  _texture.flipY = false;
-  _texture.colorSpace = THREE.SRGBColorSpace; 
-  _texture.minFilter = THREE.LinearFilter;
-  _texture.magFilter = THREE.LinearFilter;
+  let _texture = prepareTexture('gametexture.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
   const mat = new THREE.MeshMatcapMaterial({color:'red'})
   let modelRef = useRef(null);
@@ -630,11 +619,21 @@ export function Mob_1_model(props) {
           //           <meshBasicMaterial color={'red'}  />
           //      </mesh>
           // </mesh>
-          <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]}>
-                {/* <mesh geometry={nodes.mob_1.geometry} visible={false} scale={1}>
-                    <meshBasicMaterial color={'red'}  />
-               </mesh> */}
-          </mesh>
+          <>
+              <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]}>
+                    {/* <mesh geometry={nodes.mob_1.geometry} visible={false} scale={1}>
+                        <meshBasicMaterial color={'red'}  />
+                  </mesh> */}
+                    
+              </mesh>
+              <mesh position={[props.x,0.1,props.z]} visible={false}
+              >
+                  <boxGeometry args={[2,2,2]}  />
+                  <meshBasicMaterial wireframe color={'red'} />
+                  <BulletCollisionEffect />
+              </mesh>
+          </>
+         
             
       
   )
@@ -725,6 +724,43 @@ export function EnemyBullet(props)
                         <meshBasicMaterial visible={false} map={bulletTXT} />
                     </mesh>
           </>
+  )
+}
+
+export function BulletCollisionEffect(props)
+{
+  let paticleTexture = useTexture(`particleRes/star_07.png`);
+  return(
+    <>
+    <sprite 
+    position={[0
+      ,1
+      ,-0.7]} scale={0.15}
+    >
+    <spriteMaterial visible={true} color={'white'} depthWrite={true}  />
+    </sprite>
+    <sprite 
+    position={[0.16
+      ,1
+      ,-0.7]} scale={0.15}
+    >
+    <spriteMaterial visible={true} color={'white'} depthWrite={true}  />
+    </sprite>
+    <sprite 
+    position={[0
+      ,0.85
+      ,-0.7]} scale={0.15}
+    >
+    <spriteMaterial visible={true} color={'white'} depthWrite={true}  />
+    </sprite>
+    <sprite 
+    position={[0.16
+      ,0.85
+      ,-0.7]} scale={0.15}
+    >
+    <spriteMaterial visible={true} color={'white'} depthWrite={true}  />
+    </sprite>
+    </>
   )
 }
 useGLTF.preload('/model.glb')

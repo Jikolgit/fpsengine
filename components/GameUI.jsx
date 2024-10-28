@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { appContext } from "../src/App"
 import { Html } from "@react-three/drei"
 import { mobContext } from "./mob_2"
@@ -7,41 +7,82 @@ import { AudioManage } from "./audioComponents"
 import { CustomCounter } from "./utils"
 import { speechTimeline, storyText } from "./gameStory"
 
+let gameUIContext = createContext(null)
 export function GameUI()
 {
     const AppContext = useContext(appContext);
     const [actualUi,setActualUi] = useState('TITLE-SCREEN');
+    let [enableTransitionScreen,setEnableTransitionScreen] = useState(true)
+    let args2Value = useRef(null);
     let gameUIController = (args)=>
         {
-            if(args.arg1 == 'SWITCH-TO')
+            if(AppContext.transitionBetweenScreen.current)
             {
-                if(args.arg2 == 'NO-SCREEN')
-                {
-                    setActualUi(c => c = null)
-                }
-                else
-                {   
-                    
-                    setActualUi(c => c = args.arg2)
-                }
-                
+                    if(args.arg1 == 'SWITCH-TO')
+                    {
+                        // setActualUi('SMOOTH-TANSITION-SCREEN')
+                        args2Value.current = args.arg2;
+                        AppContext.BlackScreenTransitionController.current('SHOW-TRANSITION-SCREEN')
+                        
+                    }
             }
+            else
+            {
+                if(args.arg1 == 'SWITCH-TO')
+                {
+                    if(args.arg2 == 'NO-SCREEN')
+                    {
+                   
+                        setActualUi(c => c = null)
+                    }
+                    else
+                    {   
+                        
+                        setActualUi(c => c = args.arg2)
+                    }
+                    
+                }
+            }
+            
         }
     useEffect(()=>
         {
-            AppContext.GameUIController.current = (args)=>{gameUIController(args)}
+            AppContext.GameUIController.current = (args)=>
+                {
+                   
+                    if(args.arg1 == 'DIRECT')
+                    {
+                        if(args.arg2 == 'NO-SCREEN')
+                        {
+                            setActualUi(c => c = null)
+                        }
+                        else
+                        {   
+                            
+                            setActualUi(c => c = args.arg2)
+                        }
+                    }
+                    else
+                    {
+                        gameUIController(args)
+                    }
+                }
         },[])
     return(
             <>
-
-                {actualUi == 'TITLE-SCREEN' && <TitleScreen />}
-                {actualUi == 'OPTION-SCREEN' && <OptionScreen />}
-                {actualUi == 'CREDIT-SCREEN' && <CreditScreen />}
-                {actualUi == 'PAUSE-SCREEN' && <PauseScreen />}
-                {actualUi == 'GAME_OVER-SCREEN' && <GameOverScreen />}
-                {actualUi == 'ENDING-SCREEN' && <GameEndingScreen />}
-                {actualUi == 'LOADING-SCREEN' && <GameScreenTransition />}
-                {actualUi == 'STORY-SCREEN' && <StoryScreen />}
+                <gameUIContext.Provider 
+                value={{setEnableTransitionScreen,setActualUi}}
+                >
+                        {actualUi == 'TITLE-SCREEN' && <TitleScreen />}
+                        {actualUi == 'OPTION-SCREEN' && <OptionScreen />}
+                        {actualUi == 'CREDIT-SCREEN' && <CreditScreen />}
+                        {actualUi == 'PAUSE-SCREEN' && <PauseScreen />}
+                        {actualUi == 'GAME_OVER-SCREEN' && <GameOverScreen />}
+                        {actualUi == 'ENDING-SCREEN' && <GameEndingScreen />}
+                        {actualUi == 'LOADING-SCREEN' && <GameLoadingScreen />}
+                        {actualUi == 'STORY-SCREEN' && <StoryScreen />}
+                        {enableTransitionScreen && <BlackScreenTransition nextScreen={args2Value.current} />}
+                </gameUIContext.Provider>
                  
             </>
 
@@ -52,10 +93,23 @@ export function GameController()
 {
     let _appContext = useContext(appContext);
     let [controllerVisible,setcontrollerVisible] = useState(_appContext.gameControllerVisible.current);
-    _appContext.gameControllerFunc.current = ()=>
+    let [actionIcon,setActionIcon] = useState('gameButton/attack.png');
+    _appContext.gameControllerFunc.current = (args)=>
         {
-            _appContext.gameControllerVisible.current = _appContext.gameControllerVisible.current? false : true;
-            setcontrollerVisible(_appContext.gameControllerVisible.current);
+            if(args == 'HIDE-SHOW')
+            {
+                _appContext.gameControllerVisible.current = _appContext.gameControllerVisible.current? false : true;
+                setcontrollerVisible(_appContext.gameControllerVisible.current);
+            }
+            else if(args == 'SHOOT-ICON')
+            {
+                setActionIcon('gameButton/attack.png')
+            }
+            else if(args == 'INTERACT-ICON')
+            {
+                setActionIcon('gameButton/interact.png')
+            }
+            
         }
     return(
             <>
@@ -122,7 +176,7 @@ export function GameController()
                                 ' 
                                 >
                                     <div id="GLASS" className="absolute left-[0] top-[0] z-[2] w-full h-full"></div>
-                                    <img  ref={_appContext.actionButtonRef} src='gameButton/attack.png' alt="action" className="w-full h-full" />
+                                    <img  ref={_appContext.actionButtonRef} src={actionIcon} alt="action" className="w-full h-full" />
                                 </div>
                                 <div id="RIGHT"
                                 onTouchStart={()=>{_appContext.touchEventMFunc.current.right()}}
@@ -156,21 +210,71 @@ export function GameController()
               </>
               )
 }
+export function ScreenHalo()
+{
+    let _appContext = useContext(appContext);
+    let [_animation,setAnimation] = useState('');
 
+    useEffect(()=>
+        {
+            _appContext.ScreenHaloCOntroller.current = (args)=>
+                {
+                    if(args == 'GLOW-RED')
+                    {
+                        setAnimation('animate-screen-glowRed')
+                    }
+                    else if(args == 'GLOW-GREEN')
+                    {
+                        setAnimation('animate-screen-glowGreen')
+                    }
+                }
+        },[])
+    return(
+            <>
+                <div className="w-full h-full absolute left-0 top-0 z-[5] bg-transparent pointer-events-none ">
+
+                        <div 
+                        onAnimationEnd={()=>{setAnimation('')}} className={`shadow-[inset_0_0_0_0px_rgba(0,0,0,0.3)] ${_animation}
+                                        w-full h-full absolute left-0 right-0 top-0 m-auto relative `}>
+                                
+                        </div>
+                </div>
+            </>
+    )
+}
 export function ActionIcon()
 {
     let _appContext = useContext(appContext);
     let [actionIconVisible,setActionIconVisible] = useState(_appContext.actionIconVisible.current);
-    _appContext.actionIconController.current = ()=>
+    let [actionIcon,setActionIcon] = useState('spear_1_icon.png');
+    _appContext.actionIconController.current = (args)=>
         {
-            _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
-            setActionIconVisible(_appContext.actionIconVisible.current);
+            if(args == 'HIDE-SHOW')
+            {
+                _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
+                setActionIconVisible(_appContext.actionIconVisible.current);
+            }
+            else if(args == 'INTERACT')
+            {
+                setActionIcon('INTERACT')
+            }
+            else if(args == 'SHOOT')
+            {
+                setActionIcon('SHOOT')
+            }
         }
     return(
         <>
             {actionIconVisible &&
                 <div className=" border-[5px] border-gray-500 bg-black w-[60px] h-[60px] absolute z-[2] left-0 right-0 bottom-[10px] mx-auto ">
-                    <img src="spear_1_icon.png" alt="icon" className="w-full h-full" />
+                    {/* <img src={actionIcon} alt="icon" className="w-full h-full" /> */}
+                            {actionIcon == 'INTERACT' && <svg fill="none" stroke="#d2d1d1" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3.75c-.405 0-.777.345-.75.75l.375 10.125a.375.375 0 1 0 .75 0L12.75 4.5c.028-.405-.344-.75-.75-.75Z" />
+                            <path d="M12 20.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
+                            </svg>}
+                            {actionIcon == 'SHOOT' && <svg  fill="#d2d1d1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m19.406 15.094-6.552-7.647a1.125 1.125 0 0 0-1.709 0l-6.552 7.647c-.625.73-.107 1.857.854 1.857h13.107c.96 0 1.479-1.128.852-1.857Z" />
+                            </svg>}
                 </div>
 
             }
@@ -301,13 +405,18 @@ export function LifeBar(props)
                     </div>
             </div>
 }
-export function GameScreenTransition() 
+export function GameLoadingScreen() 
 {
+    
     let _appContext = useContext(appContext);
     
+    useEffect(()=>
+        {
+            _appContext.setGameVueActive(true);
+        },[])
     return(
             <div
-                ref={_appContext.GameScreenTransitionRef}
+                ref={_appContext.GameLoadingScreenRef}
                 className=" select-none absolute top-[0] left-[0] w-full h-full bg-black z-[9]"
             >
                <div
@@ -477,6 +586,7 @@ export function TitleScreen()
                 style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`absolute left-[0] top-[0] z-[2] w-full h-full select-none `}
             >
+                    
                     <div className="relative mt-[10px] max-w-[400px] w-[90%] mx-auto ">
                         <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
                         <img className="w-full " src="title.png" alt="title" />
@@ -502,7 +612,44 @@ export function TitleScreen()
                     
            </div>
 }
-
+export function BlackScreenTransition(props)
+{
+    let _gameUiContext = useContext(gameUIContext)
+    let _appContext = useContext(appContext);
+    let [screenColor,setScreenColor] = useState('bg-transparent')
+    useEffect(()=>
+        {
+            // setTimeout(()=>{setScreenColor('bg-black')},500)
+            _appContext.BlackScreenTransitionController.current = (args)=>
+            {   
+                if(args == 'SHOW-TRANSITION-SCREEN')
+                {   
+                    setScreenColor('bg-black')
+                }
+                else if(args == 'REMOVE-TRANSITION-SCREEN')
+                {
+                    setScreenColor('bg-transparent')
+                }
+            }
+            
+            // setScreenColor('bg-black')
+        },[])
+    return(
+            <>
+                <div id="BLACK-SCREEN"
+                style={{transition:'background-color 0.5s'}} 
+                onTransitionEnd={()=>
+                    {   
+                        setScreenColor('bg-transparent')
+                        
+                        
+                        _gameUiContext.setActualUi('LOADING-SCREEN');
+                       
+                    }}
+                className={`pointer-events-none w-full h-full absolute top-0 left-0 z-[10] ${screenColor} `}></div>
+            </>
+    )
+}
 export function OptionScreen()
 {
     let _appContext = useContext(appContext);
@@ -697,8 +844,8 @@ export function ToggleTouchScreen()
 
     let toggleTouch = ()=>
         {
-            _appContext.gameControllerFunc.current();
-            _appContext.actionIconController.current()
+            _appContext.gameControllerFunc.current('HIDE-SHOW');
+            _appContext.actionIconController.current('HIDE-SHOW')
         }
     return(
         <>
@@ -718,6 +865,7 @@ export function ToggleTouchScreen()
 }
 export function StoryScreen()
 {
+    let _gameUiContext = useContext(gameUIContext)
     let _appContext = useContext(appContext)
     let [storyScreenActive,setStoryScreenActive] = useState(false);
     // let speech = useRef(speechTimeline[_appContext.level.current-1]);
@@ -730,7 +878,7 @@ export function StoryScreen()
         {
             
             _appContext.gamePause.current = false;
-            _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'});
+            _appContext.GameUIController.current({arg1:'DIRECT',arg2:'NO-SCREEN'})
 
         }
     let nextPart = ()=>
@@ -745,7 +893,7 @@ export function StoryScreen()
             {
                 // _appContext.systemPause(false);
                 _appContext.gamePause.current = false;
-                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'});
+                _appContext.GameUIController.current({arg1:'DIRECT',arg2:'NO-SCREEN'})
                 // setStoryScreenActive(c => c = false);
             }
             else
@@ -774,7 +922,8 @@ export function StoryScreen()
             }
             else
             {
-                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'})
+            
+                _appContext.GameUIController.current({arg1:'DIRECT',arg2:'NO-SCREEN'})
             }
         },[])
     useEffect(()=>
@@ -806,7 +955,7 @@ export function StoryScreen()
                 }
                 else if(state == 'remove')
                 {   
-                    _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'NO-SCREEN'});
+                    _appContext.GameUIController.current({arg1:'DIRECT',arg2:'NO-SCREEN'})
                     // setStoryScreenActive(c => c = false);
                 }
                 
@@ -859,3 +1008,4 @@ export function StoryScreen()
 // 7-
 // 8- GameNotif
 // 9- GameScreenTransition
+// 10-BlackScreenTransition

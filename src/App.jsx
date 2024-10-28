@@ -2,10 +2,11 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
 import { createLevel, createObject } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
-import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameScreenTransition, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen } from '../components/GameUI';
+import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
 import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen } from '../components/DefaultComponents';
+import { PlayerCursor } from '../components/Game3DAssets';
 
 
 export let appContext = createContext(null)
@@ -13,7 +14,7 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(1);
+  let level = useRef(2);
   let mapHeight = 19;
   let mapWidth = 16;
   let gameMap = createLevel(level.current);
@@ -34,7 +35,9 @@ function App() {
   const HelpScreenFunc = useRef(null);
   const StoryScreenController = useRef(null);
   const KeyBoardManageStory = useRef(null);
-  
+  const ScreenHaloCOntroller = useRef(null);
+  const BlackScreenTransitionController = useRef(null);
+  let transitionBetweenScreen = useRef(true);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -44,8 +47,8 @@ function App() {
   let touchEventMFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let touchEventTouchEndFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let actionButtonRef = useRef(null);
-  let GameScreenTransitionRef = useRef(null);
-  let playerStats = useRef({life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let GameLoadingScreenRef = useRef(null);
+  let playerStats = useRef({life:2,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
   let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0});
 
   let saveGame = ()=>
@@ -115,7 +118,7 @@ function App() {
         AudioManage.playAmbient('play');
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
-        setGameVueActive(c => c = true);
+        // setGameVueActive(c => c = true);
         
 
         
@@ -225,6 +228,22 @@ function App() {
 
         }
       }
+    
+    let toggleActionIcon = (args) =>
+      {
+        if(args == 'INTERACT')
+        {
+          gameControllerFunc.current('INTERACT-ICON')
+          actionIconController.current('INTERACT')
+        }
+        else if(args == 'SHOOT')
+        {
+          gameControllerFunc.current('SHOOT-ICON')
+          actionIconController.current('SHOOT')
+        }
+        
+
+      }
     useEffect(()=>
       {
         // if(!gameVueActive && actualGameScreen.current == 'LOADING-SCREEN')
@@ -242,9 +261,10 @@ function App() {
       <appContext.Provider
         value={{playerLifeContainerRef,playerMoneyContainerRef,touchEventMFunc,playerStats,devMode,gamePause,PauseScreenController,setPause,HelpScreenFunc,
                 actualGameScreen,helpMode,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
-                touchEventTouchEndFunc,actionButtonRef,level,GameScreenTransitionRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
+                touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
-                GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController}}
+                GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
+                BlackScreenTransitionController,transitionBetweenScreen}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -254,11 +274,11 @@ function App() {
             <Canvas>
             {gameVueActive && <GameApp />}
             </Canvas>
+            {gameVueActive && <ScreenHalo /> }
             {gameVueActive && <ActionIcon/>}
             {gameVueActive && <PauseIcon />}
             {gameVueActive && <GameController />}
             {gameVueActive && <GameNotif />}
-            {/* {gameVueActive && <ToggleTouchScreen />} */}
             {gameVueActive && <PlayerMoney /> }
             {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
 
@@ -308,11 +328,7 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <UpdateStroryScreen>
-                        <div className="">Text 1</div>
-                        <div className="">Text 2</div>
-                        <div className="">Text 3</div>
-                    </UpdateStroryScreen>
+                    <AddItem name={'healItem'} position={[183]} value={3} />
                     <UpdatePlayerStat life={2} moveSpeed={0.1} />
                     <AddDecor position={[45,66,192,147,126,187]} />
                     <AddDoor position={[295]} open  />
@@ -321,7 +337,8 @@ function GameConfig()
               {AppCntext.level.current == 2 &&
                 <>
                     <UpdateLevelConfig  mobToKill={2} />
-                    <AddMob position={[146,94]} life={2} />
+                    <AddMob position={[135-(16*5),94]} life={2} />
+                    <AddMob position={[134-(16*5)]} life={2} active />
                     <AddDecor position={[45,66,192,147,126,187]} />
                     <AddDoor position={[295]}  />
                 </>
