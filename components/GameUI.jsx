@@ -12,16 +12,16 @@ export function GameUI()
 {
     const AppContext = useContext(appContext);
     const [actualUi,setActualUi] = useState('TITLE-SCREEN');
-    let [enableTransitionScreen,setEnableTransitionScreen] = useState(true)
-    let args2Value = useRef(null);
+    let [enableTransitionScreen,setEnableTransitionScreen] = useState(true);
+    let nextScreen = useRef('')
+    // let args2Value = useRef(null);
     let gameUIController = (args)=>
         {
             if(AppContext.transitionBetweenScreen.current)
             {
                     if(args.arg1 == 'SWITCH-TO')
                     {
-                        // setActualUi('SMOOTH-TANSITION-SCREEN')
-                        args2Value.current = args.arg2;
+                        nextScreen.current=args.arg2
                         AppContext.BlackScreenTransitionController.current('SHOW-TRANSITION-SCREEN')
                         
                     }
@@ -71,7 +71,7 @@ export function GameUI()
     return(
             <>
                 <gameUIContext.Provider 
-                value={{setEnableTransitionScreen,setActualUi}}
+                value={{setEnableTransitionScreen,setActualUi,nextScreen}}
                 >
                         {actualUi == 'TITLE-SCREEN' && <TitleScreen />}
                         {actualUi == 'OPTION-SCREEN' && <OptionScreen />}
@@ -81,7 +81,7 @@ export function GameUI()
                         {actualUi == 'ENDING-SCREEN' && <GameEndingScreen />}
                         {actualUi == 'LOADING-SCREEN' && <GameLoadingScreen />}
                         {actualUi == 'STORY-SCREEN' && <StoryScreen />}
-                        {enableTransitionScreen && <BlackScreenTransition nextScreen={args2Value.current} />}
+                        {enableTransitionScreen && <BlackScreenTransition  />}
                 </gameUIContext.Provider>
                  
             </>
@@ -412,7 +412,14 @@ export function GameLoadingScreen()
     
     useEffect(()=>
         {
-            _appContext.setGameVueActive(true);
+            if(_appContext.transitionBetweenScreen.current)
+            {
+                _appContext.BlackScreenTransitionController.current('REMOVE-TRANSITION-SCREEN');
+            }
+            else
+            {   
+                window.setTimeout(()=>{_appContext.setGameVueActive(c => c = true);},1)
+            }
         },[])
     return(
             <div
@@ -616,15 +623,27 @@ export function BlackScreenTransition(props)
 {
     let _gameUiContext = useContext(gameUIContext)
     let _appContext = useContext(appContext);
+    let animationStep = useRef('none')
+    let transitionScreenRef = useRef(null);
     let [screenColor,setScreenColor] = useState('bg-transparent')
     useEffect(()=>
         {
-            // setTimeout(()=>{setScreenColor('bg-black')},500)
+            
             _appContext.BlackScreenTransitionController.current = (args)=>
             {   
                 if(args == 'SHOW-TRANSITION-SCREEN')
                 {   
-                    setScreenColor('bg-black')
+                    if(_gameUiContext.nextScreen.current == 'GAME_OVER-SCREEN')
+                    {
+                        transitionScreenRef.current.style.transitionDuration = '1s';
+                        setScreenColor('bg-red-500')
+                    }
+                    else
+                    {
+                        transitionScreenRef.current.style.transitionDuration = '0.5s';
+                        setScreenColor('bg-black')
+                    }
+                   
                 }
                 else if(args == 'REMOVE-TRANSITION-SCREEN')
                 {
@@ -632,18 +651,49 @@ export function BlackScreenTransition(props)
                 }
             }
             
-            // setScreenColor('bg-black')
+            
         },[])
     return(
             <>
                 <div id="BLACK-SCREEN"
+                ref={transitionScreenRef}
                 style={{transition:'background-color 0.5s'}} 
                 onTransitionEnd={()=>
-                    {   
-                        setScreenColor('bg-transparent')
+                    {  
+                  
+                        if(animationStep.current == 'none')
+                        {
+                            animationStep.current = 'first-step';
+                            _gameUiContext.setActualUi(_gameUiContext.nextScreen.current);
+                            _appContext.setGameVueActive(c => c = false);
+                            if(_gameUiContext.nextScreen.current == 'LOADING-SCREEN')
+                            {
+                                // _appContext.setGameVueActive(c => c = false);
+                            }
+                            else
+                            {
+                                transitionScreenRef.current.style.transitionDuration = '0.5s';
+                                setScreenColor('bg-transparent')
+                            }
+                            
+                            
+                        }
+                        else if(animationStep.current == 'first-step')
+                        {
+                            animationStep.current = 'none';
+                            if(_gameUiContext.nextScreen.current == 'LOADING-SCREEN')
+                            {
+                                _appContext.setGameVueActive(true);
+                            }
+                            else
+                            {
+                                _appContext.setGameVueActive(false);
+                            }
+                            
+                            
+                        }
+
                         
-                        
-                        _gameUiContext.setActualUi('LOADING-SCREEN');
                        
                     }}
                 className={`pointer-events-none w-full h-full absolute top-0 left-0 z-[10] ${screenColor} `}></div>

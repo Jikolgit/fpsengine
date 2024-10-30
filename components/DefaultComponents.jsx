@@ -6,13 +6,18 @@ import { storyText } from "./gameStory";
 
 
 
-
-export function UpdateLevelConfig({mobToKill,keyNumber})
+/**
+ * 
+ * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean}} param0 
+ * @returns 
+ */
+export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel})
 {
   const AppCntext = useContext(appContext);
 
   AppCntext.levelInfo.current._MobToKillNumber = mobToKill? mobToKill : 0;
   AppCntext.levelInfo.current._KeyNumber = keyNumber? keyNumber : 0;
+  AppCntext.levelInfo.current.finalLevel = finalLevel? finalLevel : false;
 
   return null
 }
@@ -43,7 +48,14 @@ export function UpdatePlayerStat(props)
   {
     AppCntext.playerStats.current.life = props.life;
   }
- 
+  if(props.shootInterval)
+  {
+    AppCntext.playerStats.current.shootInterval = props.shootInterval;
+  }
+  else
+  {
+    AppCntext.playerStats.current.shootInterval = 25;
+  }
   return null
 }
 
@@ -133,18 +145,61 @@ export function AddDoor({position,open})
  * @param {{life:number,lootObject:boolean,active:boolean,position: number[]}} param0 
  * @returns 
  */
-export function AddMob({life,lootObject,active,position})
+export function AddMob({life,lootObject,active,position,children})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = [];
   let lifeProps = life? life : 2;
-  let lootObjectProps = lootObject? lootObject : 'none'
-  let hasObject = lootObject? true : false;
-  let fromMob = lootObject? true : false;
-  let type = active? 'mob_2' : 'mob_1'
+  let objectSkin = 'none'
+  let hasObject = lootObject? lootObject : false;
+  let objectValue = 1;
+  let objectPosition = 0;
+  let type = active? 'mob_2' : 'mob_1';
+
+  if(children)
+  {
+    
+    if(children.length)
+    {
+      if(children[0].props.name)
+      {
+        hasObject = children[0].props.name;
+        objectValue = children[0].props.value? children[0].props.value : 1; 
+
+        if(hasObject == 'heal_item'){objectSkin = 'heal_item_1'}
+        if(hasObject == 'coin_item'){objectSkin = 'coin_item_1'}
+      }
+      else
+      {
+        
+      }
+      
+    }
+    else
+    {
+        if(children.props.name)
+        {
+          hasObject = children.props.name;
+          objectValue = children.props.value? children.props.value : 1; 
+
+          if(hasObject == 'heal_item'){objectSkin = 'heal_item_1'}
+          if(hasObject == 'coin_item'){objectSkin = 'coin_item_1'}
+        }
+        else
+        {
+          
+        }
+      
+    }
+  }
+  else
+  {
+    hasObject = false;
+  }
   for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:fromMob,isImportant:false,skin:lootObjectProps}
+    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:false,
+                          objectValue,objectPosition,objectSkin}
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
   {   

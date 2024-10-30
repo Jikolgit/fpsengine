@@ -69,7 +69,7 @@ export function GameApp(props)
     let passedTime = 0;
     let walkEffectTimer = {value:0};
     let totalBullet = {value:20};
-    let weaponReload = {time:0,timeLimite:5,start:false};
+    let weaponReload = {time:0,timeLimite:_appContext.playerStats.current.shootInterval,start:false};
     let nextBulletToShoot={value:null};
     let exitDoorVisible={value:false};
     let showWeapon3DModel = {value:_appContext.playerStats.current.showWeapon}
@@ -137,6 +137,15 @@ export function GameApp(props)
     let gameEnding = ()=>
         {
             // _appContext.gameEndingScreenFunc.current();
+            if(_appContext.transitionBetweenScreen.current)
+            {
+
+            }
+            else
+            {
+                _appContext.setGameVueActive(false);
+            }
+            
             _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'ENDING-SCREEN'});
         }
     let reduceEnemyLife = ()=>
@@ -553,9 +562,16 @@ export function GameApp(props)
 
                                 if(currentObjectInFront.objectInfo.objectDesc.open)
                                 {
-
-                                    if(_appContext.level.current == 13){gameEnding()}
-                                    else{_appContext.nextLevel()}
+                                    
+                                    if(_appContext.levelInfo.current.finalLevel)
+                                    {
+                                        gameEnding()
+                                    }
+                                    else
+                                    {
+                                        _appContext.nextLevel()
+                                    }
+                                    
 
                                 }
                                 else
@@ -573,14 +589,17 @@ export function GameApp(props)
                                 AudioManage.play('coin')
 
                                 if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
-                                managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
+                                
                                 currentObjectInFront.objectInfo.isOnScene = false;
 
                                 if(currentObjectInFront.objectInfo.objectDesc.fromMob)
-                                {mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");}
+                                {
+                                    managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.objectValue,'add')
+                                    mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");
+                                }
                                 else
                                 {
-
+                                    managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
 
@@ -592,12 +611,16 @@ export function GameApp(props)
                                 AudioManage.play('heal');
                                 _appContext.ScreenHaloCOntroller.current('GLOW-GREEN')
                                 if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
-                                increasePlayerLife(currentObjectInFront.objectInfo.objectDesc.value)
+                                
                                 currentObjectInFront.objectInfo.isOnScene = false;
-                                if(currentObjectInFront.objectInfo.objectDesc.fromMob){mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");}
+                                if(currentObjectInFront.objectInfo.objectDesc.fromMob)
+                                {
+                                    increasePlayerLife(currentObjectInFront.objectInfo.objectDesc.objectValue)
+                                    mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");
+                                }
                                 else
                                 {
-
+                                    increasePlayerLife(currentObjectInFront.objectInfo.objectDesc.value)
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
 
@@ -703,11 +726,11 @@ export function GameApp(props)
             }
 
         })
-
+        
     useEffect(()=>
         {
             if(_appContext.transitionBetweenScreen.current)
-            {   
+            {  
                 _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
             }
             else

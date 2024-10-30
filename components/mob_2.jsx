@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useRef } from "react"
 import { gameAppContext } from "./GameApp"
 import { useFrame } from "@react-three/fiber";
 import { MobLifeBar } from "./GameUI";
-import { ItemType1Model, Dummy_1_model, EnemyBullet, Mob_1_model } from "./Game3DAssets";
+import { ItemType1Model, Dummy_1_model, EnemyBullet, Mob_1_model, ItemType2Model } from "./Game3DAssets";
 import { appContext } from "../src/App";
 import { AudioManage } from "./audioComponents";
 export let mobContext = createContext(null)
@@ -506,8 +506,13 @@ export function Mob_2(props)
             >
             </Mob_1_model>}
             {props.hasObject? 
-                    
-                    <ItemType1Model controller={{itemController,index:0}} skin={'cauris'} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />:null
+                    <>
+                    {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                    :
+                    <ItemType2Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                    }
+                    </>
+                    :null
             }
             <MobLifeBar x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />
             

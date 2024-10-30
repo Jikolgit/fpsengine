@@ -160,10 +160,10 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                    
                                                     let effectAfterMobDeath = ()=>
                                                         {
-                                                            if(result.objectDesc.hasObject)
+                                                                if(result.objectDesc.hasObject)
                                                                 {
-                                                                    
-                                                                    result.objectType = result.objectDesc.skin;
+                                                                   
+                                                                    result.objectType = 'item';
                                                                     gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
                                                                 }
                                                                 else

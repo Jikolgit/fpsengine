@@ -311,6 +311,7 @@ export function ItemType2Model(props) {
       <>
       <group
             ref={itemGroupRef}
+            visible={props._visible}
       >
           {/* {props.skin == "heal_item_1" && <mesh ref={itemRef}  geometry={nodes.healthBox.geometry} material={containerMat} position={[props.x,0.1,props.z]}>
           <mesh geometry={nodes.health_1.geometry} material={mat} position={[-0.004, 0.5, 0.043]} rotation={[0.585, 0, 0]} />
@@ -357,7 +358,7 @@ export function ItemType1Model(props)
   let spriteRef = useRef(null);
   let passedTime = 0;
 
-  if(props.skin == 'cauris_item')
+  if(props.skin == 'coin_item_1')
   {
     paticleTexture = useTexture('caurisTXT.png');
   }

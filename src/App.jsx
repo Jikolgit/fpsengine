@@ -14,7 +14,7 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(2);
+  let level = useRef(1);
   let mapHeight = 19;
   let mapWidth = 16;
   let gameMap = createLevel(level.current);
@@ -37,7 +37,7 @@ function App() {
   const KeyBoardManageStory = useRef(null);
   const ScreenHaloCOntroller = useRef(null);
   const BlackScreenTransitionController = useRef(null);
-  let transitionBetweenScreen = useRef(true);
+  let transitionBetweenScreen = useRef(false);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -48,8 +48,8 @@ function App() {
   let touchEventTouchEndFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let actionButtonRef = useRef(null);
   let GameLoadingScreenRef = useRef(null);
-  let playerStats = useRef({life:2,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
-  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0});
+  let playerStats = useRef({life:1,maxLife:5,moveSpeed:0.1,shootInterval:20,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0,finalLevel:false});
 
   let saveGame = ()=>
     {
@@ -127,12 +127,12 @@ function App() {
       {
         
         level.current ++;
-        
-        setGameVueActive(c => c = false);
+        if(!transitionBetweenScreen.current){ setGameVueActive(c => c = false);}
+        // setGameVueActive(c => c = false);
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
         saveGame();
-        window.setTimeout(()=>{setGameVueActive(c => c = true);},1)
+        // window.setTimeout(()=>{setGameVueActive(c => c = true);},1)
         
       }
   let setGameOver = ()=>
@@ -185,7 +185,7 @@ function App() {
         AudioManage.playAmbient(state?'pause':'play');
         actualGameScreen.current = state? 'PAUSE-SCREEN' : 'GAME-SCREEN';
         // PauseScreenController.current();
-        GameUIController.current({arg1:'SWITCH-TO',arg2:state?'PAUSE-SCREEN':'NO-SCREEN'})
+        GameUIController.current({arg1:'DIRECT',arg2:state?'PAUSE-SCREEN':'NO-SCREEN'})
 
         
         
@@ -328,9 +328,13 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <AddItem name={'healItem'} position={[183]} value={3} />
-                    <UpdatePlayerStat life={2} moveSpeed={0.1} />
+                    <UpdateLevelConfig  finalLevel />
+                    <UpdatePlayerStat life={2} moveSpeed={0.1} shootInterval={35} />
                     <AddDecor position={[45,66,192,147,126,187]} />
+
+                    <AddMob position={[135-(16*5),94]} life={2} active>
+                            <AddItem name={'coin_item'} position={[183]} value={3} />
+                    </AddMob>
                     <AddDoor position={[295]} open  />
                 </>
               }
@@ -351,8 +355,12 @@ function GameConfig()
                     <UpdateLevelConfig  mobToKill={8} />
                     <UpdatePlayerStat life={5} moveSpeed={0.1} />
                     {/* <AddItem name={'healItem'} position={[135]} value={1} /> */}
-                    <AddMob position={[153,154,155,156]} life={5} active  />
-                    <AddMob position={[149,148,147,146]} life={5} active />
+                    <AddMob position={[153,154,155,156]} life={5} active>
+                          <AddItem name={'coin_item'} position={[183]} value={3} />
+                    </AddMob>
+                    <AddMob position={[149,148,147,146]} life={5} active>
+                          <AddItem name={'heal_item'} position={[183]} value={3} />
+                    </AddMob>
 
                     <AddDoor position={[295]}  />
                 </>
