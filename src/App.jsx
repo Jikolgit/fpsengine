@@ -2,10 +2,10 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
 import { createLevel, createObject } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
-import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo } from '../components/GameUI';
+import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
-import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen } from '../components/DefaultComponents';
+import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen, AddTimer } from '../components/DefaultComponents';
 import { PlayerCursor } from '../components/Game3DAssets';
 
 
@@ -37,6 +37,7 @@ function App() {
   const KeyBoardManageStory = useRef(null);
   const ScreenHaloCOntroller = useRef(null);
   const BlackScreenTransitionController = useRef(null);
+  const ScoreVueController = useRef(null);
   let transitionBetweenScreen = useRef(false);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
@@ -48,8 +49,8 @@ function App() {
   let touchEventTouchEndFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let actionButtonRef = useRef(null);
   let GameLoadingScreenRef = useRef(null);
-  let playerStats = useRef({life:1,maxLife:5,moveSpeed:0.1,shootInterval:20,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
-  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0,finalLevel:false});
+  let playerStats = useRef({score:0,life:1,maxLife:5,moveSpeed:0.1,shootInterval:20,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0,finalLevel:false});
 
   let saveGame = ()=>
     {
@@ -114,6 +115,7 @@ function App() {
     }
   let startGame = ()=>
       {
+        
         AudioManage.play('click');
         AudioManage.playAmbient('play');
         actualGameScreen.current = 'LOADING-SCREEN'
@@ -264,7 +266,7 @@ function App() {
                 touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
-                BlackScreenTransitionController,transitionBetweenScreen}}
+                BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -280,6 +282,8 @@ function App() {
             {gameVueActive && <GameController />}
             {gameVueActive && <GameNotif />}
             {gameVueActive && <PlayerMoney /> }
+            {gameVueActive &&<GameTimer />}
+            {gameVueActive &&<ScoreVue />} 
             {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
 
             <GameUI />
@@ -328,11 +332,12 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <UpdateLevelConfig  finalLevel />
+                    <UpdateLevelConfig  />
+                    <AddTimer minute={2} second={99} />
                     <UpdatePlayerStat life={2} moveSpeed={0.1} shootInterval={35} />
                     <AddDecor position={[45,66,192,147,126,187]} />
 
-                    <AddMob position={[135-(16*5),94]} life={2} active>
+                    <AddMob position={[134-(16*5),94]} life={2} active>
                             <AddItem name={'coin_item'} position={[183]} value={3} />
                     </AddMob>
                     <AddDoor position={[295]} open  />
@@ -340,6 +345,7 @@ function GameConfig()
               }
               {AppCntext.level.current == 2 &&
                 <>
+                    <AddTimer minute={1} second={59} />
                     <UpdateLevelConfig  mobToKill={2} />
                     <AddMob position={[135-(16*5),94]} life={2} />
                     <AddMob position={[134-(16*5)]} life={2} active />

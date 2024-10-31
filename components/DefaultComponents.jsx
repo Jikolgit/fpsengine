@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { appContext } from "../src/App";
 import { createObject } from "./gameMap";
 import { storyText } from "./gameStory";
@@ -260,4 +260,33 @@ export function UpdateStroryScreen({htmlContent,children})
     },[])
   return null
 }
+
+/**
+ * 
+ * @param {{minute:number,second:number}} param0 
+ */
+export function AddTimer({minute,second})
+{
+  let _appContext = useContext(appContext);
+  const isUnmounted = useRef(false);
+    if(second>=0 && second<60)
+    {
+      _appContext.levelInfo.current.timerSecond = second;
+    }
+    else
+    {
+      _appContext.levelInfo.current.timerSecond = 0;
+    }
+    if(minute>=0 && minute<10)
+      {
+        _appContext.levelInfo.current.timerMinute = minute;
+      }
+    else
+    {
+        _appContext.levelInfo.current.timerMinute = 0;
+    }
+
+    return null
+}
+
 

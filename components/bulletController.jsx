@@ -173,7 +173,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                         }
                                                     gloBalObject.mobUpdateFunc.current[result.objectId]('dead',effectAfterMobDeath);
                                                     
-                                                    
+                                                    gloBalObject._appContext.ScoreVueController.current('INCREASE',3);
                                                     gloBalObject._appContext.playerStats.current.mobKilled ++;
                                                     gloBalObject.checkWinCondition();
                                                 }

@@ -81,6 +81,7 @@ export function GameUI()
                         {actualUi == 'ENDING-SCREEN' && <GameEndingScreen />}
                         {actualUi == 'LOADING-SCREEN' && <GameLoadingScreen />}
                         {actualUi == 'STORY-SCREEN' && <StoryScreen />}
+                        {actualUi == 'UPGRADE-SCREEN' && <UpgradePlayerScreen />}
                         {enableTransitionScreen && <BlackScreenTransition  />}
                 </gameUIContext.Provider>
                  
@@ -291,7 +292,7 @@ export function PauseIcon()
         <div
             onClick={()=>{_appContext.setPause(true);}}
             className=" w-[50px] h-[50px]  cursor-pointer z-[2]
-                        absolute top-[10px] right-[10px] flex flex-col justify-center"
+                        absolute bottom-[10px] right-[10px] flex flex-col justify-center"
         >
             <img className="w-full mx-auto " src="n_button/btnPause.png" alt="PauseButton" />
             <svg
@@ -587,8 +588,15 @@ export function GameNotif()
 export function TitleScreen()
 {
     let _appContext = useContext(appContext);
-
-
+    let [controllerVersion,setControllerVersion] = useState(2);
+    let [volumeIcon,setVolumeIcon] = useState('volume-high.svg')
+    let switchVolume = ()=>
+        { 
+             AudioManage.play('click')
+            _appContext.soundOn.current = _appContext.soundOn.current? false : true;
+            AudioManage.soundONOFF(_appContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
+            setVolumeIcon(c => c = _appContext.soundOn.current? 'volume-high.svg' : 'volume-off.svg');
+        }
     return <div 
                 style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`absolute left-[0] top-[0] z-[2] w-full h-full select-none `}
@@ -599,22 +607,93 @@ export function TitleScreen()
                         <img className="w-full " src="title.png" alt="title" />
                     </div>
                     
-                     <div className="">
-                            <div onClick={()=>{_appContext.appController('START-GAME')}}
-                                className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                <img className="w-full h-full mx-auto " src="n_button/btnPlay.png" alt="play" />
-                            </div>
-                            <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'OPTION-SCREEN'})}}
-                                className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                <img className="w-full mx-auto " src="n_button/btnOption.png" alt="Option" />
-                            </div>
-                            <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'CREDIT-SCREEN'})}}
-                                className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                <img className="w-full mx-auto " src="n_button/btnCredit.png" alt="Credit" />
-                            </div>
+                     <div className=" text-center text-white  ">
+                        <span className="text-[0.8rem] mr-[5px] ">
+                            Score :
+                        </span>
+                        <span className="text-[1.2rem]">{_appContext.playerStats.current.score}</span>
+                     </div>
+                     <div className=" text-center text-white  ">
+                        <span className="text-[0.8rem] mr-[5px] ">
+                            Money :
+                        </span>
+                        <span className="text-[1.2rem]">{_appContext.playerStats.current.coinCollected}</span>
+                     </div>
+                     <div className="mt-[20px] ">
+                            { controllerVersion == 1 &&
+                            <>
+                                <div onClick={()=>{_appContext.appController('START-GAME')}}
+                                    className=" relative flex justify-center flex-col text-center mt-[20px] cursor-pointer w-[200px] h-[50px] mx-auto ">
+                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
+                                    <img className="w-full h-full mx-auto " src="n_button/btnPlay.png" alt="play" />
+                                </div>
+                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'OPTION-SCREEN'})}}
+                                    className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
+                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
+                                    <img className="w-full mx-auto " src="n_button/btnOption.png" alt="Option" />
+                                </div>
+                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'CREDIT-SCREEN'})}}
+                                    className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
+                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
+                                    <img className="w-full mx-auto " src="n_button/btnCredit.png" alt="Credit" />
+                                </div>
+                            </>
+                            }
+                            {controllerVersion == 2 &&
+                                <>
+                                    <div className="w-full flex justify-center">
+                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <div onClick={()=>{_appContext.appController('START-GAME')}} id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                            <img src="play.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="btnTemplate.png" alt="Play Button back" className="block " />
+                                        </div>
+                                        {/* <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'UPGRADE-SCREEN'})}} id="GLASS" className="w-full h-full z-[3] absolute left-0 top-0"></div>
+                                            <img src="chevrons-up.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="btnTemplate.png" alt="Play Button" className="block" />
+                                        </div> */}
+                                        <div onClick={()=>{switchVolume()}} className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <div  id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
+                                            <img src={volumeIcon} alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="btnTemplate.png" alt="Play Button back" className="block " />
+                                        </div>
+                                    </div>
+                                    <div className="w-full mt-[20px] flex justify-center">
+                                            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
+                                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
+                                                    <span className="text-[0.7rem] ">Lvl:</span>
+                                                    <span className="text-[1.2rem] ">1</span>
+                                                </div>
+                                                <img src="sword.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
+                                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
+                                                    500
+                                                </div>
+                                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
+                                            </div>
+                                            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
+                                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
+                                                    <span className="text-[0.7rem] ">Lvl:</span>
+                                                    <span className="text-[1.2rem] ">1</span>
+                                                </div>
+                                                <img src="heart.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
+                                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
+                                                    500
+                                                </div>
+                                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
+                                            </div>
+                                    </div>
+                                    <div className="w-full mt-[20px] flex justify-center">
+                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <div id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
+                                            <img src="apps.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="btnTemplate.png" alt="Play Button back" className="block" />
+                                        </div>
+                                    </div>
+                                </>
+                            }
+                            
                     </div>
                     
            </div>
@@ -1047,7 +1126,149 @@ export function StoryScreen()
             </div>
     )
 }
+export function GameTimer()
+{
 
+    let _appContext = useContext(appContext)
+    let minuteRef = useRef(_appContext.levelInfo.current.timerMinute)
+    let seconRef = useRef(_appContext.levelInfo.current.timerSecond)
+    let timercustomCounterRef = useRef(null)
+    let [timerVisible,setTimerVisible] = useState(false)
+    let [mintute,setMinute] = useState(minuteRef.current);
+    let [second,setSecon] = useState(seconRef.current);
+
+
+    let timerFunc = ()=>
+        {
+            if(seconRef.current == 0)
+            {
+                if(minuteRef.current>0)
+                {
+                    minuteRef.current --;
+                    seconRef.current = 59;
+                    setSecon(seconRef.current);
+                    setMinute(minuteRef.current);
+                    return false;
+                }
+                else
+                {
+                    // console.log('timer finit')
+                    return true;
+                }
+            }
+            else
+            {
+                seconRef.current --;
+                setSecon(seconRef.current);
+                return false;
+            }
+            
+        }
+    useEffect(()=>
+        {
+            if(minuteRef.current == 0 && seconRef.current == 0){}
+            else
+            {
+                setTimerVisible(true)
+            }
+            
+            if(timerVisible)
+            {
+                timercustomCounterRef.current = new CustomCounter(70,0,timerFunc,null)
+                timercustomCounterRef.current.start()
+            }
+           
+            return()=>{timercustomCounterRef.current?.cancelCounter()}
+        },[timerVisible])
+
+    return(
+            <>
+                {
+                    timerVisible &&
+                    <div className=" pointer-events-none text-[1.5rem] text-white text-center bg-transparent absolute z-[2] left-0 right-0 mx-auto top-[5px] ">
+                            <span>{mintute}</span>
+                            <span className="mx-[3px] ">:</span>
+                            <span>{second}</span>
+                    </div>
+                }
+                
+                        
+                
+            </>
+    )
+}
+export function ScoreVue()
+{
+    let _appContext = useContext(appContext);
+    let [score,setScore] = useState(_appContext.playerStats.current.score);
+    useEffect(()=>
+        {
+            _appContext.ScoreVueController.current = (args1,args2)=>
+                {
+                    if(args1 == 'INCREASE')
+                    {  
+                        _appContext.playerStats.current.score += args2;
+                        // console.log( _appContext.playerStats.current.score)
+                        setScore(_appContext.playerStats.current.score)
+                    }
+                }
+        },[])
+    return(
+            <>
+                <div className="absolute w-full flex justify-end top-[5px] z-[2] text-white text-[1.5rem] ">
+                <span className="mr-[20px] ">{score}</span>
+                </div>
+            </>
+    );
+}
+
+export function UpgradePlayerScreen()
+{
+    let _appContext = useContext(appContext);
+    return(
+            <>
+                <div
+                    style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                    className={`absolute select-none left-[0] top-[0] z-[2] w-full h-full bg-black `} 
+                >
+                        <div className="text-center text-[1.5rem] text-white">Upgrade State</div>
+                        <div className="w-full mt-[10px] flex justify-center">
+                            <div className="cursor-pointer relative mx-[10px] w-[90px] h-[130px] ">
+                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
+                                    <span className="text-[0.7rem] ">Lvl:</span>
+                                    <span className="text-[1.2rem] ">1</span>
+                                </div>
+                                <img src="sword.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
+                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
+                                    500
+                                </div>
+                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
+                            </div>
+                            <div className="cursor-pointer relative mx-[10px] w-[90px] h-[130px] ">
+                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
+                                    <span className="text-[0.7rem] ">Lvl:</span>
+                                    <span className="text-[1.2rem] ">1</span>
+                                </div>
+                                <img src="heart.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
+                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
+                                    500
+                                </div>
+                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
+                            </div>
+                        </div>
+                        <div className="w-full mt-[10px] flex justify-center">
+                            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                <img src="return.svg" alt="Return Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                <img src="btnTemplate.png" alt="Play Button back" className="block " />
+                            </div>
+                        </div>
+                </div>
+            </>
+    )
+}
 //Z-INDEX
 // 1-  Canvas
 // 2- LifeBar, GameController, TitleScreen, OptionScreen, PlayerMoney, CreditScreen, ToggleTouchScreen
