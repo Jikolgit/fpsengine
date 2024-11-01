@@ -1,4 +1,4 @@
-import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, TreeDecor_model, WallModel } from "./Game3DAssets";
+import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, TreeDecor_model, WallModel, GroundModel } from "./Game3DAssets";
 import { Mob_2 } from "./mob_2";
 
 export function placeModelOnScene(gloBalObject)
@@ -7,11 +7,11 @@ export function placeModelOnScene(gloBalObject)
         {
             
             
-            
+            gloBalObject.platformModelContainer.current[i] = <GroundModel x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
             if(gloBalObject.GameMap[i].objectType == 'item')
             { 
                 let objectComponents=null;
-                if(gloBalObject.GameMap[i].objectDesc.skin =='cauris_item')
+                if(gloBalObject.GameMap[i].objectDesc.skin =='coin_item_1')
                 {objectComponents =<ItemType1Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
                 skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose}  /> }
                 else if(gloBalObject.GameMap[i].objectDesc.skin =='dummy')
@@ -73,26 +73,7 @@ export function placeModelOnScene(gloBalObject)
                     gloBalObject.exitDoorMapIndexArr.value.push(i);
                     
             }
-            // else if(gloBalObject.GameMap[i].objectType == 'Exitdoor')
-            //     {
-            //         let visibleState = true;
-            //         if(gloBalObject.level.current==13 || gloBalObject.level.current==9 || gloBalObject.level.current==11){visibleState = false}
-            //         let arrElem = gloBalObject.GameMap[i].isOnScene?
-            //         <group
-            //         visible={visibleState}
-            //         key={i}
-            //         ref={(val)=>{gloBalObject.objectRef.current[gloBalObject.GameMap[i].objectId] = val}}
-            //         >
-                                
-            //                     <Barier_Model _for={'exit'} _visible={visibleState} refID={gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
-                            
-            //         </group> : null;
-                    
-            //         if(gloBalObject.exitDoorVisible.value){gloBalObject.objectContainer.current[i] = arrElem}
-            //         gloBalObject.exitDoorMapIndexArr.value.push(i);
-            //         gloBalObject.exitDoorModelIndexArr.value.push({objectId:gloBalObject.GameMap[i].objectId,modelFunc:null})
-                    
-            //     }
+
             else if(gloBalObject.GameMap[i].objectType == 'final_exitDoor')
                 {
                     let arrElem = gloBalObject.GameMap[i].isOnScene?

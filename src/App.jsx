@@ -49,16 +49,38 @@ function App() {
   let touchEventTouchEndFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
   let actionButtonRef = useRef(null);
   let GameLoadingScreenRef = useRef(null);
-  let playerStats = useRef({score:0,life:1,maxLife:5,moveSpeed:0.1,shootInterval:20,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let playerLifeUpgradeCost = useRef({value:20,level:1});
+  let playerWeaponUpgradeCost = useRef({value:20,level:1});
+  let playerStats = useRef({score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:35,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false});
   let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0,finalLevel:false});
+  let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
+    playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
+    playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level])
 
-  let saveGame = ()=>
+  /**
+   * 
+   * @param {number[]} args 
+   */
+  let saveGame = (args)=>
     {
-      let createdSave = null;
-      createdSave = level.current.toString()+'-'+playerStats.current.life.toString()+'-'+playerStats.current.coinCollected.toString();
+      /**
+       * @type {string}
+       */
+      saveDataOrder.current = [level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
+        playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
+        playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level]
+      let dataToSave='';
+      
+      for(let i = 0;i<saveDataOrder.current.length;i++)
+      { 
+        dataToSave += saveDataOrder.current[i].toString();
+        if(i<saveDataOrder.current.length-1){dataToSave += '-'}
+      }
+
       //2,5,8
-      encryptData(createdSave)
+      encryptData(dataToSave)
     }
+    
   let deleteGameSave = ()=>
     {
       deleteCookie('DW_SAVE')
@@ -76,41 +98,104 @@ function App() {
         let levelValueArr=[] ,playerLifeValueArr =[] ,playerCoinValueArr=[] ;
         let levelValue,playerLifeValue,playerCoinValue;
         let saveStep =0;
+        let saveData = '';
         for(let i =0;i<saveString.length;i++)
         {
-            if(saveStep ==0)
+            if(saveString[i]=='-')
             {
-              if(saveString[i]!='-')
-              {
-                levelValueArr.push(saveString[i])
-              }
-              else
-              {
+                
+                saveDataOrder.current[saveStep] = saveData;
+                saveData = '';
                 saveStep ++;
-              }
             }
-            else if(saveStep ==1)
+            else
             {
-              if(saveString[i]!='-')
-              {
-                playerLifeValueArr.push(saveString[i]);
-              }
-              else
-              {
-                saveStep ++;
-              }
+              saveData += saveString[i]
+              
             }
-            else if(saveStep ==2)
-            {
-              playerCoinValueArr.push(saveString[i]);
-            }
+            // if(saveStep ==0)
+            // {
+            //   if(saveString[i]!='-')
+            //   {
+            //     levelValueArr.push(saveString[i])
+            //   }
+            //   else
+            //   {
+            //     saveStep ++;
+            //   }
+            // }
+            // else if(saveStep ==1)
+            // {
+            //   if(saveString[i]!='-')
+            //   {
+            //     playerLifeValueArr.push(saveString[i]);
+            //   }
+            //   else
+            //   {
+            //     saveStep ++;
+            //   }
+            // }
+            // else if(saveStep ==2)
+            // {
+            //   playerCoinValueArr.push(saveString[i]);
+            // }
         }
-        levelValue = levelValueArr.join('')
-        playerLifeValue = playerLifeValueArr.join('')
-        playerCoinValue = playerCoinValueArr.join('')
-        level.current = parseInt(levelValue) ;
-        playerStats.current.life =  parseInt(playerLifeValue) ;
-        playerStats.current.coinCollected = parseInt(playerCoinValue) ;
+        // console.log(saveDataOrder.current)
+        // levelValue = levelValueArr.join('')
+        // playerLifeValue = playerLifeValueArr.join('')
+        // playerCoinValue = playerCoinValueArr.join('')
+        
+        level.current = parseInt(saveDataOrder.current[0]) ;
+        playerStats.current.coinCollected = parseInt(saveDataOrder.current[1]) ;
+        playerStats.current.score = parseInt(saveDataOrder.current[2]) ;
+        playerStats.current.life =  parseInt(saveDataOrder.current[3]) ;
+        playerStats.current.maxLife = parseInt(saveDataOrder.current[4]) ;
+        playerStats.current.shootInterval = parseInt(saveDataOrder.current[5]) ;
+        playerStats.current.shootPower =  parseInt(saveDataOrder.current[6]) ;
+        playerLifeUpgradeCost.current.value = parseInt(saveDataOrder.current[7]) ;
+        playerLifeUpgradeCost.current.level =parseInt(saveDataOrder.current[8]) ;
+        playerWeaponUpgradeCost.current.value = parseInt(saveDataOrder.current[9]) ;
+        playerWeaponUpgradeCost.current.level =parseInt(saveDataOrder.current[10]) ;
+        
+      }
+    }
+  let upgradePlayerState = (args)=>
+    {
+      if(args == 'LIFE')
+      {
+        if(playerStats.current.coinCollected>=playerLifeUpgradeCost.current.value)
+        {
+          AudioManage.play('click')
+          playerStats.current.coinCollected = playerStats.current.coinCollected - playerLifeUpgradeCost.current.value;
+          playerStats.current.maxLife ++;
+          playerStats.current.life = playerStats.current.maxLife;
+          playerLifeUpgradeCost.current.value += 10;
+          playerLifeUpgradeCost.current.level += 1;
+          saveGame()
+        }
+        else
+        {
+          AudioManage.play('click-Error')
+          // console.log('not enough money')
+        }
+      }
+      else if(args == 'WEAPON')
+      {
+        if(playerStats.current.coinCollected>=playerWeaponUpgradeCost.current.value)
+        {
+          AudioManage.play('click')
+          playerStats.current.coinCollected = playerStats.current.coinCollected - playerWeaponUpgradeCost.current.value;
+          playerStats.current.shootPower ++;
+          playerStats.current.shootInterval -=2;
+          playerWeaponUpgradeCost.current.value += 10;
+          playerWeaponUpgradeCost.current.level += 1;
+          saveGame()
+        }
+        else
+        {
+          AudioManage.play('click-Error')
+          // console.log('not enough money')
+        }
       }
     }
   let startGame = ()=>
@@ -133,7 +218,7 @@ function App() {
         // setGameVueActive(c => c = false);
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
-        saveGame();
+        saveGame(saveDataOrder.current)
         // window.setTimeout(()=>{setGameVueActive(c => c = true);},1)
         
       }
@@ -168,7 +253,7 @@ function App() {
         playerStats.current.mobKilled = 0
         level.current = 1;
       }
-      saveGame()
+      saveGame(saveDataOrder.current)
       gamePause.current = false;
       setGameVueActive(false)
       GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})
@@ -246,12 +331,11 @@ function App() {
         
 
       }
+      // findGameSave();
     useEffect(()=>
       {
-        // if(!gameVueActive && actualGameScreen.current == 'LOADING-SCREEN')
-        // {
-        //   setGameVueActive(c => c = true);
-        // }
+        // saveGame(saveDataOrder.current)
+        
       },[])
     useEffect(() => {
 
@@ -266,7 +350,7 @@ function App() {
                 touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
-                BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController}}
+                BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -334,12 +418,12 @@ function GameConfig()
                 <>
                     <UpdateLevelConfig  />
                     <AddTimer minute={2} second={99} />
-                    <UpdatePlayerStat life={2} moveSpeed={0.1} shootInterval={35} />
+                    
                     <AddDecor position={[45,66,192,147,126,187]} />
-
-                    <AddMob position={[134-(16*5),94]} life={2} active>
+                    <AddItem name={'coin_item'} position={[183]} value={3} />
+                    {/* <AddMob position={[134-(16*5),94]} life={10}  active>
                             <AddItem name={'coin_item'} position={[183]} value={3} />
-                    </AddMob>
+                    </AddMob> */}
                     <AddDoor position={[295]} open  />
                 </>
               }
@@ -359,7 +443,7 @@ function GameConfig()
                         <div className="">Text 3</div>
                     </UpdateStroryScreen>
                     <UpdateLevelConfig  mobToKill={8} />
-                    <UpdatePlayerStat life={5} moveSpeed={0.1} />
+                   
                     {/* <AddItem name={'healItem'} position={[135]} value={1} /> */}
                     <AddMob position={[153,154,155,156]} life={5} active>
                           <AddItem name={'coin_item'} position={[183]} value={3} />
@@ -376,7 +460,7 @@ function GameConfig()
                     <UpdateLevelConfig  mobToKill={14} />
                     <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
                     <AddMob position={[134,149,164,179,194,209]} life={5}  active />
-                    <AddItem name={'healItem'} position={[183]} value={3} />
+                    <AddItem name={'heal_item'} position={[183]} value={3} />
                     <AddDoor position={[295]}  />
                 </>
               }

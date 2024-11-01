@@ -589,13 +589,31 @@ export function TitleScreen()
 {
     let _appContext = useContext(appContext);
     let [controllerVersion,setControllerVersion] = useState(2);
-    let [volumeIcon,setVolumeIcon] = useState('volume-high.svg')
+    let [volumeIcon,setVolumeIcon] = useState('volume-high.svg');
+    let [lifeUpdateInfo,setIifeUpdateInfo] = useState({level:_appContext.playerLifeUpgradeCost.current.level,
+                                                       cost:_appContext.playerLifeUpgradeCost.current.value});
+    let [weaponUpdateInfo,setWeaponUpdateInfo] = useState({level:_appContext.playerWeaponUpgradeCost.current.level,
+                                                        cost:_appContext.playerWeaponUpgradeCost.current.value});
     let switchVolume = ()=>
         { 
              AudioManage.play('click')
             _appContext.soundOn.current = _appContext.soundOn.current? false : true;
             AudioManage.soundONOFF(_appContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
             setVolumeIcon(c => c = _appContext.soundOn.current? 'volume-high.svg' : 'volume-off.svg');
+        }
+    let upgradeLife = ()=>
+        {
+            
+            _appContext.upgradePlayerState('LIFE');
+            setIifeUpdateInfo({level:_appContext.playerLifeUpgradeCost.current.level,
+                               cost:_appContext.playerLifeUpgradeCost.current.value})
+        }
+    let upgradeWeapon = ()=>
+        {
+            
+            _appContext.upgradePlayerState('WEAPON');
+            setWeaponUpdateInfo({level:_appContext.playerWeaponUpgradeCost.current.level,
+                                cost:_appContext.playerWeaponUpgradeCost.current.value})
         }
     return <div 
                 style={{backgroundImage:`url("gameBack.jpg")`}}
@@ -613,10 +631,11 @@ export function TitleScreen()
                         </span>
                         <span className="text-[1.2rem]">{_appContext.playerStats.current.score}</span>
                      </div>
-                     <div className=" text-center text-white  ">
-                        <span className="text-[0.8rem] mr-[5px] ">
-                            Money :
-                        </span>
+                     
+                     <div className=" flex justify-center text-white ">
+                        <div className="text-[0.8rem] mr-[5px] flex flex-col justify-center ">
+                            <img src="coin.svg" alt="coin" className=" w-[20px] h-[20px]  " />
+                        </div>
                         <span className="text-[1.2rem]">{_appContext.playerStats.current.coinCollected}</span>
                      </div>
                      <div className="mt-[20px] ">
@@ -660,26 +679,26 @@ export function TitleScreen()
                                     </div>
                                     <div className="w-full mt-[20px] flex justify-center">
                                             <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
-                                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                                <div onClick={upgradeWeapon}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
                                                 <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
                                                     <span className="text-[0.7rem] ">Lvl:</span>
-                                                    <span className="text-[1.2rem] ">1</span>
+                                                    <span className="text-[1.2rem] ">{weaponUpdateInfo.level}</span>
                                                 </div>
                                                 <img src="sword.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
                                                 <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
-                                                    500
+                                                    {weaponUpdateInfo.cost}
                                                 </div>
                                                 <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
                                             </div>
                                             <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
-                                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
+                                                <div onClick={upgradeLife}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
                                                 <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
                                                     <span className="text-[0.7rem] ">Lvl:</span>
-                                                    <span className="text-[1.2rem] ">1</span>
+                                                    <span className="text-[1.2rem] ">{lifeUpdateInfo.level}</span>
                                                 </div>
                                                 <img src="heart.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
                                                 <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
-                                                    500
+                                                    {lifeUpdateInfo.cost}
                                                 </div>
                                                 <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
                                             </div>
@@ -857,14 +876,14 @@ export function PlayerMoney()
                     absolute top-[50px] left-[10px] text-white text-[2rem] ' 
         >
             <div
-                className="w-[20px] h-[40px] relative "
+                className="w-[30px] h-[30px] relative "
             >   
                 <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                <img className="w-full h-full " src="caurisTXT.png" alt="Money_Icon" />
+                <img className="w-full h-full " src="coin.svg" alt="Money_Icon" />
             </div>
             
             <div className="text-[1.4rem] text-white/50 flex flex-col justify-center mx-[5px] ">x</div>
-            <div ref={_appContext.playerMoneyContainerRef} className="text-[2rem]  flex flex-col justify-center "></div>
+            <div ref={_appContext.playerMoneyContainerRef} className="text-[1.5rem]  flex flex-col justify-center "></div>
         </div>
     )
 }

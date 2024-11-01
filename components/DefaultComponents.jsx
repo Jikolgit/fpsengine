@@ -66,13 +66,13 @@ export function AddItem(props)
 
   for(let i = 0;i<props.position.length;i++)
   {
-    if(props.name == 'healItem')
+    if(props.name == 'heal_item')
     {
       objectDetailArr[i] = {position:props.position[i],objectName:'heal_item',skin:'heal_item_1',value:props.value?props.value:2,isImportant:true}
     }
-    else if(props.name == 'coinItem')
+    else if(props.name == 'coin_item')
     {
-      objectDetailArr[i] = {position:props.position[i],objectName:'coin_item',skin:'cauris_item',value:props.value?props.value:1,isImportant:true}
+      objectDetailArr[i] = {position:props.position[i],objectName:props.name,skin:'coin_item_1',value:props.value?props.value:1,isImportant:true}
     }
     else if(props.name == 'wallItem')
     {

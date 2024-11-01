@@ -27,12 +27,14 @@ export function GroundModel(props) {
   // 3D ASSET OF THE GROUND
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('groundtxt.jpg');
+  let _texture = prepareTexture('ntxt4.jpg');
  
   let mat = new THREE.MeshBasicMaterial({map:_texture,wireframe:true});
+  let mat2 = new THREE.MeshBasicMaterial({map:_texture})
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.dground.geometry} material={mat} />
+      {/* <mesh geometry={nodes.dground.geometry} material={mat} /> */}
+      <mesh geometry={nodes.planeGround.geometry} material={mat2} position={[props.x, 0, props.z]} />
     </group>
   )
 }
@@ -360,7 +362,7 @@ export function ItemType1Model(props)
 
   if(props.skin == 'coin_item_1')
   {
-    paticleTexture = useTexture('caurisTXT.png');
+    paticleTexture = useTexture('coin.svg');
   }
   useEffect(()=>
     { 
@@ -385,7 +387,7 @@ export function ItemType1Model(props)
   return(     <>
               <group ref={spriteRef} visible={props._visible} >
                     <sprite 
-                      position={[props.x,0.5,props.z]} scale={[0.3,0.4,1]}
+                      position={[props.x,0.5,props.z]} scale={[0.4,0.4,1]}
                     >
                       <spriteMaterial map={paticleTexture}   />
                       

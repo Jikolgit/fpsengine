@@ -75,6 +75,7 @@ export function GameApp(props)
     let showWeapon3DModel = {value:_appContext.playerStats.current.showWeapon}
     let directionToGo = {value:'FRONT'};
     let gloBalObject;
+    let platformModelContainer = useRef([]);
 
 
 
@@ -793,7 +794,7 @@ export function GameApp(props)
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
             barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
-            wallController,exitDoorController,showWeapon3DModel,bulletModelController
+            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer
 
             }
         placeModelOnScene(gloBalObject)
@@ -818,7 +819,8 @@ export function GameApp(props)
                         <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} /> */}
 
                         <axesHelper args={[15]} />
-                        <GroundModel />
+                        {/* <GroundModel /> */}
+                        {platformModelContainer.current}
                         {objectContainer.current}
                         <mesh
                             name="PLAYER"

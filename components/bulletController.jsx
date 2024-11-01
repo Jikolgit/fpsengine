@@ -127,14 +127,15 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     {
                                         if(result.objectType == 'item')
                                         {
-                                            if(result.objectDesc.objectName == 'wall_1')
-                                            {
-                                                return "move-stop-explode";
-                                            }
-                                            else if(result.objectDesc.objectName == 'heal_item')
-                                            {
-                                                return "move-continue-none"
-                                            }
+                                            return "move-continue-none"
+                                            // if(result.objectDesc.objectName == 'wall_1')
+                                            // {
+                                            //     return "move-stop-explode";
+                                            // }
+                                            // else if(result.objectDesc.objectName == 'heal_item')
+                                            // {
+                                            //     return "move-continue-none"
+                                            // }
                                         }
                                         else if(result.objectType == 'decor')
                                         {
@@ -146,14 +147,10 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     {
                                         if(result.hasEnemy)
                                         {   AudioManage.play('hit')
-                                            if(result.objectDesc.life > 1)
+                                                result.objectDesc.life -= gloBalObject._appContext.playerStats.current.shootPower;
+                                                if(result.objectDesc.life <=0 )
                                                 {
-                                                    result.objectDesc.life --;
-                                                    gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
-                                                }
-                                                else
-                                                {   
-                                                    result.objectDesc.life --;
+                                                    result.objectDesc.life =0;
                                                     result.hasEnemy = false;
                                                     gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
                                                     
@@ -177,6 +174,19 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                     gloBalObject._appContext.playerStats.current.mobKilled ++;
                                                     gloBalObject.checkWinCondition();
                                                 }
+                                                else
+                                                {
+                                                    gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
+                                                }
+                                                // if(result.objectDesc.life > 1)
+                                                // {
+                                                //     result.objectDesc.life -= gloBalObject._appContext.playerStats.current.shootPower;
+                                                //     gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
+                                                // }
+                                                // else
+                                                // {   
+                                                    
+                                                // }
                                                 
                                                 return "move-stop-explode";
                                         }

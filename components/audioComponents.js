@@ -1,20 +1,21 @@
 import {Howl, Howler} from 'howler';
 let audioOn =true;
-let audioSrc = new URL('../sound/bow_shoot.wav',import.meta.url);
+let audioSrc = new URL('../sound/laser.wav',import.meta.url);
 let audioSrc2 = new URL('../sound/bow_hit.wav',import.meta.url);
 let audioSrc3 = new URL('../sound/walk_6.wav',import.meta.url);
 let audioSrc4 = new URL('../sound/playerhit.wav',import.meta.url);
-let audioSrc5 = new URL('../sound/click.wav',import.meta.url);
+let audioSrc5 = new URL('../sound/toggle_001.ogg',import.meta.url);
 let audioSrc6 = new URL('../sound/ambience.wav',import.meta.url);
 let audioSrc7 = new URL('../sound/heal.wav',import.meta.url);
 let audioSrc8 = new URL('../sound/grabWeapon.wav',import.meta.url);
 let audioSrc9 = new URL('../sound/coin_1.wav',import.meta.url);
+let audioSrc10 = new URL('../sound/rollover1.ogg',import.meta.url);
 
 //let hitAudio=new Audio(audioSrc.href);
 let hitAudio = new Howl({
     src: [audioSrc.href]
   });
-
+hitAudio.volume(0.2)
 let shootAudio=new Audio(audioSrc2.href);
 let walkAudio=new Audio(audioSrc3.href);
 //let walkAudio = new Howl({src: [audioSrc3.href]});
@@ -38,6 +39,10 @@ let grabWeapon = new Howl({
 });
 let takeCoin = new Howl({
   src: [audioSrc9.href],
+  
+});
+let uiErrorAudio = new Howl({
+  src: [audioSrc10.href],
   
 });
 export class AudioManage{
@@ -74,6 +79,7 @@ export class AudioManage{
         else if(audio=='walk'){walkAudio.play()}
         else if(audio=='playerhit'){playerhitAudio.play()}
         else if(audio=='click'){clickAudio.play()}
+        else if(audio=='click-Error'){uiErrorAudio.play()}
         else if(audio=='heal'){heal.play()}
         else if(audio=='grab'){grabWeapon.play()}
         else if(audio=='coin'){takeCoin.play()}
