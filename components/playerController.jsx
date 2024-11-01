@@ -221,7 +221,7 @@ function checkifElemCanMoveNextPlatform(objArg)
                                         }
                                         else if(_result.objectType == 'wall')
                                         {
-                                            if(_result.objectType == 'wall' && _result.objectDesc.haswall)
+                                            if(_result.objectType == 'wall' && !_result.objectDesc.destructible)
                                             {
                                                 return false
                                             } 
@@ -263,7 +263,7 @@ function checkifElemCanMoveNextPlatform(objArg)
                                 }
                                 else
                                 {
-                                    if(_result.hasEnemy)
+                                    if(_result.hasEnemy || _result.objectLimit)
                                     {   
                                         return false
                                     }

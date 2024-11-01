@@ -1,4 +1,4 @@
-import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, TreeDecor_model, WallModel, GroundModel } from "./Game3DAssets";
+import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, Decor_model, WallModel, GroundModel } from "./Game3DAssets";
 import { Mob_2 } from "./mob_2";
 
 export function placeModelOnScene(gloBalObject)
@@ -7,7 +7,9 @@ export function placeModelOnScene(gloBalObject)
         {
             
             
-            gloBalObject.platformModelContainer.current[i] = <GroundModel x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+            gloBalObject.platformModelContainer.current[i] = <GroundModel key={i} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+            
+
             if(gloBalObject.GameMap[i].objectType == 'item')
             { 
                 let objectComponents=null;
@@ -96,7 +98,7 @@ export function placeModelOnScene(gloBalObject)
                     ref={(val)=>{gloBalObject.objectRef.current[gloBalObject.GameMap[i].objectId] = val}}
                     >
                                 
-                            <TreeDecor_model x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                            <Decor_model skin={gloBalObject.GameMap[i].objectDesc.skin} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     </group> : null;
                     gloBalObject.objectContainer.current[i] = arrElem
                     
@@ -159,6 +161,12 @@ export function placeModelOnScene(gloBalObject)
                             
                     </group> : null;
                     gloBalObject.objectContainer.current[i] = arrElem
+                }
+
+                if(gloBalObject.GameMap[i].objectLimit)
+                {
+                    gloBalObject.wallModelContainer.current[i] = <Decor_model key={i} skin={'wall'} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                    
                 }
             
 

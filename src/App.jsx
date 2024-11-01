@@ -419,12 +419,13 @@ function GameConfig()
                     <UpdateLevelConfig  />
                     <AddTimer minute={2} second={99} />
                     
-                    <AddDecor position={[45,66,192,147,126,187]} />
-                    <AddItem name={'coin_item'} position={[183]} value={3} />
-                    {/* <AddMob position={[134-(16*5),94]} life={10}  active>
-                            <AddItem name={'coin_item'} position={[183]} value={3} />
-                    </AddMob> */}
-                    <AddDoor position={[295]} open  />
+                    <AddDecor skin={'tree'} position={[45,66,192,147,126,187]} />
+                    {/* <AddItem name={'coin_item'} position={[183]} value={3} /> */}
+                    <AddWall position={[183]} />
+                    <AddMob position={[134-(16*5),94]} life={10}  active>
+                            {/* <AddItem name={'coin_item'} position={[183]} value={3} /> */}
+                    </AddMob>
+                    <AddDoor position={[279]} open  />
                 </>
               }
               {AppCntext.level.current == 2 &&

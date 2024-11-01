@@ -141,14 +141,14 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             else if(objectType == 'wall')
             {   
                 map_level[index].active = true,map_level[index].objectType = objectType, 
-                map_level[index].objectDesc ={haswall:true,objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,life:objectIndexArr[i].life,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
+                map_level[index].objectDesc ={destructible:objectIndexArr[i].destructible,objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,life:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
                 objectIdValue ++;
                 
             }
             
             else if(objectType == 'decor')
             {
-                map_level[index].active = true,map_level[index].objectType ='decor',map_level[index].objectDesc={decorType:objectIndexArr[i].decorType} ,map_level[index].object = true
+                map_level[index].active = true,map_level[index].objectType ='decor',map_level[index].objectDesc={skin:objectIndexArr[i].skin} ,map_level[index].object = true
             }
             else if(objectType == 'final_exitDoor')
             {
@@ -179,7 +179,7 @@ function createMapTemplate()
                 else
                 {
                     if(i == mapWidth*i1 )
-                        {
+                        {  
                             xLevel = 0;
                             zLevel +=2;
                         }
@@ -209,7 +209,10 @@ function createMapTemplate()
                 else
                 {
                     if(i<mapWidth || i>(mapWidth*(mapHeight-1)) || i == mapWidth*i2 || i == mapWidth*(i2+1)-1)
-                    {mapTemplate[i].objectLimit = true}
+                    {   
+                        mapTemplate[i].objectLimit = true
+                        
+                    }
                 }
                 
                     

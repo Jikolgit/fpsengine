@@ -1,11 +1,11 @@
 import {Howl, Howler} from 'howler';
 let audioOn =true;
-let audioSrc = new URL('../sound/laser.wav',import.meta.url);
+let audioSrc = new URL('../sound/bow_shoot.wav',import.meta.url);
 let audioSrc2 = new URL('../sound/bow_hit.wav',import.meta.url);
 let audioSrc3 = new URL('../sound/walk_6.wav',import.meta.url);
 let audioSrc4 = new URL('../sound/playerhit.wav',import.meta.url);
 let audioSrc5 = new URL('../sound/toggle_001.ogg',import.meta.url);
-let audioSrc6 = new URL('../sound/ambience.wav',import.meta.url);
+let audioSrc6 = new URL('../sound/dungeon2.wav',import.meta.url);
 let audioSrc7 = new URL('../sound/heal.wav',import.meta.url);
 let audioSrc8 = new URL('../sound/grabWeapon.wav',import.meta.url);
 let audioSrc9 = new URL('../sound/coin_1.wav',import.meta.url);
@@ -29,6 +29,7 @@ let ambient = new Howl({
   src: [audioSrc6.href],
   loop:true,
 });
+// ambient.volume(0.2)
 let heal = new Howl({
   src: [audioSrc7.href],
   

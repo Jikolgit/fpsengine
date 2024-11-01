@@ -202,7 +202,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     }
                                     else if(result.objectType == "wall")
                                     {   
-                                            if(result.objectDesc.haswall)
+                                            if(result.objectDesc.destructible)
                                             {   AudioManage.play('hit')
                                                 if(result.objectDesc.life > 1)
                                                     {
@@ -215,24 +215,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                         result.objectDesc.haswall = false;
                                                         gloBalObject.wallController.value[result.objectId]('REMOVE-WALL');
                                                         
-                                                       
-                                                        // let effectAfterMobDeath = ()=>
-                                                        //     {
-                                                        //         if(result.objectDesc.hasObject)
-                                                        //             {
-                                                                        
-                                                        //                 result.objectType = result.objectDesc.skin;
-                                                        //                 gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
-                                                        //             }
-                                                        //             else
-                                                        //             {
-                                                        //                 result.isOnScene = false;
-                                                        //             }
-                                                        //     }
-                                                        // gloBalObject.mobUpdateFunc.current[result.objectId]('dead',effectAfterMobDeath);
-                                                        
-                                                        
-                                                        // gloBalObject._appContext.playerStats.current.mobKilled ++;
+       
                                                         gloBalObject.checkWinCondition();
                                                     }
                                                     

@@ -83,7 +83,7 @@ export function SpearModel(props) {
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let modelRef = useRef(null)
-  let _texture = prepareTexture('gametexture.jpg');
+  let _texture = prepareTexture('txtglobal1.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture,visible:props._visible,wireframe:_appContext.devMode.current? true : false});
   let mat = new THREE.MeshBasicMaterial({color:'yellow',visible:props._visible,wireframe:true});
   let spear2HeadMat = new THREE.MeshBasicMaterial({color:'blue',side:THREE.BackSide,transparent:true,opacity:0.1});
@@ -120,8 +120,10 @@ export function SpearModel(props) {
       </mesh> */}
       <group ref={modelRef} position={[props.posX,props.posY,props.posZ]}
       >
-              <mesh scale={0.3} rotation={[Math.PI*0.5,Math.PI*0.2,0]}  material={mat} geometry={nodes.playerBullet_1.geometry} >
-                    <meshBasicMaterial color={'yellow'} wireframe visible={props._visible} />
+              <mesh scale={1} 
+              rotation={[Math.PI*0.5,Math.PI*0.2,0]}  
+              material={mat} geometry={nodes.nArrow.geometry} >
+                    <meshBasicMaterial map={_texture} visible={props._visible} />
               </mesh>
               <mesh scale={1.5} material={mat} geometry={nodes.playerBullet_1.geometry}  >
                     <meshBasicMaterial color={'red'} wireframe visible={props._visible} />
@@ -225,31 +227,34 @@ export function Dummy_1_model(props) {
       
   )
 }
-export function TreeDecor_model(props) {
+export function Decor_model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('texture1.jpg');
+  let _texture = prepareTexture('ntxt4.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
   // let mat = new THREE.MeshBasicMaterial({color:'white',wireframe:true});
   const mat = new THREE.MeshMatcapMaterial({color:'white'})
   const mat2 = new THREE.MeshMatcapMaterial({color:'green'})
+  const mat3 = new THREE.MeshMatcapMaterial({map:_texture})
   return (
 
     // <mesh  geometry={nodes.tree.geometry} material={mat} position={[props.x,0,props.z]} />
-    
-    <mesh geometry={nodes.pdecor_1.geometry} material={mat} position={[props.x,0,props.z]}>
+    <>
+    {props.skin == 'tree' && <mesh geometry={nodes.pdecor_1.geometry} material={mat} position={[props.x,0,props.z]}>
         <mesh geometry={nodes.pdecor_1_leaf.geometry} material={mat2} />
-    </mesh>
-            
+    </mesh>}
+    {props.skin == 'wall' && <mesh geometry={nodes.nWall.geometry} material={mat3} position={[props.x,0,props.z]}/>}
+        
+    </>      
       
   )
 }
 export function WallModel(props)
 {
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('gametexture.jpg');
+  let _texture = prepareTexture('ntxt4.jpg');
   let wallRef = useRef(null);
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
-  const mat = new THREE.MeshMatcapMaterial({color:'blue'})
+  const mat = new THREE.MeshMatcapMaterial({map:_texture})
   useEffect(()=>
     { 
       props.controller.wallController.value[props.controller.index] = (args)=>
@@ -266,7 +271,7 @@ export function WallModel(props)
     },[])
   return(
     // <mesh ref={wallRef} geometry={nodes.wall_1.geometry} material={mat} position={[props.x,0,props.z]} />
-    <mesh ref={wallRef} geometry={nodes.pwall_2.geometry} material={mat} position={[props.x,0,props.z]} />
+    <mesh ref={wallRef} geometry={nodes.nWall.geometry} material={mat} position={[props.x,0,props.z]} />
   )
 }
 export function ItemType2Model(props) {

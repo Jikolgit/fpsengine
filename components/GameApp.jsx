@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { TestModel } from "./Testmodel";
 import { OrbitControls, PerspectiveCamera, Point, Points } from "@react-three/drei";
 import { createContext, useContext, useEffect, useRef } from "react";
-import {  ExitDoor_model, GroundModel, PlayerCursor, SpearModel, TreeDecor_model } from "./Game3DAssets";
+import {  ExitDoor_model, GroundModel, PlayerCursor, SpearModel } from "./Game3DAssets";
 import { EnemyComponent } from "./enemy";
 import { appContext } from "../src/App";
 import { PlatformIndex } from "./DevHelp";
@@ -29,11 +29,11 @@ export function GameApp(props)
     let getCameraPOsition = {value:0};
     let getorbitPosition = {value:0};
     let playerSpeed = _appContext.playerStats.current.moveSpeed;
-    let bulletSpeed = 0.1*5;
+    let bulletSpeed = 0.1*5; // 1 2 5
     let playerDistance = {value:0};
     let playerDistanceTarget = {value:2};
     let enemyLifePoint = {value:1};
-    let playerPoseVar = {x:structuredClone(GameMap[7].xPose),y:0.8,z:structuredClone(GameMap[7].zPose)};
+    let playerPoseVar = {x:structuredClone(GameMap[23].xPose),y:0.8,z:structuredClone(GameMap[23].zPose)};
     let playerPositionOnMap = {x:playerPoseVar.x,y:0,z:playerPoseVar.z}
     let bulletPositionOnMap = [];
     let camRotateStart = useRef(false);
@@ -76,6 +76,7 @@ export function GameApp(props)
     let directionToGo = {value:'FRONT'};
     let gloBalObject;
     let platformModelContainer = useRef([]);
+    let wallModelContainer = useRef([]);
 
 
 
@@ -694,7 +695,8 @@ export function GameApp(props)
                                     <sphereGeometry args={[0.05,10,10]} />
                                     <meshBasicMaterial visible={false}  />
 
-                                    <SpearModel controller={{bulletModelController:bulletModelController,index:i}} _rotation={[Math.PI*0.5,0,0]}  _visible={false} posX={-0.1} posY={0.25} posZ={0} />
+                                    <SpearModel controller={{bulletModelController:bulletModelController,index:i}} _rotation={[Math.PI*0.5,0,0]}  
+                                    _visible={false} posX={-0.5} posY={0} posZ={0} />
                             </mesh>
         bulletRefInfo.current[i] = {_index:i,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
         bulletPositionOnMap[i] = {x:playerPoseVar.x,y:0.6,z:playerPoseVar.z};
@@ -794,7 +796,7 @@ export function GameApp(props)
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
             barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
-            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer
+            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer
 
             }
         placeModelOnScene(gloBalObject)
@@ -821,6 +823,7 @@ export function GameApp(props)
                         <axesHelper args={[15]} />
                         {/* <GroundModel /> */}
                         {platformModelContainer.current}
+                        {wallModelContainer.current}
                         {objectContainer.current}
                         <mesh
                             name="PLAYER"

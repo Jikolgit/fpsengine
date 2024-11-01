@@ -112,7 +112,7 @@ export function AddDecor(props)
 
   for(let i = 0;i<props.position.length;i++)
   {
-    objectDetailArr[i] = {position:props.position[i],decorType:'tree'}
+    objectDetailArr[i] = {position:props.position[i],skin:props.skin}
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
   {   
@@ -205,7 +205,7 @@ export function AddMob({life,lootObject,active,position,children})
   {   
             createObject(AppCntext.gameMap,'mob',objectDetailArr,i);
   }
-  return null
+  return children? children : null
 }
 export function AddWall(props)
 {
@@ -215,7 +215,7 @@ export function AddWall(props)
   for(let i = 0;i<props.position.length;i++)
   {
 
-      objectDetailArr[i] = {position:props.position[i],objectName:'Wall_type_1',skin:'wall_1',life:props.value?props.value:0,isImportant:false}
+      objectDetailArr[i] = {position:props.position[i],objectName:'Wall_type_1',skin:'wall_1',destructible:props.destructible?props.destructible:false,life:props.value?props.value:0,isImportant:false}
     
   }
   for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
