@@ -31,6 +31,15 @@ export function Model(props) {
         <mesh geometry={nodes.spear_2_head.geometry} material={nodes.spear_2_head.material} position={[0, 0.79, 0.001]} scale={1.227} />
       </mesh>
       <mesh geometry={nodes.spear_1.geometry} material={nodes.spear_1.material} position={[1, 1.775, -0.224]} rotation={[0.842, 0, 0]} />
+      <mesh geometry={nodes.planeGround.geometry} material={nodes.planeGround.material} position={[1, 0, -2]} />
+      <mesh geometry={nodes.nArrow.geometry} material={nodes.nArrow.material} position={[1.166, 1.588, 1.595]} rotation={[Math.PI / 2, 0, 0]} />
+      <mesh geometry={nodes.nWall.geometry} material={nodes.nWall.material} position={[5, 0, -2]} />
+      <mesh geometry={nodes.ndecor1.geometry} material={nodes.ndecor1.material} position={[7.1, 0.002, -2]} />
+      <mesh geometry={nodes.ndecor2.geometry} material={nodes.ndecor2.material} position={[3, 0.02, -2]} />
+      <mesh geometry={nodes.nmob1.geometry} material={nodes.nmob1.material} position={[11, 1.002, -2]}>
+        <mesh geometry={nodes.nmob1head.geometry} material={nodes.nmob1head.material} />
+        <mesh geometry={nodes.nmob1horn.geometry} material={nodes.nmob1horn.material} />
+      </mesh>
       <mesh geometry={nodes.Cube001.geometry} material={nodes.Cube001.material} position={[28, 1, -5]} />
       <mesh geometry={nodes.pcoin_1.geometry} material={nodes.pcoin_1.material} position={[32, 1.005, -5]} />
       <mesh geometry={nodes.pdecor_1.geometry} material={nodes.pdecor_1.material} position={[36, 0, -5]}>

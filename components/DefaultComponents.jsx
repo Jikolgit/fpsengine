@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { appContext } from "../src/App";
-import { createObject } from "./gameMap";
+import { createLevel, createObject } from "./gameMap";
 import { storyText } from "./gameStory";
 
 
@@ -8,16 +8,18 @@ import { storyText } from "./gameStory";
 
 /**
  * 
- * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean}} param0 
+ * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean,playerPosition:number}} param0 
  * @returns 
  */
-export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel})
+export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel,playerPosition})
 {
   const AppCntext = useContext(appContext);
 
   AppCntext.levelInfo.current._MobToKillNumber = mobToKill? mobToKill : 0;
   AppCntext.levelInfo.current._KeyNumber = keyNumber? keyNumber : 0;
   AppCntext.levelInfo.current.finalLevel = finalLevel? finalLevel : false;
+  AppCntext.playerPosition.current = playerPosition?playerPosition : 0
+  
 
   return null
 }
@@ -79,9 +81,9 @@ export function AddItem(props)
       objectDetailArr[i] = {position:props.position[i],objectName:'wall_1',skin:'wall_1',value:props.value?props.value:0,isImportant:false}
     }
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-      createObject(AppCntext.gameMap,'item',objectDetailArr,i);
+      createObject(AppCntext.gameMap.current,'item',objectDetailArr,i);
       
   }
   return null
@@ -98,25 +100,30 @@ export function AddWeapon(props)
     
    
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-      createObject(AppCntext.gameMap,'item',objectDetailArr,i);
+      createObject(AppCntext.gameMap.current,'item',objectDetailArr,i);
       
   }
   return null
 }
-export function AddDecor(props)
+/**
+ * 
+ * @param {{position:number,skin:string}} param0 
+ * @returns 
+ */
+export function AddDecor({position,skin})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = []
 
-  for(let i = 0;i<props.position.length;i++)
+  for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {position:props.position[i],skin:props.skin}
+    objectDetailArr[i] = {position:position[i],skin:skin}
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-            createObject(AppCntext.gameMap,'decor',objectDetailArr,i);
+            createObject(AppCntext.gameMap.current,'decor',objectDetailArr,i);
   }
   return null
 }
@@ -134,9 +141,9 @@ export function AddDoor({position,open})
   {
     objectDetailArr[i] = {open:open?open:false,position:position[i]}
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-            createObject(AppCntext.gameMap,'Exitdoor',objectDetailArr,i);
+            createObject(AppCntext.gameMap.current,'Exitdoor',objectDetailArr,i);
   }
   return null
 }
@@ -201,9 +208,9 @@ export function AddMob({life,lootObject,active,position,children})
     objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:false,
                           objectValue,objectPosition,objectSkin}
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-            createObject(AppCntext.gameMap,'mob',objectDetailArr,i);
+            createObject(AppCntext.gameMap.current,'mob',objectDetailArr,i);
   }
   return children? children : null
 }
@@ -218,9 +225,9 @@ export function AddWall(props)
       objectDetailArr[i] = {position:props.position[i],objectName:'Wall_type_1',skin:'wall_1',destructible:props.destructible?props.destructible:false,life:props.value?props.value:0,isImportant:false}
     
   }
-  for(let i =0;i<(AppCntext.mapWidth*AppCntext.mapHeight);i++)
+  for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
-      createObject(AppCntext.gameMap,'wall',objectDetailArr,i);
+      createObject(AppCntext.gameMap.current,'wall',objectDetailArr,i);
       
   }
   return null
@@ -289,4 +296,23 @@ export function AddTimer({minute,second})
     return null
 }
 
+/**
+ * 
+ * @param {{width:number,height:number,addWallOnMap:boolean}} param0 
+ * @returns 
+ */
+export function SetMapDimension({width,height,addWallOnMap})
+{
+  let _appContext = useContext(appContext)
+  _appContext.mapWidth.current = width? width : 16;
+  _appContext.mapWidth.current = _appContext.mapWidth.current > 0? _appContext.mapWidth.current : 16;
+
+  _appContext.mapHeight.current = height? height : 19;
+  _appContext.mapHeight.current = _appContext.mapHeight.current > 0? _appContext.mapHeight.current : 19;
+
+  _appContext.setMapWall.current = true
+
+  _appContext.gameMap.current = createLevel(_appContext.level.current,_appContext.mapWidth.current,_appContext.mapHeight.current)
+  return null
+}
 

@@ -163,7 +163,7 @@ export function placeModelOnScene(gloBalObject)
                     gloBalObject.objectContainer.current[i] = arrElem
                 }
 
-                if(gloBalObject.GameMap[i].objectLimit)
+                if(gloBalObject.GameMap[i].objectLimit && gloBalObject._appContext.setMapWall.current)
                 {
                     gloBalObject.wallModelContainer.current[i] = <Decor_model key={i} skin={'wall'} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     

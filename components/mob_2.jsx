@@ -99,11 +99,15 @@ export function Mob_2(props)
         }
     let prepareBulletAnimation = ()=>
         {
-            let freeBulletElem = lookForFreeMobBullet();
+            if(props._attack)
+            {
+                let freeBulletElem = lookForFreeMobBullet();
             
-            freeBulletElem.isShooted = true;
-            freeBulletElem.bulletDirection = playerDirectionToMob;
-            freeBulletElem.count = Math.floor((Math.random()*10)+81)
+                freeBulletElem.isShooted = true;
+                freeBulletElem.bulletDirection = playerDirectionToMob;
+                freeBulletElem.count = Math.floor((Math.random()*10)+81)
+            }
+
             
         }
     let beforeBulletAnimation = (index,bulletDirection)=> //AVANT Chaque animation de la balle
@@ -450,8 +454,8 @@ export function Mob_2(props)
                     }
                     if(mobState=='Alive')
                     {
-                            if(props._attack)
-                            {
+                            // if(props._attack)
+                            // {
                                 if(!_gameAppContext.playerMoveIsActive.current)
                                     {
                                         if(checkOnce)
@@ -468,7 +472,7 @@ export function Mob_2(props)
                                     {
                                         checkOnce = true;
                                     }
-                            }
+                            // }
                             
                             
                     }
@@ -493,18 +497,20 @@ export function Mob_2(props)
             
                 
             
-            {props._attack == false && <Dummy_1_model
+            {props._attack == false && <Mob_1_model
                 
-                name="ENEMY"
-                x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
-            >
-            </Dummy_1_model>}
+                                            name="ENEMY"
+                                            x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
+                                        >
+                                        </Mob_1_model>
+            }
             {props._attack && <Mob_1_model
               
-                name="ENEMY"
-                x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
-            >
-            </Mob_1_model>}
+                                name="ENEMY-ACTIVE"
+                                x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
+                                >
+                            </Mob_1_model>
+            }
             {props.hasObject? 
                     <>
                     {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />

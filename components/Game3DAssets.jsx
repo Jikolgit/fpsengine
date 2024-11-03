@@ -155,7 +155,7 @@ export function Dummy_1_model(props) {
 
   let modelRef = useRef(null);
   let mobHitManager = {startEffect:false,timer:10,effectCount:0}
-  // let mat = new THREE.MeshBasicMaterial({map:_texture});
+  const mat1 = new THREE.MeshMatcapMaterial({color:'white'})
   let mat = new THREE.MeshBasicMaterial({color:'red',wireframe:true});
   let visibleStatut;
 
@@ -208,9 +208,17 @@ export function Dummy_1_model(props) {
   return (
 
     <>
-    <mesh ref={modelRef} geometry={nodes.pmob_0.geometry} material={mat} position={[props.x,0.1,props.z]}>
-           
+    {/* <mesh ref={modelRef} geometry={nodes.pmob_0.geometry} material={mat} position={[props.x,0.1,props.z]}/> */}
+    <mesh geometry={nodes.nmob1.geometry} position={[props.x,0.8,props.z]} >
+        <meshMatcapMaterial color={'black'} />
+        <mesh geometry={nodes.nmob1head.geometry}>
+                <meshMatcapMaterial color={'white'} />
+        </mesh>
+        <mesh geometry={nodes.nmob1horn.geometry} >
+                <meshMatcapMaterial color={'blue'} />
+        </mesh>
     </mesh>
+    
     <mesh position={[props.x,0.1,props.z]} visible={false}
     >
         <boxGeometry args={[2,2,2]}  />
@@ -230,11 +238,13 @@ export function Dummy_1_model(props) {
 export function Decor_model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
   let _texture = prepareTexture('ntxt4.jpg');
+  let _texture2 = prepareTexture('txtglobal1.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
   // let mat = new THREE.MeshBasicMaterial({color:'white',wireframe:true});
   const mat = new THREE.MeshMatcapMaterial({color:'white'})
   const mat2 = new THREE.MeshMatcapMaterial({color:'green'})
   const mat3 = new THREE.MeshMatcapMaterial({map:_texture})
+  const mat4 = new THREE.MeshMatcapMaterial({map:_texture2})
   return (
 
     // <mesh  geometry={nodes.tree.geometry} material={mat} position={[props.x,0,props.z]} />
@@ -243,6 +253,8 @@ export function Decor_model(props) {
         <mesh geometry={nodes.pdecor_1_leaf.geometry} material={mat2} />
     </mesh>}
     {props.skin == 'wall' && <mesh geometry={nodes.nWall.geometry} material={mat3} position={[props.x,0,props.z]}/>}
+    {props.skin == 'tombstone' && <mesh geometry={nodes.ndecor1.geometry} material={mat4} position={[props.x,0,props.z]}/>}
+    {props.skin == 'lampadaire' && <mesh geometry={nodes.ndecor2.geometry} material={mat4} position={[props.x,0,props.z]}/>}
         
     </>      
       
@@ -534,15 +546,29 @@ export function Mob_1_model(props) {
   let mobShakeFromLeft = false;
   let mobInitialPos = 0;
   let mobShakeAnimationStart = false;
+  let explodeParticleController = useRef(null); 
+  let shakeOrientation = useRef('FRONT-BACK');
   let shakeBrick = ()=>
     { 
       let value = mobShakeFromLeft? -0.2 : 0.2;
       mobShakeFromLeft = mobShakeFromLeft? false : true;
-      modelRef.current.position.x = modelRef.current.position.x + value
+      if(shakeOrientation.current == 'FRONT-BACK')
+      {
+        modelRef.current.position.x = modelRef.current.position.x + value
+      }
+      else
+      {
+        modelRef.current.position.z = modelRef.current.position.z + value
+      }
+      
     }
   let shakeBrickCallBack = ()=>
     { 
-      modelRef.current.position.x = mobInitialPos
+      
+      if(shakeOrientation.current == 'FRONT-BACK')
+      {modelRef.current.position.x = mobInitialPos}
+      else
+      {modelRef.current.position.z = mobInitialPos}
       mobShakeAnimationStart = false;
     }
   useFrame(()=>
@@ -580,7 +606,7 @@ export function Mob_1_model(props) {
         {
           if(args == 'REMOVE-MOB')
           {
-            modelRef.current.material.visible = false;
+            modelRef.current.visible = false;
           }
           else if(args == 'SHAKE-MOB')
           {
@@ -590,8 +616,13 @@ export function Mob_1_model(props) {
           { 
             if(!mobShakeAnimationStart)
             {
+              explodeParticleController.current('EXPLODE')
               mobShakeAnimationStart = true
-              mobInitialPos = modelRef.current.position.x
+             
+              if(shakeOrientation.current == 'FRONT-BACK')
+              {mobInitialPos = modelRef.current.position.x;}
+              else
+              {mobInitialPos = modelRef.current.position.z;}
               let customCounter = new CustomCounter(4,7,shakeBrick,shakeBrickCallBack)
               customCounter.start();
             }
@@ -602,18 +633,22 @@ export function Mob_1_model(props) {
           }
           else if(args == 'MOB-ROTATE-LEFT')
           {
+            shakeOrientation.current = 'LEFT-RIGHT'
             modelRef.current.rotation.y = Math.PI*0.5
           }
           else if(args == 'MOB-ROTATE-RIGHT')
           {
+            shakeOrientation.current = 'LEFT-RIGHT'
             modelRef.current.rotation.y = -Math.PI*0.5
           }
           else if(args == 'MOB-ROTATE-FRONT')
           {
+            shakeOrientation.current = 'FRONT-BACK'
             modelRef.current.rotation.y = 0
           }
           else if(args == 'MOB-ROTATE-BACK')
           {
+            shakeOrientation.current = 'FRONT-BACK'
             modelRef.current.rotation.y = Math.PI
           }
         }
@@ -628,12 +663,23 @@ export function Mob_1_model(props) {
           //      </mesh>
           // </mesh>
           <>
-              <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]}>
-                    {/* <mesh geometry={nodes.mob_1.geometry} visible={false} scale={1}>
-                        <meshBasicMaterial color={'red'}  />
-                  </mesh> */}
-                    
+              {/* <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]} /> */}
+              <mesh ref={modelRef} position={[props.x,0.8,props.z]} rotation={[0,Math.PI, 0]} >
+                      <boxGeometry args={[2,2,2]} />
+                      <meshBasicMaterial color={'red'} visible={false} wireframe />
+                      <MobHitParticleEffect controller={explodeParticleController} x={0.5} z={0.5} />
+                      <mesh  geometry={nodes.nmob1.geometry}   >
+                          <meshMatcapMaterial color={'black'} />
+                          <mesh geometry={nodes.nmob1head.geometry}>
+                                  <meshMatcapMaterial color={'white'} />
+                          </mesh>
+                          <mesh geometry={nodes.nmob1horn.geometry} >
+                                  {props.name == 'ENEMY' && <meshMatcapMaterial color={'blue'} />}
+                                  {props.name == 'ENEMY-ACTIVE' && <meshMatcapMaterial color={'red'} />}
+                          </mesh>
+                      </mesh>
               </mesh>
+              
               <mesh position={[props.x,0.1,props.z]} visible={false}
               >
                   <boxGeometry args={[2,2,2]}  />
@@ -644,6 +690,99 @@ export function Mob_1_model(props) {
          
             
       
+  )
+}
+function MobHitParticleEffect(props)
+{
+  let paticleTexture = useTexture('particleRes/fire_01.png')
+  let spriteGroupRef = useRef(null)
+  let ref1 = useRef(null)
+  let ref2 = useRef(null)
+  let ref3 = useRef(null)
+  let ref4 = useRef(null)
+  let explodeSeepd = 0.03
+  let explodeStart = useRef(false);
+  // alphaMap={paticleTexture} depthWrite={true}
+  let spriteMat = <spriteMaterial color={'red'} alphaMap={paticleTexture} depthWrite={true}  />;
+  useFrame(()=>
+    {
+      if(explodeStart.current)
+      {
+        ref1.current.position.x += explodeSeepd
+        ref1.current.position.y += explodeSeepd
+        ref2.current.position.x -= explodeSeepd
+        ref2.current.position.y += explodeSeepd
+
+        ref3.current.position.x += explodeSeepd
+        ref3.current.position.y -= explodeSeepd
+        ref4.current.position.x -= explodeSeepd
+        ref4.current.position.y -= explodeSeepd
+        
+        if(ref1.current.position.x >= 0.5)
+        {
+          explodeStart.current = false;
+          spriteGroupRef.current.visible = false;
+          ref1.current.position.x = 0
+          ref1.current.position.y = 0.2
+          ref2.current.position.x = -0.2
+          ref2.current.position.y = 0.2
+
+          ref3.current.position.x = 0
+          ref3.current.position.y = 0
+          ref4.current.position.x = -0.2
+          ref4.current.position.y = 0
+        }
+      }
+        
+    })
+
+  useEffect(()=>
+    {
+      props.controller.current = (args)=>
+        {
+          if(args == 'EXPLODE')
+          {
+            spriteGroupRef.current.visible = true;
+            explodeStart.current = true;
+          }
+        }  
+    },[])
+  return(
+    <>
+        <group
+         ref={spriteGroupRef} visible={false}
+        >
+                <sprite 
+                  ref={ref1}
+                  position={[0,0.2,0.7]} scale={0.4}
+                >
+                  {spriteMat}
+                </sprite>
+                <sprite 
+                  ref={ref2}
+                  position={[-0.2,0.2,0.7]} scale={0.4}
+                >
+                  {spriteMat}
+                </sprite>
+
+                <sprite 
+                  ref={ref3}
+                  position={[0,0,0.7]} scale={0.4}
+                >
+                  {spriteMat}
+                </sprite>
+                <sprite 
+                  ref={ref4}
+                  position={[-0.2,0,0.7]} scale={0.4}
+                >
+                  {spriteMat}
+                </sprite>
+        </group>
+        
+        
+    </>
+    
+    
   )
 }
 export function Barier_Model(props)

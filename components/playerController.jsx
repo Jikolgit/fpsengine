@@ -263,13 +263,21 @@ function checkifElemCanMoveNextPlatform(objArg)
                                 }
                                 else
                                 {
-                                    if(_result.hasEnemy || _result.objectLimit)
+                                    if(_result.hasEnemy)
                                     {   
                                         return false
                                     }
                                     else
                                     {
-                                        return true;
+                                        if(_result.objectLimit && objArg._appContext.setMapWall.current)
+                                        {
+                                            return false;
+                                        }
+                                        else
+                                        {
+                                            return true;
+                                        }
+                                        
                                     }
                                     
                                 }

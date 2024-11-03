@@ -5,8 +5,9 @@ import { Canvas } from '@react-three/fiber';
 import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
-import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen, AddTimer } from '../components/DefaultComponents';
+import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen, AddTimer, SetMapDimension } from '../components/DefaultComponents';
 import { PlayerCursor } from '../components/Game3DAssets';
+import { Settings } from '../components/Setting';
 
 
 export let appContext = createContext(null)
@@ -14,15 +15,17 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(1);
-  let mapHeight = 19;
-  let mapWidth = 16;
-  let gameMap = createLevel(level.current);
+  let level = useRef(2);
+  let mapHeight = useRef(19);
+  let mapWidth = useRef(16);
+  let playerPosition = useRef(5)
+  let gameMap = useRef(createLevel(level.current,mapWidth.current,mapHeight.current));
   let playerLifeContainerRef = useRef(null);
   let playerMoneyContainerRef = useRef(null);
   let lifeBarFunc = useRef(null);
   let gameNotifFunc = useRef(null);
   let gamePause = useRef(false);
+  let setMapWall = useRef(false);
   let gameControllerVisible = useRef(true);
   let actionIconVisible = useRef(false);
   let soundOn = useRef(true);
@@ -38,7 +41,7 @@ function App() {
   const ScreenHaloCOntroller = useRef(null);
   const BlackScreenTransitionController = useRef(null);
   const ScoreVueController = useRef(null);
-  let transitionBetweenScreen = useRef(false);
+  let transitionBetweenScreen = useRef(true);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -229,31 +232,35 @@ function App() {
         gamePause.current = true;
         AudioManage.playAmbient('stop')
       }
-  let restartLevel = ()=>
-      {
-        playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
-        AudioManage.play('click')
-        level.current = 1;
-        setScreen(c => c = 'LOADING-SCREEN')
-        window.setTimeout(()=>{setScreen(c => c = 'GAME');gamePause.current = false;actualGameScreen.current = 'GAME-SCREEN'},1000)
-      }
+  // let restartLevel = ()=>
+  //     {
+  //       playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
+  //       AudioManage.play('click')
+  //       level.current = 1;
+  //       setScreen(c => c = 'LOADING-SCREEN')
+  //       window.setTimeout(()=>{setScreen(c => c = 'GAME');gamePause.current = false;actualGameScreen.current = 'GAME-SCREEN'},1000)
+  //     }
   let quitGame = (args)=>
     {
       AudioManage.play('click');
       AudioManage.playAmbient('stop')
       if(args == 'RESTART-GAME-OVER')
       {
-        playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
+        // playerStats.current = {score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:35,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false}
+        playerStats.current.life =  structuredClone(playerStats.current.maxLife);
+        playerStats.current.keyCollected =  0
+        playerStats.current.mobKilled = 0
+        // playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
         level.current = 1;
       }
       else if(args == 'RESTART-GAME-FINISHED')
       {
-        playerStats.current.life = 5
+        playerStats.current.life =  structuredClone(playerStats.current.maxLife);
         playerStats.current.keyCollected = 0
         playerStats.current.mobKilled = 0
         level.current = 1;
       }
-      saveGame(saveDataOrder.current)
+      saveGame()
       gamePause.current = false;
       setGameVueActive(false)
       GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})
@@ -347,10 +354,11 @@ function App() {
       <appContext.Provider
         value={{playerLifeContainerRef,playerMoneyContainerRef,touchEventMFunc,playerStats,devMode,gamePause,PauseScreenController,setPause,HelpScreenFunc,
                 actualGameScreen,helpMode,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
-                touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,restartLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
+                touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
-                BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState}}
+                BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState,
+                playerPosition,setMapWall}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -371,7 +379,7 @@ function App() {
             {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
 
             <GameUI />
-            <GameConfig />
+            <Settings />
 
             {/* <HelpScreen /> */}
             
@@ -416,16 +424,19 @@ function GameConfig()
           <>
               {AppCntext.level.current == 1 &&
                 <>
-                    <UpdateLevelConfig  />
-                    <AddTimer minute={2} second={99} />
+                    <UpdateLevelConfig playerPosition={4}  />
+                    <SetMapDimension width={3} height={20} addWallOnMap />
+                    <AddDoor position={[55]} open  />
+                    {/* <AddTimer minute={2} second={99} /> */}
                     
-                    <AddDecor skin={'tree'} position={[45,66,192,147,126,187]} />
-                    {/* <AddItem name={'coin_item'} position={[183]} value={3} /> */}
-                    <AddWall position={[183]} />
-                    <AddMob position={[134-(16*5),94]} life={10}  active>
-                            {/* <AddItem name={'coin_item'} position={[183]} value={3} /> */}
-                    </AddMob>
-                    <AddDoor position={[279]} open  />
+                    {/* <AddDecor skin={'tombstone'} position={[45,66,183]} />
+                    <AddDecor skin={'lampadaire'} position={[147,126,187]} />
+                    <AddItem name={'coin_item'} position={[184]} value={3} />
+                    
+                    <AddMob position={[134-(16*5)]} life={10}  />
+
+                    <AddMob position={[94]} life={5} active />
+                    <AddDoor position={[279]} open  /> */}
                 </>
               }
               {AppCntext.level.current == 2 &&
@@ -435,7 +446,7 @@ function GameConfig()
                     <AddMob position={[135-(16*5),94]} life={2} />
                     <AddMob position={[134-(16*5)]} life={2} active />
                     <AddDecor position={[45,66,192,147,126,187]} />
-                    <AddDoor position={[295]}  />
+                    <AddDoor position={[279]}  />
                 </>
               }
               {AppCntext.level.current == 3 &&

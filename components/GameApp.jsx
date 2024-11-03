@@ -22,7 +22,7 @@ export function GameApp(props)
 
     let _appContext = useContext(appContext);
     let level = useRef(_appContext.level.current);
-    const GameMap =  _appContext.gameMap;
+    const GameMap =  _appContext.gameMap.current;
     let gameMapInfo = _appContext.levelInfo.current; //WIN CONDITION
     let moveDirection={value:'none'};
     let getPlayerPosition = {value:0};
@@ -33,7 +33,7 @@ export function GameApp(props)
     let playerDistance = {value:0};
     let playerDistanceTarget = {value:2};
     let enemyLifePoint = {value:1};
-    let playerPoseVar = {x:structuredClone(GameMap[23].xPose),y:0.8,z:structuredClone(GameMap[23].zPose)};
+    let playerPoseVar = {x:structuredClone(GameMap[_appContext.playerPosition.current].xPose),y:0.8,z:structuredClone(GameMap[_appContext.playerPosition.current].zPose)};
     let playerPositionOnMap = {x:playerPoseVar.x,y:0,z:playerPoseVar.z}
     let bulletPositionOnMap = [];
     let camRotateStart = useRef(false);
@@ -820,7 +820,7 @@ export function GameApp(props)
                         {/* <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
                         <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} /> */}
 
-                        <axesHelper args={[15]} />
+                        {/* <axesHelper args={[15]} /> */}
                         {/* <GroundModel /> */}
                         {platformModelContainer.current}
                         {wallModelContainer.current}
