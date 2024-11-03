@@ -292,6 +292,7 @@ export function ItemType2Model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
   let textureSrc;
   if(props.skin == 'wall_1'){textureSrc = 'gametexture.jpg'}
+  else if(props.skin == 'key_1'){textureSrc = 'txtglobal1.jpg'}
   else{textureSrc = 'texture2.jpg'}
   let _texture = prepareTexture(textureSrc);
   let itemRef = useRef(null);
@@ -303,7 +304,7 @@ export function ItemType2Model(props) {
   {
     if(!_appContext.gamePause.current)
     {
-      if(props.skin == 'heal_item_1')
+      if(props.skin == 'heal_item_1' || props.skin == 'key_1')
       {
         itemRef.current.rotation.y += (1/30);
       }
@@ -338,6 +339,8 @@ export function ItemType2Model(props) {
           </mesh>} */}
           {props.skin == "heal_item_1" && <mesh ref={itemRef} scale={0.5} geometry={nodes.pheal_1.geometry} material={healmat} position={[props.x,0.1,props.z]} />}
           {props.skin == "heal_item_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={props.x} z={props.z} />}
+          {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
+          {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />}
           {props.skin == "triangle" && 
                       <mesh
                           position={[props.x,0.5,props.z]}

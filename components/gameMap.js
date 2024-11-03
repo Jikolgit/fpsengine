@@ -125,9 +125,10 @@ export function createObject(map_level,objectType,objectIndexArr,index)
                 map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob' ,
                 map_level[index].objectDesc={mobType:objectIndexArr[i].mobType,mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,
                                              hasObject:objectIndexArr[i].hasObject,objectName:objectIndexArr[i].hasObject,objectValue:objectIndexArr[i].objectValue,objectSkin:objectIndexArr[i].objectSkin,
-                                             fromMob:true,isImportant:objectIndexArr[i].isImportant},
+                                             fromMob:true,isImportant:objectIndexArr[i].isImportant,objectIsImportant:objectIndexArr[i].objectIsImportant},
                 map_level[index].object = true;map_level[index].objectId = objectIdValue;
                 objectIdValue ++;
+             
             }
             
             

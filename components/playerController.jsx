@@ -245,7 +245,7 @@ function checkifElemCanMoveNextPlatform(objArg)
                                                 return false
                                             }
                                         }
-                                        else if(_result.objectType == 'cauris_item' || _result.objectType == 'key' || _result.objectType == 'heal_item')
+                                        else if(_result.objectType == 'item')
                                         {
                                             return false;
                                         }

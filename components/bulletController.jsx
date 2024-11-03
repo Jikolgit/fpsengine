@@ -153,7 +153,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                     result.objectDesc.life =0;
                                                     result.hasEnemy = false;
                                                     gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
-                                                    
+                                                  
                                                    
                                                     let effectAfterMobDeath = ()=>
                                                         {

@@ -1288,6 +1288,21 @@ export function UpgradePlayerScreen()
             </>
     )
 }
+
+export function LevelUi(props)
+{
+    let _appContext = useContext(appContext)
+    let [_visible,setVisible] = useState(true);
+    return(
+            <>
+                {_visible &&
+                    <div className="text-white text-[1.5rem] absolute z-[2] right-[20px] top-[40px] ">
+                    Level : {_appContext.level.current}
+                    </div>
+                }
+            </>  
+    )
+}
 //Z-INDEX
 // 1-  Canvas
 // 2- LifeBar, GameController, TitleScreen, OptionScreen, PlayerMoney, CreditScreen, ToggleTouchScreen

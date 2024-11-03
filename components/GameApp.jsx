@@ -244,6 +244,7 @@ export function GameApp(props)
                             if(result.objectDesc.objectName=='weapon_item'){setActionButtonEffect('TAKE-SPEAR',result)}
                             else if(result.objectDesc.objectName=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                             else if(result.objectDesc.objectName=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
+                            else if(result.objectDesc.objectName=='key_item'){setActionButtonEffect('TAKE-KEY',result)}
                             else if(result.objectDesc.objectName=='wall_1')
                             {
 
@@ -317,6 +318,23 @@ export function GameApp(props)
                     // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
                     _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'HEAL';
+                }
+                else
+                {
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    _appContext.toggleActionIcon('SHOOT');
+                    currentObjectInFront.effect ='none';
+                }
+
+
+            }
+            else if(effect == 'TAKE-KEY')
+            {
+                if(objectInfo.isOnScene)
+                {
+                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    _appContext.toggleActionIcon('INTERACT');
+                    currentObjectInFront.effect = 'KEY';
                 }
                 else
                 {
@@ -602,6 +620,28 @@ export function GameApp(props)
                                 else
                                 {
                                     managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
+                                    itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
+                                }
+
+                                getNextPlatformInfo(playerDirection,'AfterMove');
+
+                            }
+                            else if (currentObjectInFront.effect == 'KEY')
+                            {
+                                AudioManage.play('coin')
+                                // console.log(currentObjectInFront.objectInfo.objectDesc.isImportant)
+                                // if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
+                                
+                                currentObjectInFront.objectInfo.isOnScene = false;
+
+                                if(currentObjectInFront.objectInfo.objectDesc.fromMob)
+                                {
+                                    if(currentObjectInFront.objectInfo.objectDesc.objectIsImportant){managePlayerKey()}
+                                    mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");
+                                }
+                                else
+                                {
+                                    if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
 

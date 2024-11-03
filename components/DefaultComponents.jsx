@@ -20,7 +20,6 @@ export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel,playerPosition
   AppCntext.levelInfo.current.finalLevel = finalLevel? finalLevel : false;
   AppCntext.playerPosition.current = playerPosition?playerPosition : 0
   
-
   return null
 }
 export function UpdatePlayerStat(props)
@@ -61,24 +60,29 @@ export function UpdatePlayerStat(props)
   return null
 }
 
-export function AddItem(props)
+/**
+ * 
+ * @param {{position:number[],name:string,value:number|null,important:boolean}} param0 
+ * @returns 
+ */
+export function AddItem({position,name,value,important})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = []
 
-  for(let i = 0;i<props.position.length;i++)
+  for(let i = 0;i<position.length;i++)
   {
-    if(props.name == 'heal_item')
+    if(name == 'heal_item')
     {
-      objectDetailArr[i] = {position:props.position[i],objectName:'heal_item',skin:'heal_item_1',value:props.value?props.value:2,isImportant:true}
+      objectDetailArr[i] = {position:position[i],objectName:'heal_item',skin:'heal_item_1',value:value?value:2,isImportant:important?important:false}
     }
-    else if(props.name == 'coin_item')
+    else if(name == 'coin_item')
     {
-      objectDetailArr[i] = {position:props.position[i],objectName:props.name,skin:'coin_item_1',value:props.value?props.value:1,isImportant:true}
+      objectDetailArr[i] = {position:position[i],objectName:name,skin:'coin_item_1',value:value?value:1,isImportant:important?important:false}
     }
-    else if(props.name == 'wallItem')
+    else if(name == 'key_item')
     {
-      objectDetailArr[i] = {position:props.position[i],objectName:'wall_1',skin:'wall_1',value:props.value?props.value:0,isImportant:false}
+      objectDetailArr[i] = {position:position[i],objectName:name,skin:'key_1',value:value?value:0,isImportant:true}
     }
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
@@ -149,16 +153,17 @@ export function AddDoor({position,open})
 }
 /**
  * 
- * @param {{life:number,lootObject:boolean,active:boolean,position: number[]}} param0 
+ * @param {{life:number,lootObject:boolean,active:boolean,position: number[],important:boolean}} param0 
  * @returns 
  */
-export function AddMob({life,lootObject,active,position,children})
+export function AddMob({life,lootObject,active,position,children,important})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = [];
   let lifeProps = life? life : 2;
   let objectSkin = 'none'
   let hasObject = lootObject? lootObject : false;
+  let objectIsImportant = false;
   let objectValue = 1;
   let objectPosition = 0;
   let type = active? 'mob_2' : 'mob_1';
@@ -172,9 +177,11 @@ export function AddMob({life,lootObject,active,position,children})
       {
         hasObject = children[0].props.name;
         objectValue = children[0].props.value? children[0].props.value : 1; 
+        
 
-        if(hasObject == 'heal_item'){objectSkin = 'heal_item_1'}
-        if(hasObject == 'coin_item'){objectSkin = 'coin_item_1'}
+        if(hasObject == 'heal_item'){objectSkin = 'heal_item_1';objectIsImportant = children[0].props.important? children[0].props.important : false;}
+        if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children[0].props.important? children[0].props.important : false;}
+        if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
       }
       else
       {
@@ -188,9 +195,11 @@ export function AddMob({life,lootObject,active,position,children})
         {
           hasObject = children.props.name;
           objectValue = children.props.value? children.props.value : 1; 
+          
 
-          if(hasObject == 'heal_item'){objectSkin = 'heal_item_1'}
-          if(hasObject == 'coin_item'){objectSkin = 'coin_item_1'}
+          if(hasObject == 'heal_item'){objectSkin = 'heal_item_1';objectIsImportant = children.props.important? children.props.important : false;}
+          if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children.props.important? children.props.important : false;}
+          if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
         }
         else
         {
@@ -198,6 +207,7 @@ export function AddMob({life,lootObject,active,position,children})
         }
       
     }
+    // console.log(children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true))
   }
   else
   {
@@ -205,14 +215,23 @@ export function AddMob({life,lootObject,active,position,children})
   }
   for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:false,
-                          objectValue,objectPosition,objectSkin}
+    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:important?important:false,
+                          objectValue,objectPosition,objectSkin,objectIsImportant}
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
             createObject(AppCntext.gameMap.current,'mob',objectDetailArr,i);
   }
-  return children? children : null
+  return  null
+}
+/**
+ * 
+ * @param {{name:string,important:boolean,value:number}} param0 
+ * @returns 
+ */
+export function AddMobItem({name,important,value})
+{
+  return null;
 }
 export function AddWall(props)
 {

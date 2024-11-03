@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
 import { createLevel, createObject } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
-import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue } from '../components/GameUI';
+import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue, LevelUi } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
 import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen, AddTimer, SetMapDimension } from '../components/DefaultComponents';
@@ -15,7 +15,7 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(2);
+  let level = useRef(1);
   let mapHeight = useRef(19);
   let mapWidth = useRef(16);
   let playerPosition = useRef(5)
@@ -41,7 +41,7 @@ function App() {
   const ScreenHaloCOntroller = useRef(null);
   const BlackScreenTransitionController = useRef(null);
   const ScoreVueController = useRef(null);
-  let transitionBetweenScreen = useRef(true);
+  let transitionBetweenScreen = useRef(false);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -374,8 +374,9 @@ function App() {
             {gameVueActive && <GameController />}
             {gameVueActive && <GameNotif />}
             {gameVueActive && <PlayerMoney /> }
-            {gameVueActive &&<GameTimer />}
-            {gameVueActive &&<ScoreVue />} 
+            {gameVueActive && <GameTimer />}
+            {gameVueActive && <ScoreVue />} 
+            {gameVueActive && <LevelUi />} 
             {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
 
             <GameUI />
