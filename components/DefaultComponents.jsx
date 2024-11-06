@@ -62,12 +62,16 @@ export function UpdatePlayerStat(props)
 
 /**
  * 
- * @param {{position:number[],name:string,value:number|null,important:boolean}} param0 
+ * @param {{position:number[],name:string,value:number|null,important:boolean,life:number}} param0 
  * @returns 
  */
-export function AddItem({position,name,value,important})
+export function AddItem({position,name,value,important,life,children})
 {
   const AppCntext = useContext(appContext);
+  let hasChildObject = false;
+  let childObjectSkin = '';
+  let childObjectValue = 1;
+  let childObjectIsImportant = false;
   let objectDetailArr = []
 
   for(let i = 0;i<position.length;i++)
@@ -79,6 +83,59 @@ export function AddItem({position,name,value,important})
     else if(name == 'coin_item')
     {
       objectDetailArr[i] = {position:position[i],objectName:name,skin:'coin_item_1',value:value?value:1,isImportant:important?important:false}
+    }
+    else if(name == 'box_item')
+    {
+      
+
+        if(children)
+        {
+          
+          if(children.length)
+          {
+            if(children[0].props.name)
+            {
+              hasChildObject = children[0].props.name;
+              childObjectValue = children[0].props.value? children[0].props.value : 1; 
+              
+      
+              if(hasChildObject == 'heal_item'){childObjectSkin = 'heal_item_1';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
+              if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
+              if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
+            }
+            else
+            {
+              
+            }
+            
+          }
+          else
+          {
+              if(children.props.name)
+              {
+                hasChildObject = children.props.name;
+                childObjectValue = children.props.value? children.props.value : 1; 
+                
+      
+                if(hasChildObject == 'heal_item'){childObjectSkin = 'heal_item_1';childObjectIsImportant = children.props.important? children.props.important : false;}
+                if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children.props.important? children.props.important : false;}
+                if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
+              }
+              else
+              {
+                
+              }
+            
+          }
+        }
+        else
+        {
+          hasChildObject = false;
+        }
+      
+        objectDetailArr[i] = {position:position[i],objectName:name,skin:'box_1',life:life?life:1,isImportant:false,
+                              hasChildObject,childObjectSkin,childObjectValue,childObjectIsImportant
+        }
     }
     else if(name == 'key_item')
     {
@@ -229,7 +286,7 @@ export function AddMob({life,lootObject,active,position,children,important})
  * @param {{name:string,important:boolean,value:number}} param0 
  * @returns 
  */
-export function AddMobItem({name,important,value})
+export function AddChildItem({name,important,value})
 {
   return null;
 }
@@ -329,7 +386,7 @@ export function SetMapDimension({width,height,addWallOnMap})
   _appContext.mapHeight.current = height? height : 19;
   _appContext.mapHeight.current = _appContext.mapHeight.current > 0? _appContext.mapHeight.current : 19;
 
-  _appContext.setMapWall.current = true
+  _appContext.setMapWall.current = addWallOnMap? addWallOnMap : false;
 
   _appContext.gameMap.current = createLevel(_appContext.level.current,_appContext.mapWidth.current,_appContext.mapHeight.current)
   return null

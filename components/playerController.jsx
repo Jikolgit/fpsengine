@@ -109,7 +109,11 @@ objArg.playerDistance.value = 0;
 objArg.playerMoveIsActive.current = false;
 objArg.camRef.current.position.y = 0.8
 // getCurrentPlatformInfo();
-
+// objArg._appContext.mobCallBackAfterPlayerMove.current();
+for(let i = 0; i<objArg.mobObjectIdArr.value.length;i++ )
+{
+    objArg.mobUpdateFunc.current[objArg.mobObjectIdArr.value[i]]('CHECK-AREA')
+}
 objArg.getNextPlatformInfo(objArg.playerDirection,'AfterMove');
 if(objArg.aKeyisPressed.current)
 {

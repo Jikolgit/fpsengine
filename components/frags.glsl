@@ -1,3 +1,4 @@
+#include <fog_pars_fragment>
     uniform float utime;
     uniform vec3 ucolor;
     uniform vec3 uColor;
@@ -22,7 +23,7 @@
         vec4 mixedColor = mix(vec4(0.0,0.0,0.0,0.0),blueCol*vUv.x,strenght);
         // gl_FragColor.rgba = vec4(1.0,0.0,0.0, 1.0);
         gl_FragColor.rgba = vec4(mixedColor);
+        #include <fog_fragment>
         // gl_FragColor.rgba = vec4(strenght,strenght,strenght, 1.0);
         
       }
-      

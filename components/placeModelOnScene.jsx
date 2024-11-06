@@ -1,5 +1,7 @@
+import { BoxItem } from "./BoxItem";
 import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, Decor_model, WallModel, GroundModel } from "./Game3DAssets";
 import { Mob_2 } from "./mob_2";
+import { Mob_3 } from "./mob_3";
 
 export function placeModelOnScene(gloBalObject)
 {
@@ -24,8 +26,20 @@ export function placeModelOnScene(gloBalObject)
                 }
                 else
                 {
-                    objectComponents = <ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
-                    skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                    if(gloBalObject.GameMap[i].objectDesc.objectName=='box_item')
+                    {
+                        objectComponents = <BoxItem controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} 
+                        hasChildObject={gloBalObject.GameMap[i].objectDesc.hasChildObject} childObjectSkin={gloBalObject.GameMap[i].objectDesc.childObjectSkin}
+                        childObjectValue={gloBalObject.GameMap[i].objectDesc.childObjectValue}
+                        />
+                    }
+                    else
+                    {
+                        objectComponents = <ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                    }
+
                 }
                 let arrElem = gloBalObject.GameMap[i].isOnScene?
                 <group
@@ -149,7 +163,7 @@ export function placeModelOnScene(gloBalObject)
                     }
                     else if(gloBalObject.GameMap[i].objectDesc.mobType=='mob_2')
                     {
-                        objectComponents = <Mob_2 _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
+                        objectComponents = <Mob_3 _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
                         objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
                         objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
                         mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  

@@ -438,11 +438,11 @@ export function GameLoadingScreen()
 
 export function MobLifeBar(props)
 {
-    let _mobContext = useContext(mobContext)
+    let _mobContext = useContext(props._context)
     let mobLifeRef = useRef(null);
     let mobLifeContainerRef = useRef(null)
     let lifeValue = (props.Moblife*100) / props.maxMobLife;
-    
+    let [_position,setPosition] = useState([props.x,1,props.z])
     let lifeContainerRef = useRef(null);
     let updateMobLife = (_life)=>
         {
@@ -454,16 +454,26 @@ export function MobLifeBar(props)
             //     mobLifeContainerRef.current.style.display='none'
             // }
         }
-    _mobContext.removeLifeBarFunc.current = ()=>
+    _mobContext.lifeBarController.current = (args,params)=>
         {
-            mobLifeContainerRef.current.style.display='none'
+            if(args == 'REMOVE')
+            {
+                mobLifeContainerRef.current.style.display='none'
+            }
+            else if(args == 'MOVE')
+            {
+               
+                setPosition([params.x,1,params.z])
+            }
+            
         }
     _mobContext.lifeBarFunc.current = updateMobLife;
     return(
         <Html
+        ref={lifeContainerRef}
         name="Mob Life"
         visible={true}
-        position={[props.x,1,props.z]}
+        position={_position}
         transform={true}
         zIndexRange={[0,0]}
         sprite={true}

@@ -9,7 +9,7 @@ import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat
 import { PlayerCursor } from '../components/Game3DAssets';
 import { Settings } from '../components/Setting';
 
-
+//MODELISER BOULE DE FEU
 export let appContext = createContext(null)
 function App() {
 
@@ -33,6 +33,7 @@ function App() {
   let gameControllerFunc = useRef(null);
   let actionIconController = useRef(null);
   let gameEndingScreenFunc = useRef(null);
+  let mobCallBackAfterPlayerMove = useRef(null);
   const PauseScreenController = useRef(null);
   const GameUIController = useRef(null);
   const HelpScreenFunc = useRef(null);
@@ -54,8 +55,8 @@ function App() {
   let GameLoadingScreenRef = useRef(null);
   let playerLifeUpgradeCost = useRef({value:20,level:1});
   let playerWeaponUpgradeCost = useRef({value:20,level:1});
-  let playerStats = useRef({score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:35,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false});
-  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#5394ac',fogNear:0.1,fogFar:0,finalLevel:false});
+  let playerStats = useRef({score:0,life:20,maxLife:20,moveSpeed:0.1,shootInterval:35,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false});
+  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
   let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
     playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
     playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level])
@@ -358,7 +359,7 @@ function App() {
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
                 BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState,
-                playerPosition,setMapWall}}
+                playerPosition,setMapWall,mobCallBackAfterPlayerMove}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}

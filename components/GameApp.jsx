@@ -44,6 +44,7 @@ export function GameApp(props)
     let bulletRef = useRef([]);
     let bulletRefInfo = useRef([]);
     let objectRef = useRef([]);
+    let mobObjectIdArr = {value:[]};
     let mobUpdateFunc = useRef([]);
     let keyPressedName = useRef(null);
     let aKeyisPressed = useRef(false); // si ça vaut true on ne peut plus appuyer une autre clé tant qu'on a pas laissé l'autre
@@ -245,20 +246,19 @@ export function GameApp(props)
                             else if(result.objectDesc.objectName=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                             else if(result.objectDesc.objectName=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
                             else if(result.objectDesc.objectName=='key_item'){setActionButtonEffect('TAKE-KEY',result)}
+                            else if(result.objectDesc.objectName=='box_item' && result.objectDesc.objectLife==0)
+                            {
+                                 if(result.objectDesc.hasChildObject=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
+                                else if(result.objectDesc.hasChildObject=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
+                                else if(result.objectDesc.hasChildObject=='key_item'){setActionButtonEffect('TAKE-KEY',result)}   
+                            }
                             else if(result.objectDesc.objectName=='wall_1')
                             {
 
                             }
 
                         }
-                        // else if(result.objectType=='cauris_item')
-                        // {
-                        //     setActionButtonEffect('TAKE-CAURIS',result)
-                        // }
-                        // else if(result.objectType=='heal_item')
-                        // {
-                        //     setActionButtonEffect('TAKE-HEAL',result)
-                        // }
+  
                         else if(result.objectType=='Exitdoor')
                         {
                             setActionButtonEffect('Exit',result)
@@ -641,7 +641,8 @@ export function GameApp(props)
                                 }
                                 else
                                 {
-                                    if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
+                                    if(currentObjectInFront.objectInfo.objectDesc.isImportant || 
+                                       currentObjectInFront.objectInfo.objectDesc.childObjectIsImportant){managePlayerKey()}
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
 
@@ -836,14 +837,14 @@ export function GameApp(props)
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
             barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
-            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer
+            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer,mobObjectIdArr
 
             }
         placeModelOnScene(gloBalObject)
 
     return <>
                 <gameAppContext.Provider
-                    value={{GameMap,playerPositionOnMap,playerMoveIsActive,enemyLifePoint,reducePlayerLife,mobUpdateFunc,barierModelIndexArr,exitDoorModelIndexArr}}
+                    value={{GameMap,playerPositionOnMap,playerMoveIsActive,enemyLifePoint,reducePlayerLife,mobUpdateFunc,mobObjectIdArr,barierModelIndexArr,exitDoorModelIndexArr}}
                 >
 
                         {_appContext.devMode.current?

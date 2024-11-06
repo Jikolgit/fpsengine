@@ -122,7 +122,7 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             
             else if(objectType == 'mob')
             {   
-                map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob' ,
+                map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob' ,map_level[index].isOnScene = true
                 map_level[index].objectDesc={mobType:objectIndexArr[i].mobType,mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,
                                              hasObject:objectIndexArr[i].hasObject,objectName:objectIndexArr[i].hasObject,objectValue:objectIndexArr[i].objectValue,objectSkin:objectIndexArr[i].objectSkin,
                                              fromMob:true,isImportant:objectIndexArr[i].isImportant,objectIsImportant:objectIndexArr[i].objectIsImportant},
@@ -134,14 +134,28 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             
             else if(objectType == 'item')
             {   
-                map_level[index].active = true,map_level[index].objectType = objectType, 
-                map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,value:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
-                objectIdValue ++;
+                if(objectIndexArr[i].objectName == 'box_item')
+                {
+                    map_level[index].active = true,map_level[index].objectType = objectType, map_level[index].isOnScene = true
+                    map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,value:objectIndexArr[i].value,skin:objectIndexArr[i].skin,
+                                                  objectLife:objectIndexArr[i].life,hasChildObject:objectIndexArr[i].hasChildObject,
+                                                  childObjectSkin:objectIndexArr[i].childObjectSkin,childObjectValue:objectIndexArr[i].childObjectValue,childObjectIsImportant:objectIndexArr[i].childObjectIsImportant
+                    },
+                    map_level[index].object = true,map_level[index].objectId = objectIdValue
+                    objectIdValue ++;
+                }
+                else
+                {
+                    map_level[index].active = true,map_level[index].objectType = objectType, map_level[index].isOnScene = true
+                    map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,value:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
+                    objectIdValue ++;
+                }
+               
                 
             }
             else if(objectType == 'wall')
             {   
-                map_level[index].active = true,map_level[index].objectType = objectType, 
+                map_level[index].active = true,map_level[index].objectType = objectType, map_level[index].isOnScene = true
                 map_level[index].objectDesc ={destructible:objectIndexArr[i].destructible,objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,life:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
                 objectIdValue ++;
                 
@@ -149,7 +163,7 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             
             else if(objectType == 'decor')
             {
-                map_level[index].active = true,map_level[index].objectType ='decor',map_level[index].objectDesc={skin:objectIndexArr[i].skin} ,map_level[index].object = true
+                map_level[index].active = true,map_level[index].isOnScene = true,map_level[index].objectType ='decor',map_level[index].objectDesc={skin:objectIndexArr[i].skin} ,map_level[index].object = true
             }
             else if(objectType == 'final_exitDoor')
             {
@@ -158,7 +172,7 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             
             else if(objectType == 'Exitdoor')
             {
-                map_level[index].active = true,map_level[index].objectType ='Exitdoor', map_level[index].objectDesc ={open:objectIndexArr[i].open},map_level[index].object = true,map_level[index].objectId = objectIdValue;
+                map_level[index].active = true,map_level[index].isOnScene = true,map_level[index].objectType ='Exitdoor', map_level[index].objectDesc ={open:objectIndexArr[i].open},map_level[index].object = true,map_level[index].objectId = objectIdValue;
 
                 objectIdValue ++;
             }
@@ -193,7 +207,7 @@ function createMapTemplate()
                 xPose:xMap + xLevel,
                 zPose:zMap + zLevel,
                 hasEnemy:false,
-                isOnScene:true, // Est ce que l'objet présent à cette zone est toujours sur scène
+                isOnScene:false, // Est ce que l'objet présent à cette zone est toujours sur scène
                 active:true,
                 object:false,
                 objectType:'none',

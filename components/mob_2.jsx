@@ -26,7 +26,7 @@ export function Mob_2(props)
     let distanceInscrementation=0;
     let playerIsAlreadyOnAxis = {front:false,back:false,left:false,right:false};
     
-    let bulletSpeed = 0.1*2;  //2 | 5
+    let bulletSpeed = 0.1*5;  //2 | 5
     let mobBulletRef = useRef([]);
     let mobBulletInfo = [];
     let mobBulletModel = [];
@@ -310,6 +310,7 @@ export function Mob_2(props)
             }
             
         }
+        
     let checkIfPlayerIsOnMobAxis = (checkDirection)=>
         {
             let findResult;

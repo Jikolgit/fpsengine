@@ -127,7 +127,44 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                     {
                                         if(result.objectType == 'item')
                                         {
-                                            return "move-continue-none"
+                                            if(result.objectDesc.objectName == 'box_item')
+                                            {   
+                                                result.objectDesc.objectLife -= gloBalObject._appContext.playerStats.current.shootPower;
+                                                if(result.objectDesc.objectLife <=0 )
+                                                {   
+                                                    result.objectDesc.objectLife =0;
+                                                    
+                                                    gloBalObject.itemController.value[result.objectId]('Update-Item-Life',result.objectDesc.objectLife);
+                                                  
+                                                    
+                                                    let effectAfterItemDestruction = ()=>
+                                                        {   console.log(result)
+                                                            if(result.objectDesc.hasChildObject)
+                                                            {
+                                                                gloBalObject.itemController.value[result.objectId]('SHOW-CHILD-ITEM');
+                                                                gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
+                                                            }
+                                                            else
+                                                            {
+                                                                result.isOnScene = false;
+                                                            }
+                                                        }
+                                                    gloBalObject.itemController.value[result.objectId]('destroy-Item',effectAfterItemDestruction);
+                                                    
+                                                    
+                                                }
+                                                else
+                                                {
+                                                    gloBalObject.itemController.value[result.objectId]('Update-Item-Life',result.objectDesc.objectLife);
+                                                }
+                                                
+                                                return "move-stop-explode";
+                                            }
+                                            else
+                                            {
+                                                return "move-continue-none"
+                                            }
+                                            
                                             // if(result.objectDesc.objectName == 'wall_1')
                                             // {
                                             //     return "move-stop-explode";
@@ -178,15 +215,6 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                 {
                                                     gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
                                                 }
-                                                // if(result.objectDesc.life > 1)
-                                                // {
-                                                //     result.objectDesc.life -= gloBalObject._appContext.playerStats.current.shootPower;
-                                                //     gloBalObject.mobUpdateFunc.current[result.objectId]('Update-Mob-Life',result.objectDesc.life);
-                                                // }
-                                                // else
-                                                // {   
-                                                    
-                                                // }
                                                 
                                                 return "move-stop-explode";
                                         }

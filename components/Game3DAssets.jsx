@@ -5,14 +5,15 @@ Command: npx gltfjsx@6.4.1 ./public/model.glb
 // FILE CONTAINING ALL THE 3D ASSET ON THE GAME
 import * as THREE from 'three'
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
-import { Point, Points, useGLTF, useTexture } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber';
+import { Point, Points, useAnimations, useGLTF, useTexture } from '@react-three/drei'
+import { useFrame, useGraph } from '@react-three/fiber';
 import { appContext } from '../src/App';
 import { mobContext } from './mob_2';
 import { gameAppContext } from './GameApp';
 import { CustomCounter } from './utils';
 import vertex from './vertex.glsl'
 import frags from './frags.glsl'
+import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
 function prepareTexture(texture)
 {
   const _texture = useTexture(texture);
@@ -292,7 +293,7 @@ export function ItemType2Model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
   let textureSrc;
   if(props.skin == 'wall_1'){textureSrc = 'gametexture.jpg'}
-  else if(props.skin == 'key_1'){textureSrc = 'txtglobal1.jpg'}
+  else if(props.skin == 'key_1' || props.skin == 'box_1'){textureSrc = 'txtglobal1.jpg'}
   else{textureSrc = 'texture2.jpg'}
   let _texture = prepareTexture(textureSrc);
   let itemRef = useRef(null);
@@ -304,7 +305,7 @@ export function ItemType2Model(props) {
   {
     if(!_appContext.gamePause.current)
     {
-      if(props.skin == 'heal_item_1' || props.skin == 'key_1')
+      if(props.skin == 'heal_item_1' || props.skin == 'key_1' || props.skin == 'box_1')
       {
         itemRef.current.rotation.y += (1/30);
       }
@@ -326,12 +327,13 @@ export function ItemType2Model(props) {
           }
       } 
     },[])
-  
+    
   return (
       <>
       <group
             ref={itemGroupRef}
             visible={props._visible}
+            
       >
           {/* {props.skin == "heal_item_1" && <mesh ref={itemRef}  geometry={nodes.healthBox.geometry} material={containerMat} position={[props.x,0.1,props.z]}>
           <mesh geometry={nodes.health_1.geometry} material={mat} position={[-0.004, 0.5, 0.043]} rotation={[0.585, 0, 0]} />
@@ -341,6 +343,7 @@ export function ItemType2Model(props) {
           {props.skin == "heal_item_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={props.x} z={props.z} />}
           {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
           {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />}
+          {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
           {props.skin == "triangle" && 
                       <mesh
                           position={[props.x,0.5,props.z]}
@@ -494,10 +497,18 @@ export function ExitDoor_model(props)
   let passedTime = 0;
   let faceRef = useRef(null)
   let mat_0 = new THREE.MeshBasicMaterial({map:texturemat});
-  let mat = new THREE.ShaderMaterial({transparent:true ,vertexShader:vertex,fragmentShader:frags,side:THREE.DoubleSide
-    ,uniforms:{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}
-})
-  
+//   let mat = new THREE.ShaderMaterial({transparent:true ,fog:false,vertexShader:vertex,fragmentShader:frags,side:THREE.DoubleSide
+//     ,uniforms:{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}
+// })
+let mat = new THREE.ShaderMaterial( {
+  uniforms: THREE.UniformsUtils.merge( [
+      THREE.UniformsLib[ 'fog' ],{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}] ),
+    vertexShader: vertex,
+    fragmentShader: frags,
+    fog: true,
+    transparent:true,
+    side:THREE.DoubleSide
+  } );
   useFrame((clock)=>{
     faceRef.current.material.uniforms.utime.value += 0.05;
 
@@ -536,9 +547,14 @@ export function ExitDoor_model(props)
 }
 
 export function Mob_1_model(props) {
+
+  const group = React.useRef()
+  const { nodes, materials, animations } = useGLTF('/model.glb')
+  const { mixer,actions } = useAnimations(animations, group)
+
   let _appContext = useContext(appContext);
-  let _mobContext = useContext(mobContext)
-  const { nodes, materials } = useGLTF('/model.glb');
+  let _mobContext = useContext(props._context);
+
   let _texture = prepareTexture('gametexture.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
   const mat = new THREE.MeshMatcapMaterial({color:'red'})
@@ -551,6 +567,7 @@ export function Mob_1_model(props) {
   let mobShakeAnimationStart = false;
   let explodeParticleController = useRef(null); 
   let shakeOrientation = useRef('FRONT-BACK');
+  let animationManager = useRef({start:false})
   let shakeBrick = ()=>
     { 
       let value = mobShakeFromLeft? -0.2 : 0.2;
@@ -577,7 +594,17 @@ export function Mob_1_model(props) {
   useFrame(()=>
     {
       if(!_appContext.gamePause.current)
-      { passedTime += 1/40;
+      { 
+        if(animationManager.current.start)
+        {
+            if(actions.m_mob1attack2?.time >= 0.4)
+            {
+              animationManager.current.start = false;
+              _mobContext.mobShootAnimationOver.current = true;
+            }
+        }
+
+        passedTime += 1/40;
         modelRef.current.position.y += Math.sin(passedTime)/400;
 
         if(mobHitManager.startEffect)
@@ -603,17 +630,56 @@ export function Mob_1_model(props) {
           }
       }
     })
+    let mobAttackAnime = ()=>
+      {
+        animationManager.current.start = true;
+        actions.m_mob1attack1?.play();
+        actions.m_mob1attack2?.play();
+        actions.m_mob1attack3?.play();
+        actions.m_mob1attack4?.play();
+        actions.m_mob1attack5?.play();
+      }
   useEffect(()=>
     {
-      _mobContext.enemyFunc.current = (args)=>
+      actions.m_mob1attack1?.setLoop(THREE.LoopOnce,1);
+      actions.m_mob1attack2?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1attack3?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1attack4?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1attack5?.setLoop(THREE.LoopOnce,1)
+
+      mixer.addEventListener('finished', function( e ) 
+      {
+        if(e.action._clip.name == "m_mob1attack2")
+        {
+          actions.m_mob1attack1?.stop();
+          actions.m_mob1attack2?.stop();
+          actions.m_mob1attack3?.stop();
+          actions.m_mob1attack4?.stop();
+          actions.m_mob1attack5?.stop();
+          
+        }
+
+        
+      } )
+        
+    },[])
+  useEffect(()=>
+    {
+      /**
+       * 
+       * @param {string} args 
+       * @param {object|undefined} params 
+       */
+      _mobContext.enemyController.current = (args,params)=>
         {
           if(args == 'REMOVE-MOB')
           {
             modelRef.current.visible = false;
           }
-          else if(args == 'SHAKE-MOB')
+          else if(args == 'MOVE-MOB')
           {
-              
+            modelRef.current.position.x = params.x
+            modelRef.current.position.z = params.z
           }
           else if(args == 'MOB-TOUCHED')
           { 
@@ -654,6 +720,10 @@ export function Mob_1_model(props) {
             shakeOrientation.current = 'FRONT-BACK'
             modelRef.current.rotation.y = Math.PI
           }
+          else if(args == 'PLAY-MOB-ATTACK-ANIMATION')
+          {
+            mobAttackAnime()
+          }
         }
     },[])
   
@@ -667,11 +737,20 @@ export function Mob_1_model(props) {
           // </mesh>
           <>
               {/* <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]} /> */}
+              <group ref={group} {...props} dispose={null}>
               <mesh ref={modelRef} position={[props.x,0.8,props.z]} rotation={[0,Math.PI, 0]} >
                       <boxGeometry args={[2,2,2]} />
                       <meshBasicMaterial color={'red'} visible={false} wireframe />
                       <MobHitParticleEffect controller={explodeParticleController} x={0.5} z={0.5} />
-                      <mesh  geometry={nodes.nmob1.geometry}   >
+                      {/* MOB MODEL */}
+
+                      <mesh name="nmob1" geometry={nodes.nmob1.geometry} material={new THREE.MeshMatcapMaterial({color:'black'})} >
+                        <mesh name="nmob1_hand_l" geometry={nodes.nmob1_hand_l.geometry} material={mat} position={[0.639, -0.473, -0.066]} />
+                        <mesh name="nmob1_hand_r" geometry={nodes.nmob1_hand_r.geometry} material={mat} position={[-0.639, -0.494, 0]} />
+                        <mesh name="nmob1head" geometry={nodes.nmob1head.geometry} material={new THREE.MeshMatcapMaterial({color:'white'})} />
+                        <mesh name="nmob1horn" geometry={nodes.nmob1horn.geometry} material={mat} />
+                      </mesh>
+                      {/* <mesh  geometry={nodes.nmob1.geometry}   >
                           <meshMatcapMaterial color={'black'} />
                           <mesh geometry={nodes.nmob1head.geometry}>
                                   <meshMatcapMaterial color={'white'} />
@@ -680,7 +759,7 @@ export function Mob_1_model(props) {
                                   {props.name == 'ENEMY' && <meshMatcapMaterial color={'blue'} />}
                                   {props.name == 'ENEMY-ACTIVE' && <meshMatcapMaterial color={'red'} />}
                           </mesh>
-                      </mesh>
+                      </mesh> */}
               </mesh>
               
               <mesh position={[props.x,0.1,props.z]} visible={false}
@@ -689,6 +768,7 @@ export function Mob_1_model(props) {
                   <meshBasicMaterial wireframe color={'red'} />
                   <BulletCollisionEffect />
               </mesh>
+              </group>
           </>
          
             
