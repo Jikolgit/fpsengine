@@ -72,7 +72,7 @@ export function UpdatePlayerStat(props)
 
 /**
  * 
- * @param {{position:number[],name:string,value:number|null,important:boolean,life:number,upgradeType:string}} param0 
+ * @param {{position:number[],name:string,value:number|null,important:boolean,life:number}} param0 
  * @returns 
  */
 export function AddItem({position,name,value,important,life,children,upgradeType})
@@ -111,6 +111,8 @@ export function AddItem({position,name,value,important,life,children,upgradeType
       
               if(hasChildObject == 'heal_item'){childObjectSkin = 'heal_item_1';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
               if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
+              if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
+              if(hasChildObject == 'upgrade_shoot_speed_item'){childObjectSkin =  'upgrade_shoot_speed_item';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
               if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
             }
             else
@@ -129,6 +131,8 @@ export function AddItem({position,name,value,important,life,children,upgradeType
       
                 if(hasChildObject == 'heal_item'){childObjectSkin = 'heal_item_1';childObjectIsImportant = children.props.important? children.props.important : false;}
                 if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children.props.important? children.props.important : false;}
+                if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children.props.important? children.props.important : false;}
+                if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children.props.important? children.props.important : false;}
                 if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
               }
               else
@@ -151,12 +155,13 @@ export function AddItem({position,name,value,important,life,children,upgradeType
     {
       objectDetailArr[i] = {position:position[i],objectName:name,skin:'key_1',value:value?value:0,isImportant:true}
     }
-    else if(name == 'upgrade_item')
+    else if(name == 'upgrade_shoot_power_item')
     {
-      
-      // if(upgradeType == 'shoot-speed'){}
-      // if(upgradeType == 'shoot-power'){}
-      objectDetailArr[i] = {position:position[i],objectName:name,upgradeType,value:value?value:0,skin:upgradeType,isImportant:false}
+      objectDetailArr[i] = {position:position[i],objectName:name,value:0,skin:'upgrade_shoot_power_item',isImportant:false}
+    }
+    else if(name == 'upgrade_shoot_speed_item')
+    {
+      objectDetailArr[i] = {position:position[i],objectName:name,value:0,skin:'upgrade_shoot_speed_item',isImportant:false}
     }
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
@@ -259,6 +264,8 @@ export function AddMob({life,position,children,important,type,difficulty})
 
         if(hasObject == 'heal_item'){objectSkin = 'heal_item_1';objectIsImportant = children[0].props.important? children[0].props.important : false;}
         if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children[0].props.important? children[0].props.important : false;}
+        if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children[0].props.important? children[0].props.important : false;}
+        if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children[0].props.important? children[0].props.important : false;}
         if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
       }
       else
@@ -277,6 +284,8 @@ export function AddMob({life,position,children,important,type,difficulty})
 
           if(hasObject == 'heal_item'){objectSkin = 'heal_item_1';objectIsImportant = children.props.important? children.props.important : false;}
           if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children.props.important? children.props.important : false;}
+          if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children.props.important? children.props.important : false;}
+          if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children.props.important? children.props.important : false;}
           if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
         }
         else
@@ -304,7 +313,7 @@ export function AddMob({life,position,children,important,type,difficulty})
 }
 /**
  * 
- * @param {{name:string,important:boolean,value:number}} param0 
+ * @param {{name:string,important:boolean,value:number,upgradeType:string}} param0 
  * @returns 
  */
 export function AddChildItem({name,important,value})

@@ -205,13 +205,13 @@ export function GameApp(props)
 
     let upgradePlayerState = (args)=>
         {
-            if(args == 'shoot-speed')
+            if(args == 'upgrade_shoot_speed_item')
             {   
                 _appContext.playerStats.current.shootInterval -= 10;
                 // weaponReload = {time:0,timeLimite:_appContext.playerStats.current.shootInterval,start:false};
                 weaponReload.timeLimite = _appContext.playerStats.current.shootInterval;
             }
-            else if(args == 'shoot-power')
+            else if(args == 'upgrade_shoot_power_item')
             {
                 _appContext.playerStats.current.shootPower ++;
                
@@ -262,11 +262,15 @@ export function GameApp(props)
                             else if(result.objectDesc.objectName=='key_item'){setActionButtonEffect('TAKE-KEY',result)}
                             else if(result.objectDesc.objectName=='box_item' && result.objectDesc.objectLife==0)
                             {
-                                 if(result.objectDesc.hasChildObject=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
+                                if(result.objectDesc.hasChildObject=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                                 else if(result.objectDesc.hasChildObject=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
                                 else if(result.objectDesc.hasChildObject=='key_item'){setActionButtonEffect('TAKE-KEY',result)}   
+                                else if(result.objectDesc.hasChildObject=='upgrade_shoot_power_item' || result.objectDesc.hasChildObject=='upgrade_shoot_speed_item')
+                                {  
+                                    setActionButtonEffect('TAKE-UPGRADE',result)
+                                }
                             }
-                            else if(result.objectDesc.objectName=='upgrade_item')
+                            else if(result.objectDesc.objectName=='upgrade_shoot_power_item' || result.objectDesc.objectName=='upgrade_shoot_speed_item')
                             {  
                                 setActionButtonEffect('TAKE-UPGRADE',result)
                             }
@@ -647,18 +651,19 @@ export function GameApp(props)
 
                                 if(currentObjectInFront.objectInfo.objectDesc.fromMob)
                                 {
-                                    managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.objectValue,'add')
+                                    
+                                    upgradePlayerState(currentObjectInFront.objectInfo.objectDesc.hasObject)
                                     mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");
                                 }
                                 else
                                 {
                                     if(currentObjectInFront.objectInfo.objectDesc.hasChildObject)
                                     {
-                                        managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.childObjectValue,'add')
+                                        upgradePlayerState(currentObjectInFront.objectInfo.objectDesc.hasChildObject)
                                     }
                                     else
                                     {   
-                                        upgradePlayerState(currentObjectInFront.objectInfo.objectDesc.upgradeType)
+                                        upgradePlayerState(currentObjectInFront.objectInfo.objectDesc.objectName)
                                     }
                                     
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')

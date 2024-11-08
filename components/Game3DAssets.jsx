@@ -384,7 +384,7 @@ export function ItemType2Model(props) {
           {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
           {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />}
           {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
-          {props.skin == "shoot-speed" && 
+          {props.skin == "upgrade_shoot_speed_item" && 
                                             <>
                                             <mesh
                                                 ref={itemRef}
@@ -396,7 +396,7 @@ export function ItemType2Model(props) {
                                           <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />
                                           </>
           }
-          {props.skin == "shoot-power" && <>
+          {props.skin == "upgrade_shoot_power_item" && <>
                                             <mesh
                                                 ref={itemRef}
                                                 position={[props.x,0.5,props.z]}

@@ -14,8 +14,14 @@ export function Settings()
                             <SetMapDimension width={15} height={15} addWallOnMap />
                             <AddDecor position={[71,168,32]} skin="tombstone" />
                             <AddDecor position={[145,94]} skin="lampadaire" />
-                            <AddItem name="upgrade_item" upgradeType="shoot-power" position={[68]} />
-                            <AddMob position={[67]} life={5} type="1" />
+                            {/* <AddItem name="upgrade_shoot_power_item" position={[68]} /> */}
+                            {/* <AddItem name="box_item" life={2} position={[68]} >
+                                    <AddChildItem name="upgrade_shoot_power_item"/>
+                            </AddItem> */}
+                            <AddMob position={[68]} life={5} type="2" />
+                            <AddMob position={[67]} life={5} type="2">
+                                    <AddChildItem name="upgrade_shoot_power_item"/>
+                            </AddMob>
                             <AddDoor position={[187]} open  />
                         </>
                     }

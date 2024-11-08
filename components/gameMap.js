@@ -145,10 +145,10 @@ export function createObject(map_level,objectType,objectIndexArr,index)
                     map_level[index].object = true,map_level[index].objectId = objectIdValue
                     objectIdValue ++;
                 }
-                else if(objectIndexArr[i].objectName == 'upgrade_item')
+                else if(objectIndexArr[i].objectName == 'upgrade_shoot_power_item' || objectIndexArr[i].objectName == 'upgrade_shoot_speed_item')
                 {
                     map_level[index].active = true,map_level[index].objectType = objectType, map_level[index].isOnScene = true
-                    map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,upgradeType:objectIndexArr[i].upgradeType,
+                    map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,
                         value:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
                     objectIdValue ++;
                 }
