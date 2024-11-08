@@ -17,11 +17,11 @@ export function Mob_2(props)
     const GameMap = _gameAppContext.GameMap;
     let enemyPositionOnMap = {x:props.x,y:0,z:props.z};
     let itemController = {value:[]};
-    let enemyFunc = useRef(null);
+    let enemyController = useRef(null);
     let bulletGroupRef = useRef(null);
     let lifeBarFunc = useRef(null);
-    let removeLifeBarFunc = useRef(null);
-    let keyRef = useRef(null);
+    let lifeBarController = useRef(null);
+    let mobShootAnimationOver = useRef(false);
     let checkOnce = true;
     let distanceInscrementation=0;
     let playerIsAlreadyOnAxis = {front:false,back:false,left:false,right:false};
@@ -35,16 +35,25 @@ export function Mob_2(props)
     let mobEffectCounterStart = false;
     let mobEffectCounter = 100;
     let mobDeadCallBack; 
-    
+    let mobSpec = useRef({shootSpeed:40})
+
+    if(props.mobDifficulty == 'hard')
+    { 
+        mobSpec.current.shootSpeed = 10
+    }
+    else if(props.mobDifficulty == 'medium')
+    {
+        mobSpec.current.shootSpeed = 40
+    }
     let startMobEffectCounter = ()=>
         {
             mobEffectCounter --;
             if(mobEffectCounter == 0)
             {
                 
-                enemyFunc.current('REMOVE-MOB');
+                enemyController.current('REMOVE-MOB');
                 bulletGroupRef.current.visible = false;
-                removeLifeBarFunc.current();
+                lifeBarController.current("REMOVE");
                 if(props.hasObject)
                 {
                     itemController.value[0]('SHOW-ITEM')
@@ -77,7 +86,7 @@ export function Mob_2(props)
             }
             else if(state == 'Update-Mob-Life')
             {  
-                enemyFunc.current('MOB-TOUCHED')
+                enemyController.current('MOB-TOUCHED')
                 lifeBarFunc.current(_numb)
             }
             else if(state == 'Remove-Object')
@@ -105,7 +114,8 @@ export function Mob_2(props)
             
                 freeBulletElem.isShooted = true;
                 freeBulletElem.bulletDirection = playerDirectionToMob;
-                freeBulletElem.count = Math.floor((Math.random()*10)+81)
+                // freeBulletElem.count = Math.floor((Math.random()*10)+81)
+                freeBulletElem.count = mobSpec.current.shootSpeed
             }
 
             
@@ -191,6 +201,7 @@ export function Mob_2(props)
                 {   
                     // console.log('hit player')
                     AudioManage.play('playerhit')
+                    mobShootAnimationOver.current = false;
                     mobBulletRef.current[index].material.visible = false;
                     mobBulletRef.current[index].position.x = enemyPositionOnMap.x
                     mobBulletRef.current[index].position.z = enemyPositionOnMap.z
@@ -217,6 +228,7 @@ export function Mob_2(props)
                 }
                 else if(mobBulletInfo[index].bulletNextMove == 'STOP')
                 {   
+                    mobShootAnimationOver.current = false;
                     mobBulletRef.current[index].material.visible = false;
                     mobBulletRef.current[index].position.x = enemyPositionOnMap.x
                     mobBulletRef.current[index].position.z = enemyPositionOnMap.z
@@ -241,12 +253,15 @@ export function Mob_2(props)
                 {
                     if(mobBulletInfo[i].countBeforeShootOver)
                     {
-                        if(!mobBulletInfo[i].checkOnce)
+                        if(mobShootAnimationOver.current)
+                        {
+
+                            if(!mobBulletInfo[i].checkOnce)
                             {
                                
                                 mobBulletInfo[i].checkOnce = true;
                                 mobBulletInfo[i].bulletNextMove = beforeBulletAnimation(i,mobBulletInfo[i].bulletDirection); //GO | GO-PLAYER | STOP
-                                
+                                mobBulletRef.current[i].material.visible = true;
                             }
                             else
                             {
@@ -284,6 +299,7 @@ export function Mob_2(props)
                                     afterBulletAnimation(i)
                                 }
                             }
+                        }
                     
                         
                     }
@@ -297,8 +313,9 @@ export function Mob_2(props)
                                 }
                                 else
                                 {
+                                    enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
                                     mobBulletInfo[i].countBeforeShootOver = true;
-                                    mobBulletRef.current[i].material.visible = true;
+                                   
                                 }
                         }
                         
@@ -348,10 +365,10 @@ export function Mob_2(props)
                     {
                         // EST SUR L'AXIS
                         
-                        if(checkDirection == 'FRONT'){playerDirectionToMob = "FRONT";  enemyFunc.current('MOB-ROTATE-FRONT')}
-                        else if(checkDirection == 'BACK'){playerDirectionToMob = "BACK"; enemyFunc.current('MOB-ROTATE-BACK')}
-                        else if(checkDirection == 'LEFT'){playerDirectionToMob = "LEFT"; enemyFunc.current('MOB-ROTATE-LEFT')}
-                        else if(checkDirection == 'RIGHT'){playerDirectionToMob = "RIGHT"; enemyFunc.current('MOB-ROTATE-RIGHT')}
+                        if(checkDirection == 'FRONT'){playerDirectionToMob = "FRONT";  enemyController.current('MOB-ROTATE-FRONT')}
+                        else if(checkDirection == 'BACK'){playerDirectionToMob = "BACK"; enemyController.current('MOB-ROTATE-BACK')}
+                        else if(checkDirection == 'LEFT'){playerDirectionToMob = "LEFT"; enemyController.current('MOB-ROTATE-LEFT')}
+                        else if(checkDirection == 'RIGHT'){playerDirectionToMob = "RIGHT"; enemyController.current('MOB-ROTATE-RIGHT')}
                         
                         if(playerDirectionToMob == "FRONT")
                         {
@@ -492,21 +509,21 @@ export function Mob_2(props)
     return(
             <>
             <mobContext.Provider
-                value={{lifeBarFunc,removeLifeBarFunc,enemyFunc}}
+                value={{lifeBarFunc,lifeBarController,enemyController,mobShootAnimationOver}}
             >
             
             
                 
             
             {props._attack == false && <Mob_1_model
-                
+                                            _context={mobContext}
                                             name="ENEMY"
                                             x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
                                         >
                                         </Mob_1_model>
             }
             {props._attack && <Mob_1_model
-              
+                                _context={mobContext}
                                 name="ENEMY-ACTIVE"
                                 x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
                                 >
@@ -521,7 +538,7 @@ export function Mob_2(props)
                     </>
                     :null
             }
-            <MobLifeBar x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />
+            <MobLifeBar _context={mobContext} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />
             
             <group
                 ref={bulletGroupRef}

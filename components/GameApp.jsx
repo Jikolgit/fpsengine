@@ -203,6 +203,20 @@ export function GameApp(props)
             return result;
         }
 
+    let upgradePlayerState = (args)=>
+        {
+            if(args == 'shoot-speed')
+            {   
+                _appContext.playerStats.current.shootInterval -= 10;
+                // weaponReload = {time:0,timeLimite:_appContext.playerStats.current.shootInterval,start:false};
+                weaponReload.timeLimite = _appContext.playerStats.current.shootInterval;
+            }
+            else if(args == 'shoot-power')
+            {
+                _appContext.playerStats.current.shootPower ++;
+               
+            }
+        }
     let resetBullet = (_index)=>
         {
 
@@ -251,6 +265,10 @@ export function GameApp(props)
                                  if(result.objectDesc.hasChildObject=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                                 else if(result.objectDesc.hasChildObject=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
                                 else if(result.objectDesc.hasChildObject=='key_item'){setActionButtonEffect('TAKE-KEY',result)}   
+                            }
+                            else if(result.objectDesc.objectName=='upgrade_item')
+                            {  
+                                setActionButtonEffect('TAKE-UPGRADE',result)
                             }
                             else if(result.objectDesc.objectName=='wall_1')
                             {
@@ -305,6 +323,23 @@ export function GameApp(props)
                 else
                 {
                     // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    _appContext.toggleActionIcon('SHOOT');
+                    currentObjectInFront.effect ='none';
+                }
+
+
+            }
+            else if(effect == 'TAKE-UPGRADE')
+            {
+                if(objectInfo.isOnScene)
+                {
+                    
+                    _appContext.toggleActionIcon('INTERACT');
+                    currentObjectInFront.effect = 'UPGRADE';
+                }
+                else
+                {
+                    
                     _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
@@ -604,6 +639,34 @@ export function GameApp(props)
 
 
                             }
+                            else if (currentObjectInFront.effect == 'UPGRADE')
+                            {
+                                AudioManage.play('coin')
+
+                                currentObjectInFront.objectInfo.isOnScene = false;
+
+                                if(currentObjectInFront.objectInfo.objectDesc.fromMob)
+                                {
+                                    managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.objectValue,'add')
+                                    mobUpdateFunc.current[currentObjectInFront.objectInfo.objectId]('Remove-Object',"none");
+                                }
+                                else
+                                {
+                                    if(currentObjectInFront.objectInfo.objectDesc.hasChildObject)
+                                    {
+                                        managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.childObjectValue,'add')
+                                    }
+                                    else
+                                    {   
+                                        upgradePlayerState(currentObjectInFront.objectInfo.objectDesc.upgradeType)
+                                    }
+                                    
+                                    itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
+                                }
+
+                                getNextPlatformInfo(playerDirection,'AfterMove');
+
+                            }
                             else if (currentObjectInFront.effect == 'CAURIS')
                             {
                                 AudioManage.play('coin')
@@ -619,7 +682,15 @@ export function GameApp(props)
                                 }
                                 else
                                 {
-                                    managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
+                                    if(currentObjectInFront.objectInfo.objectDesc.hasChildObject)
+                                    {
+                                        managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.childObjectValue,'add')
+                                    }
+                                    else
+                                    {
+                                        managePlayerMoney(currentObjectInFront.objectInfo.objectDesc.value,'add')
+                                    }
+                                    
                                     itemController.value[currentObjectInFront.objectInfo.objectId]('REMOVE-ITEM')
                                 }
 

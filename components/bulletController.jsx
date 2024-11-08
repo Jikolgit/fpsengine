@@ -138,16 +138,18 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                   
                                                     
                                                     let effectAfterItemDestruction = ()=>
-                                                        {   console.log(result)
+                                                        {   
                                                             if(result.objectDesc.hasChildObject)
                                                             {
                                                                 gloBalObject.itemController.value[result.objectId]('SHOW-CHILD-ITEM');
-                                                                gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
+                                                                
                                                             }
                                                             else
                                                             {
+                                                                gloBalObject.itemController.value[result.objectId]('REMOVE-PARENT-ITEM');
                                                                 result.isOnScene = false;
                                                             }
+                                                            gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
                                                         }
                                                     gloBalObject.itemController.value[result.objectId]('destroy-Item',effectAfterItemDestruction);
                                                     
@@ -196,7 +198,6 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                         {
                                                                 if(result.objectDesc.hasObject)
                                                                 {
-                                                                   
                                                                     result.objectType = 'item';
                                                                     gloBalObject.getNextPlatformInfo(gloBalObject.playerDirection,'AfterMove')
                                                                 }

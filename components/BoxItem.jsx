@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ItemType2Model } from "./Game3DAssets";
+import { ItemType1Model, ItemType2Model } from "./Game3DAssets";
 
 export function BoxItem(props)
 {
@@ -17,6 +17,11 @@ export function BoxItem(props)
                 childItemController.value[0]('SHOW-ITEM')
               }
 
+            else if(args == 'REMOVE-PARENT-ITEM')
+            {   
+                parentItemController.value[0]('REMOVE-ITEM')
+            }
+
               else if(args == 'REMOVE-ITEM')
               {
                 childItemController.value[0]('REMOVE-ITEM')
@@ -24,12 +29,13 @@ export function BoxItem(props)
 
               else if(args == 'Update-Item-Life')
               {
-                console.log('il reste '+params)
+                
+                parentItemController.value[0]('SHAKE-ITEM')
               }
 
               else if(args == 'destroy-Item')
               {
-                console.log('vue')
+                
                 params();
               }
           } 
@@ -43,7 +49,10 @@ export function BoxItem(props)
                         />
                         {props.hasChildObject?
                             <>
-                            {props.childObjectSkin == 'coin_item_1'? null :
+                            {props.childObjectSkin == 'coin_item_1'? 
+                                <ItemType1Model controller={{itemController:childItemController,index:0}} 
+                                skin={props.childObjectSkin} x={props.x} z={props.z} _visible={false} />
+                                :
                                 <ItemType2Model controller={{itemController:childItemController,index:0}} 
                                 skin={props.childObjectSkin} x={props.x} z={props.z} _visible={false}
                                 />

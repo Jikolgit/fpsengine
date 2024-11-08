@@ -14,6 +14,7 @@ import { CustomCounter } from './utils';
 import vertex from './vertex.glsl'
 import frags from './frags.glsl'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
+import { color } from 'three/webgpu';
 function prepareTexture(texture)
 {
   const _texture = useTexture(texture);
@@ -300,19 +301,45 @@ export function ItemType2Model(props) {
   let itemGroupRef = useRef(null)
   let containerMat = new THREE.MeshBasicMaterial({visible:false});
   let mat = new THREE.MeshBasicMaterial({map:_texture,visible:true});
-  const healmat = new THREE.MeshMatcapMaterial({color:'green'})
+  const healmat = new THREE.MeshMatcapMaterial({color:'green'});
+  let mobInitialPos = {x:0,z:0};
+  let mobShakeAnimationStart = false
+  let mobShakeFromLeft = false
+  let passedTime = 0;
   useFrame((clock)=>
   {
     if(!_appContext.gamePause.current)
     {
-      if(props.skin == 'heal_item_1' || props.skin == 'key_1' || props.skin == 'box_1')
+      if(props.skin == 'heal_item_1' || props.skin == 'key_1' || props.skin == 'box_1' )
       {
         itemRef.current.rotation.y += (1/30);
       }
-      
+      else if(props.skin == 'shoot-power' || props.skin == 'shoot-speed')
+      {
+        passedTime += 1/40;
+        itemRef.current.position.y += Math.sin(passedTime)/400;
+      }
     }
     
   })
+
+  let shakeItem = ()=>
+    { 
+      let value = mobShakeFromLeft? -0.2 : 0.2;
+      mobShakeFromLeft = mobShakeFromLeft? false : true;
+      
+      itemGroupRef.current.position.x = itemGroupRef.current.position.x + value
+      itemGroupRef.current.position.z = itemGroupRef.current.position.z + value
+      
+    }
+  let shakeItemCallBack = ()=>
+    { 
+      
+      itemGroupRef.current.position.x = mobInitialPos.x
+      itemGroupRef.current.position.z = mobInitialPos.z
+      mobShakeAnimationStart = false;
+    }
+    
   useEffect(()=>
     { 
       props.controller.itemController.value[props.controller.index] = (args)=>
@@ -324,6 +351,19 @@ export function ItemType2Model(props) {
           else if(args == 'REMOVE-ITEM')
           {
             itemGroupRef.current.visible = false;
+          }
+          else if(args=='SHAKE-ITEM')
+          {
+              if(!mobShakeAnimationStart)
+              {
+                // explodeParticleController.current('EXPLODE')
+                mobShakeAnimationStart = true
+               
+                mobInitialPos.x = itemGroupRef.current.position.x;
+                mobInitialPos.z = itemGroupRef.current.position.z;
+                let customCounter = new CustomCounter(4,7,shakeItem,shakeItemCallBack)
+                customCounter.start();
+              }
           }
       } 
     },[])
@@ -344,6 +384,29 @@ export function ItemType2Model(props) {
           {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
           {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />}
           {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
+          {props.skin == "shoot-speed" && 
+                                            <>
+                                            <mesh
+                                                ref={itemRef}
+                                                position={[props.x,0.5,props.z]}
+                                                >
+                                                    <sphereGeometry args={[0.2,10,10]} />
+                                                    <meshMatcapMaterial color={'blue'} />
+                                          </mesh> 
+                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />
+                                          </>
+          }
+          {props.skin == "shoot-power" && <>
+                                            <mesh
+                                                ref={itemRef}
+                                                position={[props.x,0.5,props.z]}
+                                                >
+                                                    <sphereGeometry args={[0.2,10,10]} />
+                                                    <meshMatcapMaterial color={'red'} />
+                                          </mesh> 
+                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />
+                                          </>
+          }
           {props.skin == "triangle" && 
                       <mesh
                           position={[props.x,0.5,props.z]}
@@ -868,6 +931,22 @@ function MobHitParticleEffect(props)
     
   )
 }
+
+// export function UpgradeModel(props)
+// {
+//   let mat = new THREE.MeshMatcapMaterial({color:'blue'})
+
+//   return(
+//           <>
+//              <mesh
+//                         position={[props.x,0.5,props.z]}
+//                     >
+//                         <sphereGeometry args={[0.2,10,10]} />
+//                         <meshBasicMaterial visible={false} map={bulletTXT} />
+//               </mesh>
+//           </>
+//   )
+// }
 export function Barier_Model(props)
 {
   let _gameAppContext = useContext(gameAppContext)

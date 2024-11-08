@@ -153,17 +153,25 @@ export function placeModelOnScene(gloBalObject)
             else if(gloBalObject.GameMap[i].objectType == 'mob')
                 {  
                     let objectComponents=null;
-                    if(gloBalObject.GameMap[i].objectDesc.mobType=='mob_1')
+                    if(gloBalObject.GameMap[i].objectDesc.mobType=='1')
                     {
-                        objectComponents = <Mob_2 _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={false} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
+                        objectComponents = <Mob_2 mobDifficulty={gloBalObject.GameMap[i].objectDesc.mobDifficulty} _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={false} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
                         objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
                         objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
                         mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  
                         mobObjectId = {gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     }
-                    else if(gloBalObject.GameMap[i].objectDesc.mobType=='mob_2')
-                    {
-                        objectComponents = <Mob_3 _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
+                    else if(gloBalObject.GameMap[i].objectDesc.mobType=='2')
+                    {   
+                        objectComponents = <Mob_2 mobDifficulty={gloBalObject.GameMap[i].objectDesc.mobDifficulty} _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
+                        objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
+                        objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
+                        mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  
+                        mobObjectId = {gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                    }
+                    else if(gloBalObject.GameMap[i].objectDesc.mobType=='3')
+                    {   
+                        objectComponents = <Mob_3 mobDifficulty={gloBalObject.GameMap[i].objectDesc.mobDifficulty} _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
                         objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
                         objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
                         mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  

@@ -8,17 +8,27 @@ import { storyText } from "./gameStory";
 
 /**
  * 
- * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean,playerPosition:number}} param0 
+ * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean,playerPosition:number,fog:boolean}} param0 
  * @returns 
  */
-export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel,playerPosition})
+export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel,playerPosition,fog})
 {
   const AppCntext = useContext(appContext);
 
   AppCntext.levelInfo.current._MobToKillNumber = mobToKill? mobToKill : 0;
   AppCntext.levelInfo.current._KeyNumber = keyNumber? keyNumber : 0;
   AppCntext.levelInfo.current.finalLevel = finalLevel? finalLevel : false;
-  AppCntext.playerPosition.current = playerPosition?playerPosition : 0
+  if(fog)
+  {
+    AppCntext.levelInfo.current.fogNear = 3
+    AppCntext.levelInfo.current.fogFar = 20
+  }
+  else
+  {
+    AppCntext.levelInfo.current.fogNear = 0.1
+    AppCntext.levelInfo.current.fogFar = 0
+  }
+  AppCntext.playerPosition.current = playerPosition?playerPosition : 0;
   
   return null
 }
@@ -62,10 +72,10 @@ export function UpdatePlayerStat(props)
 
 /**
  * 
- * @param {{position:number[],name:string,value:number|null,important:boolean,life:number}} param0 
+ * @param {{position:number[],name:string,value:number|null,important:boolean,life:number,upgradeType:string}} param0 
  * @returns 
  */
-export function AddItem({position,name,value,important,life,children})
+export function AddItem({position,name,value,important,life,children,upgradeType})
 {
   const AppCntext = useContext(appContext);
   let hasChildObject = false;
@@ -141,6 +151,13 @@ export function AddItem({position,name,value,important,life,children})
     {
       objectDetailArr[i] = {position:position[i],objectName:name,skin:'key_1',value:value?value:0,isImportant:true}
     }
+    else if(name == 'upgrade_item')
+    {
+      
+      // if(upgradeType == 'shoot-speed'){}
+      // if(upgradeType == 'shoot-power'){}
+      objectDetailArr[i] = {position:position[i],objectName:name,upgradeType,value:value?value:0,skin:upgradeType,isImportant:false}
+    }
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
   {   
@@ -210,20 +227,24 @@ export function AddDoor({position,open})
 }
 /**
  * 
- * @param {{life:number,lootObject:boolean,active:boolean,position: number[],important:boolean}} param0 
+ * @param {{life:number,position: number[],important:boolean,type:string,difficulty:string}} param0 
  * @returns 
  */
-export function AddMob({life,lootObject,active,position,children,important})
+export function AddMob({life,position,children,important,type,difficulty})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = [];
   let lifeProps = life? life : 2;
   let objectSkin = 'none'
-  let hasObject = lootObject? lootObject : false;
+  let hasObject = false;
   let objectIsImportant = false;
   let objectValue = 1;
   let objectPosition = 0;
-  let type = active? 'mob_2' : 'mob_1';
+  //TYPE
+  // 1 STATIC
+  // 2 STATIC ACTIVE
+  // 3 ACTIVE AGRESSIVE
+  let mobType = type? type : '1';
 
   if(children)
   {
@@ -272,7 +293,7 @@ export function AddMob({life,lootObject,active,position,children,important})
   }
   for(let i = 0;i<position.length;i++)
   {
-    objectDetailArr[i] = {position:position[i],life:lifeProps,mobType:type,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:important?important:false,
+    objectDetailArr[i] = {position:position[i],difficulty,life:lifeProps,mobType:mobType,mobSkin:'dummy',hasObject:hasObject,fromMob:true,isImportant:important?important:false,
                           objectValue,objectPosition,objectSkin,objectIsImportant}
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
@@ -290,15 +311,21 @@ export function AddChildItem({name,important,value})
 {
   return null;
 }
-export function AddWall(props)
+
+/**
+ * 
+ * @param {{position:number[],destructible:boolean,life:number}} param0 
+ * @returns 
+ */
+export function AddWall({position,destructible,life})
 {
   const AppCntext = useContext(appContext);
   let objectDetailArr = []
 
-  for(let i = 0;i<props.position.length;i++)
+  for(let i = 0;i<position.length;i++)
   {
 
-      objectDetailArr[i] = {position:props.position[i],objectName:'Wall_type_1',skin:'wall_1',destructible:props.destructible?props.destructible:false,life:props.value?props.value:0,isImportant:false}
+      objectDetailArr[i] = {position:position[i],objectName:'Wall_type_1',skin:'wall_1',destructible:destructible?destructible:false,life:life?life:0,isImportant:false}
     
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
@@ -390,5 +417,10 @@ export function SetMapDimension({width,height,addWallOnMap})
 
   _appContext.gameMap.current = createLevel(_appContext.level.current,_appContext.mapWidth.current,_appContext.mapHeight.current)
   return null
+}
+
+export function AddUpgradeItem(props)
+{
+
 }
 

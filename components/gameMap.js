@@ -123,11 +123,12 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             else if(objectType == 'mob')
             {   
                 map_level[index].active = true,map_level[index].hasEnemy = true, map_level[index].objectType ='mob' ,map_level[index].isOnScene = true
-                map_level[index].objectDesc={mobType:objectIndexArr[i].mobType,mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,
+                map_level[index].objectDesc={mobType:objectIndexArr[i].mobType,mobDifficulty:objectIndexArr[i].difficulty,mobSkin:objectIndexArr[i].mobSkin,life:objectIndexArr[i].life,
                                              hasObject:objectIndexArr[i].hasObject,objectName:objectIndexArr[i].hasObject,objectValue:objectIndexArr[i].objectValue,objectSkin:objectIndexArr[i].objectSkin,
                                              fromMob:true,isImportant:objectIndexArr[i].isImportant,objectIsImportant:objectIndexArr[i].objectIsImportant},
                 map_level[index].object = true;map_level[index].objectId = objectIdValue;
                 objectIdValue ++;
+                
              
             }
             
@@ -142,6 +143,13 @@ export function createObject(map_level,objectType,objectIndexArr,index)
                                                   childObjectSkin:objectIndexArr[i].childObjectSkin,childObjectValue:objectIndexArr[i].childObjectValue,childObjectIsImportant:objectIndexArr[i].childObjectIsImportant
                     },
                     map_level[index].object = true,map_level[index].objectId = objectIdValue
+                    objectIdValue ++;
+                }
+                else if(objectIndexArr[i].objectName == 'upgrade_item')
+                {
+                    map_level[index].active = true,map_level[index].objectType = objectType, map_level[index].isOnScene = true
+                    map_level[index].objectDesc ={objectName:objectIndexArr[i].objectName,isImportant:objectIndexArr[i].isImportant,upgradeType:objectIndexArr[i].upgradeType,
+                        value:objectIndexArr[i].value,skin:objectIndexArr[i].skin},map_level[index].object = true,map_level[index].objectId = objectIdValue
                     objectIdValue ++;
                 }
                 else

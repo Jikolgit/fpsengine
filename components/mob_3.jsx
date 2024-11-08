@@ -37,12 +37,17 @@ export function Mob_3(props)
     let mobState = 'Alive';
     let mobEffectCounterStart = false;
     let mobEffectCounter = 100;
+    let mobSpec = useRef({shootSpeed:40})
     let mobDeadCallBack; 
-    let checkLeft
-    let checkRight 
-    let checkFront
-    let checkBack
-    
+
+    if(props.mobDifficulty == 'hard')
+    { 
+        mobSpec.current.shootSpeed = 10
+    }
+    else if(props.mobDifficulty == 'medium')
+    {
+        mobSpec.current.shootSpeed = 40
+    }
     let startMobEffectCounter = ()=>
         {
             mobEffectCounter --;
@@ -128,7 +133,7 @@ export function Mob_3(props)
             
                 freeBulletElem.isShooted = true;
                 freeBulletElem.bulletDirection = playerDirectionToMob;
-                freeBulletElem.count = Math.floor((Math.random()*10)+81)
+                freeBulletElem.count = mobSpec.current.shootSpeed
             }
 
             
@@ -247,7 +252,7 @@ export function Mob_3(props)
                     mobBulletRef.current[index].position.z = mobPositionOnMap.z
                     
                     mobBulletInfo[index] = {index:index,checkOnce:false,isShooted:false,bulletNextMove:'none',bulletDirection:'none',bulletDistance:2,
-                        posX:mobPositionOnMap.x,posZ:mobPositionOnMap.z,count:0,countBeforeShootOver:false};
+                    posX:mobPositionOnMap.x,posZ:mobPositionOnMap.z,count:0,countBeforeShootOver:false};
                     if(mobState=='Alive')
                     { 
                         let playerPositionInfo = GameMap.find(getPlayerIndexPosition);
@@ -603,60 +608,57 @@ export function Mob_3(props)
         {
             
             let currentMobPositionInfo = GameMap.find(getIndexPosition);
-            if(nextPosIndex != currentMobPositionInfo.id)
+            if(mobState=='Alive')
             {
-                GameMap[nextPosIndex].hasEnemy = true
-                GameMap[nextPosIndex].isOnScene = true
-                GameMap[nextPosIndex].object = true
-                GameMap[nextPosIndex].objectId = structuredClone(GameMap[currentMobPositionInfo.id].objectId);
-                GameMap[nextPosIndex].objectType = structuredClone(GameMap[currentMobPositionInfo.id].objectType);
-                GameMap[nextPosIndex].objectDesc = structuredClone(GameMap[currentMobPositionInfo.id].objectDesc);
-                mobPositionOnMap.x = GameMap[nextPosIndex].xPose
-                mobPositionOnMap.z = GameMap[nextPosIndex].zPose
-                for(let i =0;i<mobBulletRef.current.length;i++)
-                {
-                    mobBulletInfo[i].posX =  mobPositionOnMap.x
-                    mobBulletInfo[i].posZ =  mobPositionOnMap.z
-                    mobBulletRef.current[i].position.x = mobPositionOnMap.x
-                    mobBulletRef.current[i].position.z = mobPositionOnMap.z
-                }
-    
-                //
-                GameMap[currentMobPositionInfo.id].hasEnemy = false
-                GameMap[currentMobPositionInfo.id].isOnScene = false;
-                GameMap[currentMobPositionInfo.id].object = false;
-                GameMap[currentMobPositionInfo.id].objectType = "none";
-                GameMap[currentMobPositionInfo.id].objectId = "none";
-                GameMap[currentMobPositionInfo.id].objectDesc = null;
-    
-    
-    
-                enemyController.current('MOVE-MOB',{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose})
-                lifeBarController.current("MOVE",{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose});
-
-                // checkIfPlayerIsOnMobAxis('LEFT')
-                // checkIfPlayerIsOnMobAxis('RIGHT')
-                // checkIfPlayerIsOnMobAxis('FRONT')
-                // checkIfPlayerIsOnMobAxis('BACK')
-                //PB LE MOB SE BLOQUE A UN MOMENT
-
-                
-                checkIfPlayerIsOnMobAxis('LEFT')
-                checkIfPlayerIsOnMobAxis('RIGHT')
-                checkIfPlayerIsOnMobAxis('FRONT')
-                checkIfPlayerIsOnMobAxis('BACK')
-                
-                if(!playerIsAlreadyOnAxis.left && !playerIsAlreadyOnAxis.right && !playerIsAlreadyOnAxis.front && !playerIsAlreadyOnAxis.back && locatePlayer)
-                {   //ON RECHERCHE LE MOB
-                   
-                    gotToPlayerAxe(GameMap.find(getPlayerIndexPosition).id);
-                }
-                else
-                {
-                    prepareBulletAnimation();
-                }
-                
+                    if(nextPosIndex != currentMobPositionInfo.id)
+                    {
+                        GameMap[nextPosIndex].hasEnemy = true
+                        GameMap[nextPosIndex].isOnScene = true
+                        GameMap[nextPosIndex].object = true
+                        GameMap[nextPosIndex].objectId = structuredClone(GameMap[currentMobPositionInfo.id].objectId);
+                        GameMap[nextPosIndex].objectType = structuredClone(GameMap[currentMobPositionInfo.id].objectType);
+                        GameMap[nextPosIndex].objectDesc = structuredClone(GameMap[currentMobPositionInfo.id].objectDesc);
+                        mobPositionOnMap.x = GameMap[nextPosIndex].xPose
+                        mobPositionOnMap.z = GameMap[nextPosIndex].zPose
+                        for(let i =0;i<mobBulletRef.current.length;i++)
+                        {
+                            mobBulletInfo[i].posX =  mobPositionOnMap.x
+                            mobBulletInfo[i].posZ =  mobPositionOnMap.z
+                            mobBulletRef.current[i].position.x = mobPositionOnMap.x
+                            mobBulletRef.current[i].position.z = mobPositionOnMap.z
+                        }
+            
+                        //
+                        GameMap[currentMobPositionInfo.id].hasEnemy = false
+                        GameMap[currentMobPositionInfo.id].isOnScene = false;
+                        GameMap[currentMobPositionInfo.id].object = false;
+                        GameMap[currentMobPositionInfo.id].objectType = "none";
+                        GameMap[currentMobPositionInfo.id].objectId = "none";
+                        GameMap[currentMobPositionInfo.id].objectDesc = null;
+            
+            
+            
+                        enemyController.current('MOVE-MOB',{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose})
+                        lifeBarController.current("MOVE",{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose});
+         
+                        checkIfPlayerIsOnMobAxis('LEFT')
+                        checkIfPlayerIsOnMobAxis('RIGHT')
+                        checkIfPlayerIsOnMobAxis('FRONT')
+                        checkIfPlayerIsOnMobAxis('BACK')
+                        
+                        if(!playerIsAlreadyOnAxis.left && !playerIsAlreadyOnAxis.right && !playerIsAlreadyOnAxis.front && !playerIsAlreadyOnAxis.back && locatePlayer)
+                        {   //ON RECHERCHE LE MOB
+                           
+                            gotToPlayerAxe(GameMap.find(getPlayerIndexPosition).id);
+                        }
+                        else
+                        {
+                            prepareBulletAnimation();
+                        }
+                        
+                    }
             }
+            
             
             
          
