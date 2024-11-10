@@ -361,7 +361,7 @@ export function PauseScreen()
     )
 }
 
-export function LifeBar(props)
+export function LifeBar()
 {
     let _appContext = useContext(appContext)
     let lifeValue = ( _appContext.playerStats.current.life*100) /  _appContext.playerStats.current.maxLife;
@@ -613,28 +613,27 @@ export function TitleScreen()
             AudioManage.soundONOFF(_appContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
             setVolumeIcon(c => c = _appContext.soundOn.current? 'volume-high.svg' : 'volume-off.svg');
         }
-    let upgradeLife = ()=>
-        {
+    // let upgradeLife = ()=>
+    //     {
             
-            _appContext.upgradePlayerState('LIFE');
-            setIifeUpdateInfo({level:_appContext.playerLifeUpgradeCost.current.level,
-                               cost:_appContext.playerLifeUpgradeCost.current.value})
-        }
-    let upgradeWeapon = ()=>
-        {
+    //         _appContext.upgradePlayerState('LIFE');
+    //         setIifeUpdateInfo({level:_appContext.playerLifeUpgradeCost.current.level,
+    //                            cost:_appContext.playerLifeUpgradeCost.current.value})
+    //     }
+    // let upgradeWeapon = ()=>
+    //     {
             
-            _appContext.upgradePlayerState('WEAPON');
-            setWeaponUpdateInfo({level:_appContext.playerWeaponUpgradeCost.current.level,
-                                cost:_appContext.playerWeaponUpgradeCost.current.value})
-        }
+    //         _appContext.upgradePlayerState('WEAPON');
+    //         setWeaponUpdateInfo({level:_appContext.playerWeaponUpgradeCost.current.level,
+    //                             cost:_appContext.playerWeaponUpgradeCost.current.value})
+    //     }
     return <div 
                 style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`absolute left-[0] top-[0] z-[2] w-full h-full select-none `}
             >
                     
-                    <div className="relative mt-[10px] max-w-[400px] w-[90%] mx-auto ">
-                        <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                        <img className="w-full " src="title.png" alt="title" />
+                    <div className="relative mt-[10px] text-center text-[2rem] text-white ">
+                         DUNGEON QUEST
                     </div>
                     
                      <div className=" text-center text-white  ">

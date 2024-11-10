@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { TestModel } from "./Testmodel";
 import { OrbitControls, PerspectiveCamera, Point, Points } from "@react-three/drei";
 import { createContext, useContext, useEffect, useRef } from "react";
-import {  ExitDoor_model, GroundModel, PlayerCursor, SpearModel } from "./Game3DAssets";
+import {  ExitDoor_model, GroundModel, PlayerCursor, BulletModel } from "./Game3DAssets";
 import { EnemyComponent } from "./enemy";
 import { appContext } from "../src/App";
 import { PlatformIndex } from "./DevHelp";
@@ -57,7 +57,6 @@ export function GameApp(props)
     let itemController = {value:[]};
     let wallController = {value:[]};
     let exitDoorController = {value:[]};
-    let spearModelIndexArr = {value:[]};
     let bulletModelController = {value:[]};
     let exitDoorModelIndexArr = {value:[]};
     let exitDoorMapIndexArr = {value:[]};
@@ -164,7 +163,7 @@ export function GameApp(props)
         }
     let gameEnding = ()=>
         {
-            // _appContext.gameEndingScreenFunc.current();
+            ;
             storyText.value = ['none'] 
             
             _appContext.gamePause.current = true;
@@ -867,7 +866,7 @@ export function GameApp(props)
                                     <sphereGeometry args={[0.05,10,10]} />
                                     <meshBasicMaterial visible={false}  />
 
-                                    <SpearModel controller={{bulletModelController:bulletModelController,index:i}} _rotation={[Math.PI*0.5,0,0]}  
+                                    <BulletModel controller={{bulletModelController:bulletModelController,index:i}} _rotation={[Math.PI*0.5,0,0]}  
                                     _visible={false} posX={-0.5} posY={0} posZ={0} />
                             </mesh>
         bulletRefInfo.current[i] = {_index:i,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
@@ -879,13 +878,7 @@ export function GameApp(props)
         {
             if(!_appContext.gamePause.current)
             {
-                passedTime += 1/40;
-                for(let i =0;i< spearModelIndexArr.value.length;i++)
-                {
-                    // objectRef.current[spearModelIndexArr.value[i]].children[0].position.y += Math.sin(passedTime)/400;
-                    // objectRef.current[spearModelIndexArr.value[i]].children[0].rotation.z += (0.1/4);
 
-                }
 
                 if(camRotateStart.current)
                 {
@@ -904,14 +897,7 @@ export function GameApp(props)
         
     useEffect(()=>
         {
-            // if(_appContext.transitionBetweenScreen.current)
-            // {  
-            //     _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
-            // }
-            // else
-            // {   
-            //     _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
-            // }
+
             _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
             
         },[])
@@ -968,7 +954,7 @@ export function GameApp(props)
             playerMoveIsActive,getNextPlatformInfo,playerDirection,aKeyisPressed,objetDirection,GameMap,playerPositionOnMap,
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
-            barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
+            barierMapIndexArr,mobIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
             wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer,mobObjectIdArr,
             checkBarierCondition
 

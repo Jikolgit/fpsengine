@@ -29,7 +29,7 @@ export function GroundModel(props) {
   // 3D ASSET OF THE GROUND
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('ntxt4.jpg');
+  let _texture = prepareTexture(_appContext.levelInfo.current.mapTexture);
  
   let mat = new THREE.MeshBasicMaterial({map:_texture,wireframe:true});
   let mat2 = new THREE.MeshBasicMaterial({map:_texture})
@@ -40,48 +40,48 @@ export function GroundModel(props) {
     </group>
   )
 }
-export function SpearModelOnMap(props) {
-  let _appContext = useContext(appContext)
-  const { nodes, materials } = useGLTF('/model.glb');
-  let passedTime = 0 ;
-  let modelRef = useRef(null)
-  let _texture = prepareTexture('gametexture.jpg');
-  let mat = new THREE.MeshBasicMaterial({map:_texture,visible:props._visible,wireframe:_appContext.devMode.current? true : false});
-  let visibleStatut;
+// export function SpearModelOnMap(props) {
+//   let _appContext = useContext(appContext)
+//   const { nodes, materials } = useGLTF('/model.glb');
+//   let passedTime = 0 ;
+//   let modelRef = useRef(null)
+//   let _texture = prepareTexture('gametexture.jpg');
+//   let mat = new THREE.MeshBasicMaterial({map:_texture,visible:props._visible,wireframe:_appContext.devMode.current? true : false});
+//   let visibleStatut;
 
-  useFrame(()=>
-    {
-      if(!_appContext.gamePause.current)
-      {
-        passedTime += 1/40;
-        modelRef.current.position.y += Math.sin(passedTime)/400;
-        if(props.name == 'triangle'){modelRef.current.rotation.y += (0.1/4);}
-        else if(props.name == 'torus'){modelRef.current.rotation.z += (0.1/4);}
+//   useFrame(()=>
+//     {
+//       if(!_appContext.gamePause.current)
+//       {
+//         passedTime += 1/40;
+//         modelRef.current.position.y += Math.sin(passedTime)/400;
+//         if(props.name == 'triangle'){modelRef.current.rotation.y += (0.1/4);}
+//         else if(props.name == 'torus'){modelRef.current.rotation.z += (0.1/4);}
         
-      }
+//       }
       
-    })
-  return (
-      <>
-      {/* <mesh ref={modelRef}
-            rotation={[0,0,Math.PI*0.1]} 
-            geometry={nodes.spear_1.geometry} material={mat} position={[props.posX,props.posY,props.posZ]} /> */}
-      {/* <mesh ref={modelRef}>
-            <boxGeometry args={[1,1,1]} />
-            <meshBasicMaterial color={'yellow'} wireframe />
-      </mesh> */}
-      {props.name == 'triangle' && <mesh ref={modelRef} geometry={nodes.playerBullet_1.geometry}>
-            <meshBasicMaterial color={'yellow'} wireframe />
-      </mesh>}
-      {props.name == 'torus' && <mesh position={[0,0.5,0]} ref={modelRef} geometry={nodes.playerBullet_2.geometry} rotation={[Math.PI*0.5,0,0]}>
-            <meshBasicMaterial color={'yellow'} />
-      </mesh>}
-      <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'red'} _speed={1} _number={30} x={props.posX} z={props.posZ} />
-      </>
+//     })
+//   return (
+//       <>
+//       {/* <mesh ref={modelRef}
+//             rotation={[0,0,Math.PI*0.1]} 
+//             geometry={nodes.spear_1.geometry} material={mat} position={[props.posX,props.posY,props.posZ]} /> */}
+//       {/* <mesh ref={modelRef}>
+//             <boxGeometry args={[1,1,1]} />
+//             <meshBasicMaterial color={'yellow'} wireframe />
+//       </mesh> */}
+//       {props.name == 'triangle' && <mesh ref={modelRef} geometry={nodes.playerBullet_1.geometry}>
+//             <meshBasicMaterial color={'yellow'} wireframe />
+//       </mesh>}
+//       {props.name == 'torus' && <mesh position={[0,0.5,0]} ref={modelRef} geometry={nodes.playerBullet_2.geometry} rotation={[Math.PI*0.5,0,0]}>
+//             <meshBasicMaterial color={'yellow'} />
+//       </mesh>}
+//       <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'red'} _speed={1} _number={30} x={props.posX} z={props.posZ} />
+//       </>
       
-  )
-}
-export function SpearModel(props) {
+//   )
+// }
+export function BulletModel(props) {
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let modelRef = useRef(null)
@@ -127,9 +127,9 @@ export function SpearModel(props) {
               material={mat} geometry={nodes.nArrow.geometry} >
                     <meshBasicMaterial map={_texture} visible={props._visible} />
               </mesh>
-              <mesh scale={1.5} material={mat} geometry={nodes.playerBullet_1.geometry}  >
-                    <meshBasicMaterial color={'red'} wireframe visible={props._visible} />
-              </mesh>
+              {/* <mesh scale={1.5} material={mat} geometry={nodes.playerBullet_1.geometry}  >
+                    <meshBasicMaterial color={'red'} wireframe visible={true} />
+              </mesh> */}
       </group>
       
       {/* <mesh ref={modelRef} geometry={nodes.spear_2.geometry} material={mat} position={[props.posX-0.1,props.posY,props.posZ+0.2]} rotation={[Math.PI*0.5,0,0]}>
@@ -239,10 +239,9 @@ export function Dummy_1_model(props) {
 }
 export function Decor_model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('ntxt4.jpg');
+  let _appContext = useContext(appContext)
+  let _texture = prepareTexture(_appContext.levelInfo.current.mapTexture);
   let _texture2 = prepareTexture('txtglobal1.jpg');
-  // let mat = new THREE.MeshBasicMaterial({map:_texture});
-  // let mat = new THREE.MeshBasicMaterial({color:'white',wireframe:true});
   const mat = new THREE.MeshMatcapMaterial({color:'white'})
   const mat2 = new THREE.MeshMatcapMaterial({color:'green'})
   const mat3 = new THREE.MeshMatcapMaterial({map:_texture})
@@ -265,9 +264,9 @@ export function Decor_model(props) {
 export function WallModel(props)
 {
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = prepareTexture('ntxt4.jpg');
+  let _appContext = useContext(appContext);
+  let _texture = prepareTexture(_appContext.levelInfo.current.mapTexture);
   let wallRef = useRef(null);
-  // let mat = new THREE.MeshBasicMaterial({map:_texture});
   const mat = new THREE.MeshMatcapMaterial({map:_texture})
   useEffect(()=>
     { 
@@ -424,7 +423,7 @@ export function ItemType2Model(props) {
                                           <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                           </>
           }
-          {props.skin == "triangle" && 
+          {/* {props.skin == "triangle" && 
                       <mesh
                           position={[0,0.5,0]}
                       >
@@ -445,7 +444,7 @@ export function ItemType2Model(props) {
                           <SpearModelOnMap name={props.skin} _visible={true} posX={0} posY={0} posZ={0} />
                           
                       </mesh>
-          }
+          } */}
           {props.skin == "wall_1" && <mesh ref={itemRef}  geometry={nodes.wall_1.geometry} material={mat} position={[0,0,0]}/>}
       </group>
       
@@ -646,7 +645,7 @@ export function Mob_1_model(props) {
 
   let _texture = prepareTexture('gametexture.jpg');
   // let mat = new THREE.MeshBasicMaterial({map:_texture});
-  const mat = new THREE.MeshMatcapMaterial({color:'red'})
+  const mat = new THREE.MeshMatcapMaterial({color:'red',transparent:true})
   let modelRef = useRef(null);
   let mobHitManager = {startEffect:false,timer:10,effectCount:0}
   let visibleStatut;
@@ -656,7 +655,8 @@ export function Mob_1_model(props) {
   let mobShakeAnimationStart = false;
   let explodeParticleController = useRef(null); 
   let shakeOrientation = useRef('FRONT-BACK');
-  let animationManager = useRef({start:false})
+  let animationManager = useRef({start:false});
+  let handRef = useRef(null)
   let shakeBrick = ()=>
     { 
       let value = mobShakeFromLeft? -0.2 : 0.2;
@@ -690,6 +690,16 @@ export function Mob_1_model(props) {
             {
               animationManager.current.start = false;
               _mobContext.mobShootAnimationOver.current = true;
+            }
+            if(actions.m_mob1dead1?.time >= 0.3)
+            {
+             
+              actions.m_mob1dead1.paused = true;
+              actions.m_mob1dead2.paused = true;
+              actions.m_mob1dead3.paused = true;
+              actions.m_mob1dead4.paused = true;
+              actions.m_mob1dead5.paused = true;
+              animationManager.current.start = false;
             }
         }
 
@@ -728,6 +738,15 @@ export function Mob_1_model(props) {
         actions.m_mob1attack4?.play();
         actions.m_mob1attack5?.play();
       }
+      let mobDeadAnime = ()=>
+      {
+        animationManager.current.start = true;
+        actions.m_mob1dead1?.play();
+        actions.m_mob1dead2?.play();
+        actions.m_mob1dead3?.play();
+        actions.m_mob1dead4?.play();
+        actions.m_mob1dead5?.play();
+      }
   useEffect(()=>
     {
       actions.m_mob1attack1?.setLoop(THREE.LoopOnce,1);
@@ -735,6 +754,12 @@ export function Mob_1_model(props) {
       actions.m_mob1attack3?.setLoop(THREE.LoopOnce,1)
       actions.m_mob1attack4?.setLoop(THREE.LoopOnce,1)
       actions.m_mob1attack5?.setLoop(THREE.LoopOnce,1)
+
+      actions.m_mob1dead1?.setLoop(THREE.LoopOnce,1);
+      actions.m_mob1dead2?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1dead3?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1dead4?.setLoop(THREE.LoopOnce,1)
+      actions.m_mob1dead5?.setLoop(THREE.LoopOnce,1)
 
       mixer.addEventListener('finished', function( e ) 
       {
@@ -745,6 +770,15 @@ export function Mob_1_model(props) {
           actions.m_mob1attack3?.stop();
           actions.m_mob1attack4?.stop();
           actions.m_mob1attack5?.stop();
+          
+        }
+        else if(e.action._clip.name == "m_mob1dead1")
+        {
+          actions.m_mob1dead1?.stop();
+          actions.m_mob1dead2?.stop();
+          actions.m_mob1dead3?.stop();
+          actions.m_mob1dead4?.stop();
+          actions.m_mob1dead5?.stop();
           
         }
 
@@ -784,10 +818,7 @@ export function Mob_1_model(props) {
               let customCounter = new CustomCounter(4,7,shakeBrick,shakeBrickCallBack)
               customCounter.start();
             }
-            
-            // modelRef.current.children[0].visible = false;
-            // mobHitManager = {startEffect:false,timer:10,effectCount:0}
-            // mobHitManager.startEffect = true
+
           }
           else if(args == 'MOB-ROTATE-LEFT')
           {
@@ -813,6 +844,24 @@ export function Mob_1_model(props) {
           {
             mobAttackAnime()
           }
+          else if(args == 'PLAY-MOB-DEAD-ANIMATION')
+          { 
+            let customCounter = new CustomCounter(5,0,()=>
+              {
+                 handRef.current.material.opacity -=0.1;
+                 if(handRef.current.material.opacity<=0)
+                 {
+                  modelRef.current.visible = false;
+                  params()
+                  return true
+                }
+                 else
+                 {
+                  return false
+                 }
+              },null)
+              customCounter.start();
+          }
         }
     },[])
   
@@ -834,7 +883,7 @@ export function Mob_1_model(props) {
                       {/* MOB MODEL */}
 
                       <mesh name="nmob1" geometry={nodes.nmob1.geometry} material={new THREE.MeshMatcapMaterial({color:'black'})} >
-                        <mesh name="nmob1_hand_l" geometry={nodes.nmob1_hand_l.geometry} material={mat} position={[0.639, -0.473, -0.066]} />
+                        <mesh ref={handRef} name="nmob1_hand_l" geometry={nodes.nmob1_hand_l.geometry} material={mat} position={[0.639, -0.473, -0.066]} />
                         <mesh name="nmob1_hand_r" geometry={nodes.nmob1_hand_r.geometry} material={mat} position={[-0.639, -0.494, 0]} />
                         <mesh name="nmob1head" geometry={nodes.nmob1head.geometry} material={new THREE.MeshMatcapMaterial({color:'white'})} />
                         <mesh name="nmob1horn" geometry={nodes.nmob1horn.geometry} material={mat} />
@@ -958,21 +1007,7 @@ function MobHitParticleEffect(props)
   )
 }
 
-// export function UpgradeModel(props)
-// {
-//   let mat = new THREE.MeshMatcapMaterial({color:'blue'})
 
-//   return(
-//           <>
-//              <mesh
-//                         position={[props.x,0.5,props.z]}
-//                     >
-//                         <sphereGeometry args={[0.2,10,10]} />
-//                         <meshBasicMaterial visible={false} map={bulletTXT} />
-//               </mesh>
-//           </>
-//   )
-// }
 export function Barier_Model(props)
 {
   let _gameAppContext = useContext(gameAppContext)

@@ -8,16 +8,17 @@ import { storyText } from "./gameStory";
 
 /**
  * 
- * @param {{mobToKill:number,keyNumber:number,finalLevel:boolean,playerPosition:number,fog:boolean}} param0 
+ * @param {{mapTexture:string,mobToKill:number,keyNumber:number,finalLevel:boolean,playerPosition:number,fog:boolean}} param0 
  * @returns 
  */
-export function UpdateLevelConfig({mobToKill,keyNumber,finalLevel,playerPosition,fog})
+export function UpdateLevelConfig({mapTexture,mobToKill,keyNumber,finalLevel,playerPosition,fog})
 {
   const AppCntext = useContext(appContext);
 
   AppCntext.levelInfo.current._MobToKillNumber = mobToKill? mobToKill : 0;
   AppCntext.levelInfo.current._KeyNumber = keyNumber? keyNumber : 0;
   AppCntext.levelInfo.current.finalLevel = finalLevel? finalLevel : false;
+  AppCntext.levelInfo.current.mapTexture = mapTexture? mapTexture : 'ntxt4.jpg';
   if(fog)
   {
     AppCntext.levelInfo.current.fogNear = 3

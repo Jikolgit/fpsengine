@@ -1,5 +1,5 @@
 import { BoxItem } from "./BoxItem";
-import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, SpearModel,SpearModelOnMap, Decor_model, WallModel, GroundModel } from "./Game3DAssets";
+import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, Decor_model, WallModel, GroundModel } from "./Game3DAssets";
 import { Mob_2 } from "./mob_2";
 import { Mob_3 } from "./mob_3";
 

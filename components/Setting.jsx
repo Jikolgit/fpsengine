@@ -2,7 +2,8 @@ import { useContext } from "react";
 import { appContext } from "../src/App";
 import { AddDecor, AddDoor, AddItem, AddMob, AddChildItem, SetMapDimension, UpdateLevelConfig, AddTimer, AddWall, AddBarrier, UpdateStroryScreen } from "./DefaultComponents";
 
-//TROUVER UN MOYEN de coder l'ouverture de la porte sans gener l'utilisateur
+// HERE YOU CAN SETUP YOUR LEVEL
+//
 export function Settings()
 {
     const AppContext = useContext(appContext);
@@ -10,7 +11,7 @@ export function Settings()
             <>
                     {AppContext.level.current == 1 &&
                         <>
-                            <UpdateLevelConfig playerPosition={22}   />
+                            <UpdateLevelConfig playerPosition={22}    />
 
                             <UpdateStroryScreen>
                                 <div>Go inside the dungeon and find the sacred treasure</div>
@@ -32,19 +33,18 @@ export function Settings()
                             </UpdateStroryScreen>
                             <SetMapDimension width={7} height={15} addWallOnMap />
                             <AddItem name="key_item" position={[45]} />
-                            {/* <AddBarrier keyToCollect={1} mobToKill={0} position={[57,58,59,60,61]} /> */}
                             <AddDoor position={[94]} />
                         </>
                     }
                     {AppContext.level.current == 3 &&
                         <>
-                            <UpdateLevelConfig playerPosition={10} mobToKill={2}  />
+                            <UpdateLevelConfig playerPosition={10} mobToKill={2} />
                             <UpdateStroryScreen>
                                 <div>Shoot the <span className="text-red-500">Ghost</span> to open the portal</div>
                             </UpdateStroryScreen>
                             <SetMapDimension width={7} height={15} addWallOnMap />
-                            <AddMob position={[64]} life={3} type="2" />
-                            <AddMob position={[68]} life={3} type="2" />
+                            <AddMob position={[64]} life={2} type="2" />
+                            <AddMob position={[68]} life={2} type="2" />
                             <AddDoor position={[94]} />
                         </>
                     }

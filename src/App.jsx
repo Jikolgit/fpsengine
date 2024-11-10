@@ -15,10 +15,10 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(1);
+  let level = useRef(3);
   let mapHeight = useRef(19);
   let mapWidth = useRef(16);
-  let playerPosition = useRef(5)
+  let playerPosition = useRef(5);
   let gameMap = useRef(createLevel(level.current,mapWidth.current,mapHeight.current));
   let playerLifeContainerRef = useRef(null);
   let playerMoneyContainerRef = useRef(null);
@@ -56,7 +56,7 @@ function App() {
   let playerLifeUpgradeCost = useRef({value:20,level:1});
   let playerWeaponUpgradeCost = useRef({value:20,level:1});
   let playerStats = useRef({score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
-  let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
+  let levelInfo = useRef({mapTexture:'ntxt4.jpg',_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
   let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
     playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
     playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level])
@@ -356,7 +356,7 @@ function App() {
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
-              className={`bg-black font-times absolute max-w-[700px] left-[0] right-[0] mx-auto  w-full font-gun
+              className={`bg-black font-times absolute max-w-[700px] left-[0] right-[0] mx-auto  w-full font-times
                           md1:h-[100%] md1:max-h-[700px] h-[500px] select-none `}
           >
             <Canvas>
@@ -370,8 +370,8 @@ function App() {
             {gameVueActive && <PlayerMoney /> }
             {gameVueActive && <GameTimer />}
             {gameVueActive && <ScoreVue />} 
-            {gameVueActive && <LevelUi />} 
-            {gameVueActive && <LifeBar life={playerStats.current.life} maxLife={playerStats.current.maxLife} /> }
+            {/* {gameVueActive && <LevelUi />}  */}
+            {gameVueActive && <LifeBar /> }
 
             <GameUI />
             <Settings />

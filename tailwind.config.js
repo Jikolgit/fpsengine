@@ -5,6 +5,9 @@ module.exports = {
       screens:{
         'md1':{'max':'500px'}
       },
+      fontFamily:{
+        'times':'Times New Toman'
+      },
       extend: 
       {
         animation:

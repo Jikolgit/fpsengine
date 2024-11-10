@@ -82,8 +82,9 @@ export function Mob_2(props)
             if(state == 'dead')
             {
                 mobState = 'Dead';
-                mobEffectCounterStart = true;
-                mobDeadCallBack = _numb
+                enemyController.current('PLAY-MOB-DEAD-ANIMATION',_numb)
+                // mobEffectCounterStart = true;
+                // mobDeadCallBack = _numb
                 
 
             }
