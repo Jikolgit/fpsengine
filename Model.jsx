@@ -46,6 +46,10 @@ export function Model(props) {
           <mesh name="nmob1head" geometry={nodes.nmob1head.geometry} material={nodes.nmob1head.material} />
           <mesh name="nmob1horn" geometry={nodes.nmob1horn.geometry} material={nodes.nmob1horn.material} />
         </mesh>
+        <mesh name="crate_1" geometry={nodes.crate_1.geometry} material={nodes.crate_1.material} position={[9.005, 1.002, -2]} />
+        <mesh name="nbarrier" geometry={nodes.nbarrier.geometry} material={nodes.nbarrier.material} position={[14.992, 0.001, -2]}>
+          <mesh name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={nodes.nbarrierplane.material} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
+        </mesh>
         <mesh name="Cube001" geometry={nodes.Cube001.geometry} material={nodes.Cube001.material} position={[28, 1, -5]} />
         <mesh name="pcoin_1" geometry={nodes.pcoin_1.geometry} material={nodes.pcoin_1.material} position={[32, 1.005, -5]} />
         <mesh name="pdecor_1" geometry={nodes.pdecor_1.geometry} material={nodes.pdecor_1.material} position={[36, 0, -5]}>

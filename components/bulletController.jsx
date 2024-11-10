@@ -129,6 +129,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                         {
                                             if(result.objectDesc.objectName == 'box_item')
                                             {   
+                                                AudioManage.play('crate-impact')
                                                 result.objectDesc.objectLife -= gloBalObject._appContext.playerStats.current.shootPower;
                                                 if(result.objectDesc.objectLife <=0 )
                                                 {   
@@ -157,6 +158,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                 }
                                                 else
                                                 {
+                                                    
                                                     gloBalObject.itemController.value[result.objectId]('Update-Item-Life',result.objectDesc.objectLife);
                                                 }
                                                 
@@ -208,8 +210,9 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                         }
                                                     gloBalObject.mobUpdateFunc.current[result.objectId]('dead',effectAfterMobDeath);
                                                     
-                                                    gloBalObject._appContext.ScoreVueController.current('INCREASE',3);
+                                                    gloBalObject._appContext.ScoreVueController.current('INCREASE',100);
                                                     gloBalObject._appContext.playerStats.current.mobKilled ++;
+                                                    gloBalObject.checkBarierCondition();
                                                     gloBalObject.checkWinCondition();
                                                 }
                                                 else

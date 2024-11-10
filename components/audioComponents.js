@@ -10,6 +10,7 @@ let audioSrc7 = new URL('../sound/heal.wav',import.meta.url);
 let audioSrc8 = new URL('../sound/grabWeapon.wav',import.meta.url);
 let audioSrc9 = new URL('../sound/coin_1.wav',import.meta.url);
 let audioSrc10 = new URL('../sound/rollover1.ogg',import.meta.url);
+let audioSrc11 = new URL('../sound/crateimpact.wav',import.meta.url);
 
 //let hitAudio=new Audio(audioSrc.href);
 let hitAudio = new Howl({
@@ -44,6 +45,10 @@ let takeCoin = new Howl({
 });
 let uiErrorAudio = new Howl({
   src: [audioSrc10.href],
+  
+});
+let crateimpactAudio = new Howl({
+  src: [audioSrc11.href],
   
 });
 export class AudioManage{
@@ -84,6 +89,7 @@ export class AudioManage{
         else if(audio=='heal'){heal.play()}
         else if(audio=='grab'){grabWeapon.play()}
         else if(audio=='coin'){takeCoin.play()}
+        else if(audio=='crate-impact'){crateimpactAudio.play()}
       }
 
     }

@@ -120,7 +120,7 @@ export function placeModelOnScene(gloBalObject)
                 }
             
             else if(gloBalObject.GameMap[i].objectType == 'barier')
-                {
+                {   
                     gloBalObject.barierMapIndexArr.value.push(i)
                     let arrElem = gloBalObject.GameMap[i].isOnScene?
                     <group
@@ -128,9 +128,9 @@ export function placeModelOnScene(gloBalObject)
                     ref={(val)=>{gloBalObject.objectRef.current[gloBalObject.GameMap[i].objectId] = val}}
                     >
                                 
-                            <Barier_Model _for={'barier'} refID={gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                            <Barier_Model orientation={gloBalObject.GameMap[i].objectDesc.orientation} refID={gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     </group> : null;
-                    gloBalObject.barierModelIndexArr.value.push({objectId:gloBalObject.GameMap[i].objectId,ModelFunc:null});
+                    gloBalObject.barierModelIndexArr.value.push({objectId:gloBalObject.GameMap[i].objectId,modelController:null});
                     gloBalObject.objectContainer.current[i] = arrElem
                     
                     

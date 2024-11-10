@@ -14,7 +14,7 @@ import { moveBullet, prepareNextBullet } from './bulletController';
 import { placeModelOnScene } from './placeModelOnScene';
 import { AudioManage } from './audioComponents';
 import { CustomCounter } from './utils';
-import { speechTimeline } from './gameStory';
+import { speechTimeline, storyText } from './gameStory';
 
 export let gameAppContext = createContext(null);
 export function GameApp(props)
@@ -93,33 +93,58 @@ export function GameApp(props)
                 {
                     openExitDoor();
                 }
-                if(_appContext.playerStats.current.mobKilled == gameMapInfo._MobToKillNumber )
-                {
-                    removeBarrier();
-                }
+
             }
             else
             {
                 // PLAYER MUST KILL ALL THE MOB IN THE AREA BEFORE GOING TO THE NEXT LEVEL
                 if(_appContext.playerStats.current.mobKilled == gameMapInfo._MobToKillNumber )
                     {
-                        removeBarrier();
+                      
                         openExitDoor();
 
                     }
             }
         }
-    const removeBarrier = ()=>
+    let checkBarierCondition = ()=>
         {
+            if(barierMapIndexArr.value.length>0)
+            {
                 for(let i =0; i< barierMapIndexArr.value.length;i++)
                 {
-                    GameMap[barierMapIndexArr.value[i]].objectDesc.pass = true;
+                    let conditions = 0;
+                    if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == 0 || GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == 0)
+                    {conditions = 1}
+                    else{conditions = 2}
+                    
+                    if(conditions == 1)
+                    {
+                        if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect != 0)
+                        {
+                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == gameMapInfo._KeyNumber){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
+                        }
+                        else if(GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill != 0)
+                        {   
+                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == _appContext.playerStats.current.mobKilled){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
+                        }
+                    }
+                    else if(conditions == 2)
+                    {
+                        if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == gameMapInfo._KeyNumber &&
+                            GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == gameMapInfo._MobToKillNumber
+                            )
+                        {
+                            GameMap[barierMapIndexArr.value[i]].isOnScene = false;
+                            barierModelIndexArr.value[i].modelController("hide")
+                        }
+                    }
+                    
+                    
                 }
-                for(let i = 0; i< barierModelIndexArr.value.length;i++)
-                {
-                    barierModelIndexArr.value[i].ModelFunc("hide")
-                }
+            }
+            
         }
+
     let openExitDoor = ()=>
         {
             for(let i = 0; i< exitDoorController.value.length;i++)
@@ -140,16 +165,21 @@ export function GameApp(props)
     let gameEnding = ()=>
         {
             // _appContext.gameEndingScreenFunc.current();
+            storyText.value = ['none'] 
+            
+            _appContext.gamePause.current = true;
             if(_appContext.transitionBetweenScreen.current)
             {
-
+                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'ENDING-SCREEN'});
             }
             else
             {
+                
                 _appContext.setGameVueActive(false);
+                _appContext.GameUIController.current({arg1:'DIRECT',arg2:'ENDING-SCREEN'});
             }
             
-            _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'ENDING-SCREEN'});
+           
         }
     let reduceEnemyLife = ()=>
         {
@@ -159,6 +189,7 @@ export function GameApp(props)
     let managePlayerKey = ()=>
         {
             _appContext.playerStats.current.keyCollected ++;
+            checkBarierCondition();
             checkWinCondition();
         }
     let reducePlayerLife = (_number)=>
@@ -207,14 +238,38 @@ export function GameApp(props)
         {
             if(args == 'upgrade_shoot_speed_item')
             {   
-                _appContext.playerStats.current.shootInterval -= 10;
-                // weaponReload = {time:0,timeLimite:_appContext.playerStats.current.shootInterval,start:false};
-                weaponReload.timeLimite = _appContext.playerStats.current.shootInterval;
+                if(_appContext.playerStats.current.shootInterval == 20)
+                {
+                    _appContext.gameNotifFunc.current('Shoot speed is max !','player')
+                }
+                else
+                {
+                    _appContext.playerStats.current.shootInterval -= 10;
+               
+                    weaponReload.timeLimite = _appContext.playerStats.current.shootInterval;
+                    _appContext.gameNotifFunc.current('Faster shoot !','player')
+                }
+
             }
             else if(args == 'upgrade_shoot_power_item')
             {
-                _appContext.playerStats.current.shootPower ++;
+                if( _appContext.playerStats.current.shootPower == 3)
+                {
+                    _appContext.gameNotifFunc.current('Damage is maxed','player')
+                }
+                else
+                {
+                    _appContext.playerStats.current.shootPower ++;
+                    _appContext.gameNotifFunc.current('You make more damage !','player')
+                }
                
+            }
+            else if(args == 'upgrade_life_item')
+            {
+                _appContext.playerStats.current.maxLife ++;
+                _appContext.playerStats.current.life = structuredClone(_appContext.playerStats.current.maxLife);
+                _appContext.lifeBarFunc.current(_appContext.playerStats.current.life);
+                _appContext.gameNotifFunc.current('Max life + 1','player')
             }
         }
     let resetBullet = (_index)=>
@@ -265,12 +320,12 @@ export function GameApp(props)
                                 if(result.objectDesc.hasChildObject=='heal_item'){setActionButtonEffect('TAKE-HEAL',result)}
                                 else if(result.objectDesc.hasChildObject=='coin_item'){setActionButtonEffect('TAKE-CAURIS',result)}
                                 else if(result.objectDesc.hasChildObject=='key_item'){setActionButtonEffect('TAKE-KEY',result)}   
-                                else if(result.objectDesc.hasChildObject=='upgrade_shoot_power_item' || result.objectDesc.hasChildObject=='upgrade_shoot_speed_item')
+                                else if(result.objectDesc.hasChildObject=='upgrade_life_item' || result.objectDesc.hasChildObject=='upgrade_shoot_power_item' || result.objectDesc.hasChildObject=='upgrade_shoot_speed_item')
                                 {  
                                     setActionButtonEffect('TAKE-UPGRADE',result)
                                 }
                             }
-                            else if(result.objectDesc.objectName=='upgrade_shoot_power_item' || result.objectDesc.objectName=='upgrade_shoot_speed_item')
+                            else if(result.objectDesc.objectName=='upgrade_life_item' || result.objectDesc.objectName=='upgrade_shoot_power_item' || result.objectDesc.objectName=='upgrade_shoot_speed_item')
                             {  
                                 setActionButtonEffect('TAKE-UPGRADE',result)
                             }
@@ -303,13 +358,13 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    
                     _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'SPEAR';
                 }
                 else
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    
                     _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
@@ -320,13 +375,13 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    
                     _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'CAURIS';
                 }
                 else
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    
                     _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
@@ -354,13 +409,13 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    
                     _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'HEAL';
                 }
                 else
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    
                     _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
@@ -371,13 +426,13 @@ export function GameApp(props)
             {
                 if(objectInfo.isOnScene)
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                    
                     _appContext.toggleActionIcon('INTERACT');
                     currentObjectInFront.effect = 'KEY';
                 }
                 else
                 {
-                    // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                    
                     _appContext.toggleActionIcon('SHOOT');
                     currentObjectInFront.effect ='none';
                 }
@@ -386,13 +441,13 @@ export function GameApp(props)
             }
             else if(effect =='Exit')
             {
-                // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('INTERACT');}
+                
                 _appContext.toggleActionIcon('INTERACT');
                 currentObjectInFront.effect ='Exit';
             }
             else if(effect =='none')
             {
-                // if(_appContext.gameControllerVisible.current){_appContext.toggleActionIcon('SHOOT');}
+                
                 _appContext.toggleActionIcon('SHOOT');
                 currentObjectInFront.effect ='none';
             }
@@ -591,7 +646,7 @@ export function GameApp(props)
                                                 if(!showWeapon3DModel.value)
                                                     {
                                                         bulletModelController.value[nextBulletToShoot.value._index]('SHOW-BULLET')
-                                                        // bulletRef.current[nextBulletToShoot.value._index].children[1].material.visible = true;
+                                                        
                                                     }
 
 
@@ -849,14 +904,15 @@ export function GameApp(props)
         
     useEffect(()=>
         {
-            if(_appContext.transitionBetweenScreen.current)
-            {  
-                _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
-            }
-            else
-            {   
-                _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
-            }
+            // if(_appContext.transitionBetweenScreen.current)
+            // {  
+            //     _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
+            // }
+            // else
+            // {   
+            //     _appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'STORY-SCREEN'})
+            // }
+            _appContext.GameUIController.current({arg1:'DIRECT',arg2:'STORY-SCREEN'});
             
         },[])
     useEffect(()=>
@@ -913,7 +969,8 @@ export function GameApp(props)
             directionToGo,camRotateInfo,camRotateStart,weaponReload,resetBullet,getCurrentBulletPlatform,objectRef,exitDoorModelIndexArr,
             gloBalObject,bulletSpeed,nextBulletToShoot,bulletPositionOnMap,mobUpdateFunc,checkWinCondition,objectContainer,exitDoorMapIndexArr,
             barierMapIndexArr,mobIndexArr,spearModelIndexArr,_appContext,spearScale,barierModelIndexArr,level,exitDoorVisible,itemController,
-            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer,mobObjectIdArr
+            wallController,exitDoorController,showWeapon3DModel,bulletModelController,platformModelContainer,wallModelContainer,mobObjectIdArr,
+            checkBarierCondition
 
             }
         placeModelOnScene(gloBalObject)

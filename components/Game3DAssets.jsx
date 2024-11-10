@@ -13,8 +13,8 @@ import { gameAppContext } from './GameApp';
 import { CustomCounter } from './utils';
 import vertex from './vertex.glsl'
 import frags from './frags.glsl'
-import { SkeletonUtils } from 'three/examples/jsm/Addons.js';
-import { color } from 'three/webgpu';
+import halosphere from './halosphere.glsl'
+
 function prepareTexture(texture)
 {
   const _texture = useTexture(texture);
@@ -342,7 +342,7 @@ export function ItemType2Model(props) {
     
   useEffect(()=>
     { 
-      props.controller.itemController.value[props.controller.index] = (args)=>
+      props.controller.itemController.value[props.controller.index] = (args,params)=>
       {
           if(args == 'SHOW-ITEM')
           {
@@ -351,6 +351,12 @@ export function ItemType2Model(props) {
           else if(args == 'REMOVE-ITEM')
           {
             itemGroupRef.current.visible = false;
+          }
+          else if(args == 'MOVE-ITEM')
+          {
+            
+            itemGroupRef.current.position.x = params.x
+            itemGroupRef.current.position.z = params.z
           }
           else if(args=='SHAKE-ITEM')
           {
@@ -367,49 +373,60 @@ export function ItemType2Model(props) {
           }
       } 
     },[])
-    
+
   return (
       <>
       <group
             ref={itemGroupRef}
             visible={props._visible}
-            
+            position={[props.x,0,props.z]}
       >
           {/* {props.skin == "heal_item_1" && <mesh ref={itemRef}  geometry={nodes.healthBox.geometry} material={containerMat} position={[props.x,0.1,props.z]}>
           <mesh geometry={nodes.health_1.geometry} material={mat} position={[-0.004, 0.5, 0.043]} rotation={[0.585, 0, 0]} />
             
           </mesh>} */}
-          {props.skin == "heal_item_1" && <mesh ref={itemRef} scale={0.5} geometry={nodes.pheal_1.geometry} material={healmat} position={[props.x,0.1,props.z]} />}
-          {props.skin == "heal_item_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={props.x} z={props.z} />}
-          {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
-          {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />}
-          {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[props.x,0.8,props.z]} />}
+          {props.skin == "heal_item_1" && <mesh ref={itemRef} scale={0.5} geometry={nodes.pheal_1.geometry} material={healmat} position={[0,0.1,0]} />}
+          {props.skin == "heal_item_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={0} z={0} />}
+          {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[0,0.8,0]} />}
+          {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />}
+          {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[0,0.8,0]} />}
           {props.skin == "upgrade_shoot_speed_item" && 
                                             <>
                                             <mesh
                                                 ref={itemRef}
-                                                position={[props.x,0.5,props.z]}
+                                                position={[0,0.5,0]}
                                                 >
                                                     <sphereGeometry args={[0.2,10,10]} />
                                                     <meshMatcapMaterial color={'blue'} />
                                           </mesh> 
-                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />
+                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                           </>
           }
           {props.skin == "upgrade_shoot_power_item" && <>
                                             <mesh
                                                 ref={itemRef}
-                                                position={[props.x,0.5,props.z]}
+                                                position={[0,0.5,0]}
                                                 >
                                                     <sphereGeometry args={[0.2,10,10]} />
                                                     <meshMatcapMaterial color={'red'} />
                                           </mesh> 
-                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={props.x} z={props.z} />
+                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
+                                          </>
+          }
+          {props.skin == "upgrade_life_item" && <>
+                                            <mesh
+                                                ref={itemRef}
+                                                position={[0,0.5,0]}
+                                                >
+                                                    <sphereGeometry args={[0.2,10,10]} />
+                                                    <meshMatcapMaterial color={'green'} />
+                                          </mesh> 
+                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                           </>
           }
           {props.skin == "triangle" && 
                       <mesh
-                          position={[props.x,0.5,props.z]}
+                          position={[0,0.5,0]}
                       >
                           <boxGeometry args={[1,0.5]} />
 
@@ -420,7 +437,7 @@ export function ItemType2Model(props) {
           }
           {props.skin == "torus" && 
                       <mesh
-                          position={[props.x,0.5,props.z]}
+                          position={[0,0.5,0]}
                       >
                           <boxGeometry args={[1,0.5]} />
 
@@ -429,7 +446,7 @@ export function ItemType2Model(props) {
                           
                       </mesh>
           }
-          {props.skin == "wall_1" && <mesh ref={itemRef}  geometry={nodes.wall_1.geometry} material={mat} position={[props.x,0,props.z]}/>}
+          {props.skin == "wall_1" && <mesh ref={itemRef}  geometry={nodes.wall_1.geometry} material={mat} position={[0,0,0]}/>}
       </group>
       
       </>
@@ -450,10 +467,13 @@ export function ItemType1Model(props)
   {
     paticleTexture = useTexture('coin.svg');
   }
+
   useEffect(()=>
     { 
-      props.controller.itemController.value[props.controller.index] = (args)=>
+      
+      props.controller.itemController.value[props.controller.index] = (args,params)=>
       {
+       
           if(args == 'SHOW-ITEM')
           {
               spriteRef.current.visible = true;
@@ -461,6 +481,12 @@ export function ItemType1Model(props)
           else if(args == 'REMOVE-ITEM')
           {
               spriteRef.current.visible = false;
+          }
+          else if(args == 'MOVE-ITEM')
+          {
+            
+            spriteRef.current.position.x = params.x
+            spriteRef.current.position.z = params.z
           }
       } 
     },[])
@@ -471,14 +497,14 @@ export function ItemType1Model(props)
         spriteRef.current.children[0].position.y += Math.sin(passedTime)/400;}
     })
   return(     <>
-              <group ref={spriteRef} visible={props._visible} >
+              <group ref={spriteRef} visible={props._visible} position={[props.x,0.5,props.z]} >
                     <sprite 
-                      position={[props.x,0.5,props.z]} scale={[0.4,0.4,1]}
+                      position={[0,0,0]} scale={[0.4,0.4,1]}
                     >
                       <spriteMaterial map={paticleTexture}   />
                       
                     </sprite>
-                    <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'}  _speed={1} _number={15} x={props.x} z={props.z} />
+                    <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'}  _speed={1} _number={15} x={0} z={0} />
               </group>
               </>
   )
@@ -951,61 +977,70 @@ export function Barier_Model(props)
 {
   let _gameAppContext = useContext(gameAppContext)
   const { nodes, materials } = useGLTF('/model.glb');
-  let _texture = useTexture('texture1.jpg');
-  _texture.flipY = false;
-  _texture.colorSpace = THREE.SRGBColorSpace; 
-  _texture.minFilter = THREE.LinearFilter;
-  _texture.magFilter = THREE.LinearFilter;
+  let _texture = prepareTexture('txtglobal1.jpg');
   let mat = new THREE.MeshBasicMaterial({map:_texture});
-  let groupRef = useRef(null)
-  let modelRef = useRef(null)
+  let particleGroupRef = useRef(null)
+  let modelRef = useRef(null);
+  let planeRef = useRef(null);
+  let barrierVisible = useRef(true);
   let modelFunc = (args)=>
       {
           if(args == "hide")
           { 
-            groupRef.current.visible = true;
-            let customCounter = new CustomCounter(100,1,()=>
-              {
-                 modelRef.current.material.visible = false;
-                 groupRef.current.visible = false;
-              });
-            
-            customCounter.start();
+            if(barrierVisible.current)
+            {
+              barrierVisible.current = false;
+              particleGroupRef.current.visible = true;
+              let customCounter = new CustomCounter(100,0,()=>
+                {
+                   modelRef.current.material.visible = false;
+                   planeRef.current.material.visible = false;
+                   particleGroupRef.current.visible = false;
+                   return true;
+                },null);
+              
+              customCounter.start();
+            }
+
             
           }
       }
+  let mat2 = new THREE.ShaderMaterial( {
+    uniforms: THREE.UniformsUtils.merge( [
+        THREE.UniformsLib[ 'fog' ],{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}] ),
+      vertexShader: vertex,
+      fragmentShader: frags,
+      fog: true,
+      transparent:true,
+      side:THREE.DoubleSide
+    } );
+  useFrame((clock)=>{
+    planeRef.current.material.uniforms.utime.value += 0.02;
+
+  })
   useEffect(()=>
     {
-      if(props._for=='barier')
-      {
+
         for(let i =0;i<_gameAppContext.barierModelIndexArr.value.length;i++)
           {
             if(_gameAppContext.barierModelIndexArr.value[i].objectId == props.refID)
             {
-              _gameAppContext.barierModelIndexArr.value[i].ModelFunc = modelFunc;
+              _gameAppContext.barierModelIndexArr.value[i].modelController = modelFunc;
             }
           }
-      }
       
-      else if(props._for=='exit')
-      {
-        // objectRef.current[exitDoorModelIndexArr.value[i].objectId].children[0].material.visible = false;
-        
-        for(let i =0;i<_gameAppContext.exitDoorModelIndexArr.value.length;i++)
-          {
-            if(_gameAppContext.exitDoorModelIndexArr.value[i].objectId == props.refID)
-            {
-              _gameAppContext.exitDoorModelIndexArr.value[i].modelFunc = modelFunc;
-            }
-          }
-        
-      }
+      
       
     },[])
+  
   return(     <>
-              <mesh ref={modelRef} geometry={nodes.barier.geometry} scale={0.6} material={mat} position={[props.x,0,props.z]} rotation={[-Math.PI, 1.484, -Math.PI]} />
+              {/* <mesh ref={modelRef} geometry={nodes.barier.geometry} scale={0.6} material={mat} position={[props.x,0,props.z]} rotation={[-Math.PI, 1.484, -Math.PI]} /> */}
+              {/* <mesh ref={modelRef} geometry={nodes.nbarrier.geometry} material={new THREE.MeshBasicMaterial({color:'red'})} position={[props.x,0,props.z]} /> */}
+              <mesh ref={modelRef} name="nbarrier" geometry={nodes.nbarrier.geometry} material={mat} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]} >
+                <mesh ref={planeRef} name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={mat2} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
+              </mesh>
               <group
-                    ref={groupRef}
+                    ref={particleGroupRef}
                     visible={false}
               >
                   <CustomParticle _skin={'smoke_06.png'} _size={1.5} _color={'white'} _speed={3} _number={10} x={props.x} z={props.z} />

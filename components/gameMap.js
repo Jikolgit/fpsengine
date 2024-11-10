@@ -116,7 +116,9 @@ export function createObject(map_level,objectType,objectIndexArr,index)
             
             if(objectType == 'barier')
             {
-                map_level[index].active = true,map_level[index].objectType ='barier', map_level[index].objectDesc={pass:objectIndexArr[i].pass}, map_level[index].object = true;map_level[index].objectId = objectIdValue;
+                map_level[index].active = true,map_level[index].objectType ='barier', map_level[index].isOnScene = true,
+                map_level[index].objectDesc={objectName:objectIndexArr[i].objectName,mobToKill:objectIndexArr[i].mobToKill,orientation:objectIndexArr[i].orientation,
+                    keyToCollect:objectIndexArr[i].keyToCollect}, map_level[index].object = true;map_level[index].objectId = objectIdValue;
                 objectIdValue ++;
             }
             

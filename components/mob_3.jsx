@@ -56,7 +56,8 @@ export function Mob_3(props)
                 
                 enemyController.current('REMOVE-MOB');
                 bulletGroupRef.current.visible = false;
-                lifeBarController.current("REMOVE");
+                
+                _appContext.devMode.current && lifeBarController.current("REMOVE");
                 if(props.hasObject)
                 {
                     itemController.value[0]('SHOW-ITEM')
@@ -96,7 +97,9 @@ export function Mob_3(props)
                     gotToPlayerAxe(GameMap.find(getPlayerIndexPosition).id);
                 }
                 enemyController.current('MOB-TOUCHED')
-                lifeBarFunc.current(_numb)
+                // lifeBarFunc.current(_numb)
+                
+                _appContext.devMode.current &&  lifeBarController.current('UPDATE-MOB-LIFE')
             }
             else if(state == 'Remove-Object')
             {
@@ -627,7 +630,11 @@ export function Mob_3(props)
                             mobBulletRef.current[i].position.x = mobPositionOnMap.x
                             mobBulletRef.current[i].position.z = mobPositionOnMap.z
                         }
-            
+                        if(props.hasObject)
+                        {
+                            itemController.value[0]('MOVE-ITEM',{x:mobPositionOnMap.x,z:mobPositionOnMap.z})
+                        }
+                        
                         //
                         GameMap[currentMobPositionInfo.id].hasEnemy = false
                         GameMap[currentMobPositionInfo.id].isOnScene = false;
@@ -639,7 +646,8 @@ export function Mob_3(props)
             
             
                         enemyController.current('MOVE-MOB',{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose})
-                        lifeBarController.current("MOVE",{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose});
+                        
+                        _appContext.devMode.current &&  lifeBarController.current("MOVE",{x:GameMap[nextPosIndex].xPose,z:GameMap[nextPosIndex].zPose});
          
                         checkIfPlayerIsOnMobAxis('LEFT')
                         checkIfPlayerIsOnMobAxis('RIGHT')
@@ -730,7 +738,7 @@ export function Mob_3(props)
             checkPlayerAxeAreaForMob();
 
             randomMobArea = playerAreaForMob[Math.floor(Math.random() * playerAreaForMob.length)]
-            let customCounter = new CustomCounter(50,0,()=>{switchMobPosition(randomMobArea);return true;},null);
+            let customCounter = new CustomCounter(50,0,()=>{!_appContext.gamePause.current && switchMobPosition(randomMobArea) ;return true;},null);
             customCounter.start();
         }
 
@@ -775,6 +783,7 @@ export function Mob_3(props)
           _gameAppContext.mobObjectIdArr.value.push(props.mobObjectId);
           _gameAppContext.mobUpdateFunc.current[props.mobObjectId]   = updateMobInfo;
         },[])
+    
     return(
             <>
                     <mobContext.Provider
@@ -807,8 +816,7 @@ export function Mob_3(props)
                             </>
                             :null
                     }
-                    <MobLifeBar _context={mobContext} x={mobPositionOnMap.x} z={mobPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />
-                    
+                    {_appContext.devMode.current && <MobLifeBar _context={mobContext} x={mobPositionOnMap.x} z={mobPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />}
                     <group
                         ref={bulletGroupRef}
                     >

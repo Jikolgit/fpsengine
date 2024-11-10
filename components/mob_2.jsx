@@ -53,7 +53,10 @@ export function Mob_2(props)
                 
                 enemyController.current('REMOVE-MOB');
                 bulletGroupRef.current.visible = false;
-                lifeBarController.current("REMOVE");
+                if(_appContext.devMode.current)
+                {
+                    lifeBarController.current("REMOVE");
+                }
                 if(props.hasObject)
                 {
                     itemController.value[0]('SHOW-ITEM')
@@ -87,7 +90,12 @@ export function Mob_2(props)
             else if(state == 'Update-Mob-Life')
             {  
                 enemyController.current('MOB-TOUCHED')
-                lifeBarFunc.current(_numb)
+                // lifeBarFunc.current(_numb)
+                if(_appContext.devMode.current)
+                {
+                    lifeBarController.current('UPDATE-MOB-LIFE')
+                }
+                
             }
             else if(state == 'Remove-Object')
             {
@@ -538,7 +546,8 @@ export function Mob_2(props)
                     </>
                     :null
             }
-            <MobLifeBar _context={mobContext} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />
+            {_appContext.devMode.current && <MobLifeBar _context={mobContext} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />}
+            
             
             <group
                 ref={bulletGroupRef}

@@ -5,9 +5,9 @@ import { Canvas } from '@react-three/fiber';
 import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue, LevelUi } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
-import { AddDecor, AddDoor, AddMob, AddItem, UpdateLevelConfig, UpdatePlayerStat, AddWall, AddWeapon, UpdateStroryScreen, AddTimer, SetMapDimension } from '../components/DefaultComponents';
-import { PlayerCursor } from '../components/Game3DAssets';
+
 import { Settings } from '../components/Setting';
+import { storyText } from '../components/gameStory';
 
 //MODELISER BOULE DE FEU
 export let appContext = createContext(null)
@@ -15,7 +15,7 @@ function App() {
 
   let devMode = useRef(false);
   let helpMode = useRef(true);
-  let level = useRef(1);
+  let level = useRef(9);
   let mapHeight = useRef(19);
   let mapWidth = useRef(16);
   let playerPosition = useRef(5)
@@ -55,7 +55,7 @@ function App() {
   let GameLoadingScreenRef = useRef(null);
   let playerLifeUpgradeCost = useRef({value:20,level:1});
   let playerWeaponUpgradeCost = useRef({value:20,level:1});
-  let playerStats = useRef({score:0,life:20,maxLife:20,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false});
+  let playerStats = useRef({score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
   let levelInfo = useRef({_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
   let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
     playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
@@ -216,14 +216,14 @@ function App() {
       }
   let nextLevel = ()=>
       {
-        
+        storyText.value = ['none']
         level.current ++;
         if(!transitionBetweenScreen.current){ setGameVueActive(c => c = false);}
         // setGameVueActive(c => c = false);
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
         saveGame(saveDataOrder.current)
-        // window.setTimeout(()=>{setGameVueActive(c => c = true);},1)
+        
         
       }
   let setGameOver = ()=>
@@ -233,38 +233,31 @@ function App() {
         gamePause.current = true;
         AudioManage.playAmbient('stop')
       }
-  // let restartLevel = ()=>
-  //     {
-  //       playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
-  //       AudioManage.play('click')
-  //       level.current = 1;
-  //       setScreen(c => c = 'LOADING-SCREEN')
-  //       window.setTimeout(()=>{setScreen(c => c = 'GAME');gamePause.current = false;actualGameScreen.current = 'GAME-SCREEN'},1000)
-  //     }
+
   let quitGame = (args)=>
     {
       AudioManage.play('click');
       AudioManage.playAmbient('stop')
+
+      playerStats.current.life =  structuredClone(playerStats.current.maxLife);
+      playerStats.current.keyCollected = 0
+      playerStats.current.mobKilled = 0
       if(args == 'RESTART-GAME-OVER')
       {
-        // playerStats.current = {score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:35,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:750,showWeapon:false}
-        playerStats.current.life =  structuredClone(playerStats.current.maxLife);
-        playerStats.current.keyCollected =  0
-        playerStats.current.mobKilled = 0
-        // playerStats.current = {life:5,maxLife:5,moveSpeed:0.1,keyCollected:0,mobKilled:0,coinCollected:0};
         level.current = 1;
       }
       else if(args == 'RESTART-GAME-FINISHED')
       {
-        playerStats.current.life =  structuredClone(playerStats.current.maxLife);
-        playerStats.current.keyCollected = 0
-        playerStats.current.mobKilled = 0
         level.current = 1;
+      }
+      else if(args == 'NO-RESTART')
+      {
+
       }
       saveGame()
       gamePause.current = false;
       setGameVueActive(false)
-      GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})
+      GameUIController.current({arg1:'DIRECT',arg2:'TITLE-SCREEN'})
       
       
     }
@@ -406,98 +399,7 @@ function App() {
     </>
   )
 }
-function GameConfig()
-{ 
-  // ALL LEVEL START WITH A VIRGIN MAP
-  // HERE YOU CAN ADD OBJECT ON THE MAP
-  // UPDATE THE LEVEL CONFIG
-  // *WIN CONDITION
-  // *
-  // YOU CAN UPDATE PLAYER STATE
-  // *LIFE
-  // *MONEY
-  // *MOVE SPEED
-  // *BULLET SPEED
-  // CHNAGER LE NOM POUR UpdateLevelConfig OU GAMEOPTION
-  // AJOUTER UN COMPOSANT QUI PERMET DE VOIR OU NON LA BARE DES MOB
-  const AppCntext = useContext(appContext);
-  
-  return(
-          <>
-              {AppCntext.level.current == 1 &&
-                <>
-                    <UpdateLevelConfig playerPosition={4}  />
-                    <SetMapDimension width={3} height={20} addWallOnMap />
-                    <AddDoor position={[55]} open  />
-                    {/* <AddTimer minute={2} second={99} /> */}
-                    
-                    {/* <AddDecor skin={'tombstone'} position={[45,66,183]} />
-                    <AddDecor skin={'lampadaire'} position={[147,126,187]} />
-                    <AddItem name={'coin_item'} position={[184]} value={3} />
-                    
-                    <AddMob position={[134-(16*5)]} life={10}  />
 
-                    <AddMob position={[94]} life={5} active />
-                    <AddDoor position={[279]} open  /> */}
-                </>
-              }
-              {AppCntext.level.current == 2 &&
-                <>
-                    <AddTimer minute={1} second={59} />
-                    <UpdateLevelConfig  mobToKill={2} />
-                    <AddMob position={[135-(16*5),94]} life={2} />
-                    <AddMob position={[134-(16*5)]} life={2} active />
-                    <AddDecor position={[45,66,192,147,126,187]} />
-                    <AddDoor position={[279]}  />
-                </>
-              }
-              {AppCntext.level.current == 3 &&
-                <>
-                    <UpdateStroryScreen>
-                        <div className="">Text 3</div>
-                    </UpdateStroryScreen>
-                    <UpdateLevelConfig  mobToKill={8} />
-                   
-                    {/* <AddItem name={'healItem'} position={[135]} value={1} /> */}
-                    <AddMob position={[153,154,155,156]} life={5} active>
-                          <AddItem name={'coin_item'} position={[183]} value={3} />
-                    </AddMob>
-                    <AddMob position={[149,148,147,146]} life={5} active>
-                          <AddItem name={'heal_item'} position={[183]} value={3} />
-                    </AddMob>
-
-                    <AddDoor position={[295]}  />
-                </>
-              }
-              {AppCntext.level.current == 4 &&
-                <>
-                    <UpdateLevelConfig  mobToKill={14} />
-                    <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
-                    <AddMob position={[134,149,164,179,194,209]} life={5}  active />
-                    <AddItem name={'heal_item'} position={[183]} value={3} />
-                    <AddDoor position={[295]}  />
-                </>
-              }
-              {AppCntext.level.current == 5 &&
-                <>
-                    <UpdateStroryScreen>
-                        <div className="">Niveau 5 part 1</div>
-                        <div className="">Niveau 5 part 2</div>
-                        <div className="">Niveau 5 part 3</div>
-                        <div className="">Niveau 5 part 4</div>
-                    </UpdateStroryScreen>
-                    <UpdateLevelConfig  mobToKill={14} />
-                    <AddMob position={[119,136,153,170,187,204,221,238]} life={5} active  />
-                    <AddMob position={[134,149,164,179,194,209]} life={5}  active />
-                    <AddMob position={[166,167,168]} life={5} active />
-                    <AddItem name={'healItem'} position={[183]} value={3} />
-                    <AddDoor position={[295]}  />
-                </>
-              }
-          </> 
-          
-  );
-}
 
 export default App
 

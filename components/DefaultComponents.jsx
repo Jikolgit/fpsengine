@@ -75,7 +75,7 @@ export function UpdatePlayerStat(props)
  * @param {{position:number[],name:string,value:number|null,important:boolean,life:number}} param0 
  * @returns 
  */
-export function AddItem({position,name,value,important,life,children,upgradeType})
+export function AddItem({position,name,value,important,life,children})
 {
   const AppCntext = useContext(appContext);
   let hasChildObject = false;
@@ -162,6 +162,10 @@ export function AddItem({position,name,value,important,life,children,upgradeType
     else if(name == 'upgrade_shoot_speed_item')
     {
       objectDetailArr[i] = {position:position[i],objectName:name,value:0,skin:'upgrade_shoot_speed_item',isImportant:false}
+    }
+    else if(name == 'upgrade_life_item')
+    {
+      objectDetailArr[i] = {position:position[i],objectName:name,value:0,skin:'upgrade_life_item',isImportant:false}
     }
   }
   for(let i =0;i<(AppCntext.mapWidth.current*AppCntext.mapHeight.current);i++)
@@ -266,6 +270,7 @@ export function AddMob({life,position,children,important,type,difficulty})
         if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children[0].props.important? children[0].props.important : false;}
         if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children[0].props.important? children[0].props.important : false;}
         if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children[0].props.important? children[0].props.important : false;}
+        if(hasObject == 'upgrade_life_item'){objectSkin =  'upgrade_life_item';objectIsImportant = children[0].props.important? children[0].props.important : false;}
         if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
       }
       else
@@ -286,6 +291,7 @@ export function AddMob({life,position,children,important,type,difficulty})
           if(hasObject == 'coin_item'){objectSkin = 'coin_item_1';objectIsImportant = children.props.important? children.props.important : false;}
           if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children.props.important? children.props.important : false;}
           if(hasObject == 'upgrade_shoot_power_item'){objectSkin =  'upgrade_shoot_power_item';objectIsImportant = children.props.important? children.props.important : false;}
+          if(hasObject == 'upgradelife_item'){objectSkin =  'upgradelife_item';objectIsImportant = children.props.important? children.props.important : false;}
           if(hasObject == 'key_item'){objectSkin = 'key_1';objectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
         }
         else
@@ -370,13 +376,6 @@ export function UpdateStroryScreen({htmlContent,children})
       storyText.value = ['none'];
     }
    
-  useEffect(()=>
-    {
-      return()=>
-        { 
-          storyText.value = ['none'];
-        }
-    },[])
   return null
 }
 
@@ -428,8 +427,27 @@ export function SetMapDimension({width,height,addWallOnMap})
   return null
 }
 
-export function AddUpgradeItem(props)
+/**
+ * 
+ * @param {{position:number[],mobToKill:number,keyToCollect:number,orientation:string}} param0 
+ * @returns 
+ */
+export function AddBarrier({position,orientation,mobToKill,keyToCollect})
 {
+  let _appContext = useContext(appContext)
+  let objectDetailArr = []
 
+  for(let i = 0;i<position.length;i++)
+  {
+
+      objectDetailArr[i] = {position:position[i],objectName:'barier',skin:'barier_1',mobToKill:mobToKill?mobToKill:(mobToKill==0?0:1),
+        keyToCollect:keyToCollect?keyToCollect:0,orientation:orientation?orientation:'FRONT'}
+    
+  }
+  for(let i =0;i<(_appContext.mapWidth.current*_appContext.mapHeight.current);i++)
+  {   
+      createObject(_appContext.gameMap.current,'barier',objectDetailArr,i);
+  }
+  return null;
 }
 

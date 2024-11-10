@@ -364,12 +364,12 @@ export function PauseScreen()
 export function LifeBar(props)
 {
     let _appContext = useContext(appContext)
-    let lifeValue = (props.life*100) / props.maxLife;
+    let lifeValue = ( _appContext.playerStats.current.life*100) /  _appContext.playerStats.current.maxLife;
     
     let lifeContainerRef = useRef(null);
     let updateLife = (_life)=>
         {
-            lifeValue = (_life*100) / props.maxLife;
+            lifeValue = (_life*100) /  _appContext.playerStats.current.maxLife;
             lifeContainerRef.current.style.width = lifeValue+'%'
         }
     _appContext.lifeBarFunc.current = updateLife;
@@ -462,12 +462,14 @@ export function MobLifeBar(props)
             }
             else if(args == 'MOVE')
             {
-               
                 setPosition([params.x,1,params.z])
             }
-            
+            else if(args == 'UPDATE-MOB-LIFE')
+            {
+                updateMobLife();
+            }
         }
-    _mobContext.lifeBarFunc.current = updateMobLife;
+    // _mobContext.lifeBarFunc.current = updateMobLife;
     return(
         <Html
         ref={lifeContainerRef}
@@ -671,23 +673,13 @@ export function TitleScreen()
                             {controllerVersion == 2 &&
                                 <>
                                     <div className="w-full flex justify-center">
-                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
-                                            <div onClick={()=>{_appContext.appController('START-GAME')}} id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
-                                            <img src="play.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
-                                            <img src="btnTemplate.png" alt="Play Button back" className="block " />
-                                        </div>
-                                        {/* <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
-                                            <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'UPGRADE-SCREEN'})}} id="GLASS" className="w-full h-full z-[3] absolute left-0 top-0"></div>
-                                            <img src="chevrons-up.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
-                                            <img src="btnTemplate.png" alt="Play Button" className="block" />
-                                        </div> */}
-                                        <div onClick={()=>{switchVolume()}} className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
-                                            <div  id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
-                                            <img src={volumeIcon} alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
-                                            <img src="btnTemplate.png" alt="Play Button back" className="block " />
-                                        </div>
+                                        <ButtonTemplate1 icon={'play.svg'} btnfunction={()=>{_appContext.appController('START-GAME')}} />
+                                        <ToggleButtonTemplate1 icon={'volume-high.svg'} btnfunction={()=>{switchVolume()}} 
+                                        toggleValue={_appContext.soundOn.current} 
+                                         />
+
                                     </div>
-                                    <div className="w-full mt-[20px] flex justify-center">
+                                    {/* <div className="w-full mt-[20px] flex justify-center">
                                             <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
                                                 <div onClick={upgradeWeapon}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
                                                 <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
@@ -712,13 +704,25 @@ export function TitleScreen()
                                                 </div>
                                                 <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
                                             </div>
-                                    </div>
+                                    </div> */}
                                     <div className="w-full mt-[20px] flex justify-center">
-                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <ToggleButtonTemplate1 icon={'gamepad.svg'} btnfunction={()=>
+                                                {_appContext.gameControllerVisible.current = _appContext.gameControllerVisible.current? false : true;
+                                                    _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
+                                                }}
+                                                toggleValue={_appContext.gameControllerVisible.current} 
+                                                 />
+                                            <ButtonTemplate1 icon={'apps.svg'} btnfunction={()=>{switchVolume()}} />
+                                        {/* <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
                                             <div id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
-                                            <img src="apps.svg" alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="gamepad.svg" alt="Enable Game Pad Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
                                             <img src="btnTemplate.png" alt="Play Button back" className="block" />
                                         </div>
+                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                                            <div id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
+                                            <img src="apps.svg" alt="More Game Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                                            <img src="btnTemplate.png" alt="Button back" className="block" />
+                                        </div> */}
                                     </div>
                                 </>
                             }
@@ -1060,7 +1064,7 @@ export function StoryScreen()
             }
         }
 
-
+        
     useEffect(()=>
         {
             if(speech.current[0] != 'none')
@@ -1137,14 +1141,14 @@ export function StoryScreen()
                                         
                                             {speechPartCounter.current < speechTotalPart.current && 
                                                 <div onClick={nextPart} 
-                                                className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto bg-blue-500 text-white ">
+                                                className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
                                                     <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
                                                 </div>
                                             }
                                             {speechPartCounter.current == speechTotalPart.current && 
                                                 <div onClick={removeStoryScreen} 
-                                                className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto bg-blue-500 text-white ">
+                                                className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
                                                     <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
                                                 </div>
@@ -1311,6 +1315,39 @@ export function LevelUi(props)
                     </div>
                 }
             </>  
+    )
+}
+
+function ButtonTemplate1(props)
+{
+    let [btnClicked,setBtnClicked] = useState(false);
+    let btnCallBack = ()=>
+        {
+            props.btnfunction();
+            
+        }
+    return(
+            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                <div onClick={btnCallBack} id="GLASS" className={`w-full h-full absolute z-[3] left-0 top-0 'bg-transparent' `}></div>
+                <img src={props.icon} alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                <img src="btnTemplate.png" alt="Play Button back" className="block " />
+            </div>
+    )
+}
+function ToggleButtonTemplate1(props)
+{
+    let [btnClicked,setBtnClicked] = useState(props.toggleValue);
+    let btnCallBack = ()=>
+        {   
+            props.btnfunction();
+            setBtnClicked(!btnClicked)
+        }
+    return(
+            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
+                <div onClick={btnCallBack} id="GLASS" className={`w-full h-full absolute z-[3] left-0 top-0 ${!btnClicked? 'bg-black/50' : 'bg-transparent'} `}></div>
+                <img src={props.icon} alt="Play Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
+                <img src="btnTemplate.png" alt="Play Button back" className="block " />
+            </div>
     )
 }
 //Z-INDEX
