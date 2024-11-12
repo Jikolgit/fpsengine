@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
 import { createLevel, createObject } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
-import { CreditScreen, GameController, GameEndingScreen, GameNotif, GameOverScreen, GameLoadingScreen, GameUI, LifeBar, OptionScreen, PauseIcon, PauseScreen, ActionIcon, PlayerMoney, StoryScreen, TitleScreen, ToggleTouchScreen, ScreenHalo, GameTimer, ScoreVue, LevelUi } from '../components/GameUI';
+import {  GameController,  GameNotif,   GameUI, LifeBar,  PauseIcon,  ActionIcon, PlayerMoney,    ScreenHalo, GameTimer, ScoreVue, LevelUi, BulletReloadIcon } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
 import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../components/utils';
 
@@ -42,7 +42,9 @@ function App() {
   const ScreenHaloCOntroller = useRef(null);
   const BlackScreenTransitionController = useRef(null);
   const ScoreVueController = useRef(null);
+  const BulletReloadIconController = useRef(null);
   let transitionBetweenScreen = useRef(false);
+  let healItemModel = useRef(false);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
   let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
@@ -55,21 +57,16 @@ function App() {
   let GameLoadingScreenRef = useRef(null);
   let playerLifeUpgradeCost = useRef({value:20,level:1});
   let playerWeaponUpgradeCost = useRef({value:20,level:1});
-  let playerStats = useRef({score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let playerStats = useRef({bulletModel:'default',score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
   let levelInfo = useRef({mapTexture:'ntxt4.jpg',_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
   let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
     playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
     playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level])
 
-  /**
-   * 
-   * @param {number[]} args 
-   */
-  let saveGame = (args)=>
+
+  let saveGame = ()=>
     {
-      /**
-       * @type {string}
-       */
+
       saveDataOrder.current = [level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
         playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
         playerWeaponUpgradeCost.current.value,playerWeaponUpgradeCost.current.level]
@@ -80,8 +77,6 @@ function App() {
         dataToSave += saveDataOrder.current[i].toString();
         if(i<saveDataOrder.current.length-1){dataToSave += '-'}
       }
-
-      //2,5,8
       encryptData(dataToSave)
     }
     
@@ -117,37 +112,9 @@ function App() {
               saveData += saveString[i]
               
             }
-            // if(saveStep ==0)
-            // {
-            //   if(saveString[i]!='-')
-            //   {
-            //     levelValueArr.push(saveString[i])
-            //   }
-            //   else
-            //   {
-            //     saveStep ++;
-            //   }
-            // }
-            // else if(saveStep ==1)
-            // {
-            //   if(saveString[i]!='-')
-            //   {
-            //     playerLifeValueArr.push(saveString[i]);
-            //   }
-            //   else
-            //   {
-            //     saveStep ++;
-            //   }
-            // }
-            // else if(saveStep ==2)
-            // {
-            //   playerCoinValueArr.push(saveString[i]);
-            // }
+
         }
-        // console.log(saveDataOrder.current)
-        // levelValue = levelValueArr.join('')
-        // playerLifeValue = playerLifeValueArr.join('')
-        // playerCoinValue = playerCoinValueArr.join('')
+
         
         level.current = parseInt(saveDataOrder.current[0]) ;
         playerStats.current.coinCollected = parseInt(saveDataOrder.current[1]) ;
@@ -180,7 +147,7 @@ function App() {
         else
         {
           AudioManage.play('click-Error')
-          // console.log('not enough money')
+          
         }
       }
       else if(args == 'WEAPON')
@@ -219,7 +186,6 @@ function App() {
         storyText.value = ['none']
         level.current ++;
         if(!transitionBetweenScreen.current){ setGameVueActive(c => c = false);}
-        // setGameVueActive(c => c = false);
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
         saveGame(saveDataOrder.current)
@@ -228,7 +194,6 @@ function App() {
       }
   let setGameOver = ()=>
       {
-        // gameOverScreenFunc.current();
         GameUIController.current({arg1:'SWITCH-TO',arg2:'GAME_OVER-SCREEN'});
         gamePause.current = true;
         AudioManage.playAmbient('stop')
@@ -272,7 +237,6 @@ function App() {
         systemPause(state)
         AudioManage.playAmbient(state?'pause':'play');
         actualGameScreen.current = state? 'PAUSE-SCREEN' : 'GAME-SCREEN';
-        // PauseScreenController.current();
         GameUIController.current({arg1:'DIRECT',arg2:state?'PAUSE-SCREEN':'NO-SCREEN'})
 
         
@@ -281,7 +245,6 @@ function App() {
 
     let systemPause = (state)=>
       {
-        //PAUSE DANS LE JEUX
         gamePause.current = state
       }
     let manageVisibility = ()=>
@@ -352,7 +315,7 @@ function App() {
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
                 BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState,
-                playerPosition,setMapWall,mobCallBackAfterPlayerMove}}
+                playerPosition,setMapWall,mobCallBackAfterPlayerMove,healItemModel,BulletReloadIconController}}
       >
           <div 
               // style={{backgroundColor:levelInfo.current.fogColor}}
@@ -370,29 +333,13 @@ function App() {
             {gameVueActive && <PlayerMoney /> }
             {gameVueActive && <GameTimer />}
             {gameVueActive && <ScoreVue />} 
+            {gameVueActive && <BulletReloadIcon /> }
             {/* {gameVueActive && <LevelUi />}  */}
             {gameVueActive && <LifeBar /> }
 
             <GameUI />
             <Settings />
 
-            {/* <HelpScreen /> */}
-            
-            {/* {screen == 'GAME' && <div
-                ref={playerLifeContainerRef}
-                className='w-[50px] h-[50px] border-red-500 border-[2px] z-[2]
-                            absolute top-[0] left-[0] text-white text-[2rem] ' 
-            ></div>} */}
-            
-            
-            {/* {screen == 'GAME' && <div
-                
-                className='w-[50px] h-[50px] z-[2]
-                            absolute top-[10px] left-[0] right-[0] mx-auto text-white text-[2rem] ' 
-            >{level.current}</div>} */}
-            
-            
-           
           </div>
           
       </appContext.Provider>

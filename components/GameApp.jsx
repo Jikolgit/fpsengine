@@ -1,20 +1,15 @@
 import * as THREE from 'three'
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { TestModel } from "./Testmodel";
-import { OrbitControls, PerspectiveCamera, Point, Points } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { createContext, useContext, useEffect, useRef } from "react";
-import {  ExitDoor_model, GroundModel, PlayerCursor, BulletModel } from "./Game3DAssets";
-import { EnemyComponent } from "./enemy";
+import {  PlayerCursor, BulletModel } from "./Game3DAssets";
 import { appContext } from "../src/App";
 import { PlatformIndex } from "./DevHelp";
-import { PlaneGeometry } from "three";
-import { Mob_2 } from './mob_2';
 import { movePlayer,preparePlayerMove,rotateCam } from './playerController';
 import { moveBullet, prepareNextBullet } from './bulletController';
 import { placeModelOnScene } from './placeModelOnScene';
 import { AudioManage } from './audioComponents';
-import { CustomCounter } from './utils';
-import { speechTimeline, storyText } from './gameStory';
+import {  storyText } from './gameStory';
 
 export let gameAppContext = createContext(null);
 export function GameApp(props)
@@ -180,11 +175,7 @@ export function GameApp(props)
             
            
         }
-    let reduceEnemyLife = ()=>
-        {
-            enemyLifePoint.value --;
-            // _appContext.playerLifeContainerRef.current.innerText = enemyLifePoint.value;
-        }
+
     let managePlayerKey = ()=>
         {
             _appContext.playerStats.current.keyCollected ++;
@@ -224,7 +215,7 @@ export function GameApp(props)
             }
 
             _appContext.playerMoneyContainerRef.current.innerText = _appContext.playerStats.current.coinCollected;
-            // checkWinCondition()
+           
         }
     let getCurrentBulletPlatform = (bulletIndex)=>
         {
@@ -277,7 +268,7 @@ export function GameApp(props)
             bulletRefInfo.current[_index] = {_index:_index,isShooted:false,prepareMove:false,move:"none",direction:'none',hasCheckNextPlatform:false,moveDistance:0};
             bulletRef.current[_index].position.x = playerPositionOnMap.x
             bulletRef.current[_index].position.z = playerPositionOnMap.z
-            // bulletRef.current[_index].children[0].material.visible = false;
+            
             bulletModelController.value[_index]('HIDE-BULLET')
             prepareNextBullet(gloBalObject);
         }
@@ -348,7 +339,7 @@ export function GameApp(props)
 
                 }
 
-            // }
+            
 
         }
     let setActionButtonEffect = (effect,objectInfo)=>
@@ -629,6 +620,7 @@ export function GameApp(props)
                                             {
 
                                                 AudioManage.play("shoot")
+                                                _appContext.BulletReloadIconController.current('RELOAD-START');
                                                 for(let i =0;i<bulletRef.current.length;i++)
                                                 {
                                                     if(!bulletRefInfo.current[i].isShooted)
@@ -658,13 +650,13 @@ export function GameApp(props)
                                             else
                                             {
                                                 _appContext.gameNotifFunc.current('Take your Weapon !','player');
-                                                // console.log('pas de lance')
+                                                
                                             }
 
                                         }
                                         else
                                         {
-                                            // console.log('rechargement')
+                                           // RELOAD
                                         }
                                 }
 
@@ -689,9 +681,9 @@ export function GameApp(props)
                                 }
                                 else
                                 {
-                                    // console.log('FERME !!!');
+                                   
                                     if(_appContext.level.current == 1){_appContext.gameNotifFunc.current('Récuperez la lance pour avancer','player');}
-                                    else{_appContext.gameNotifFunc.current('Fermé','player');}
+                                    else{_appContext.gameNotifFunc.current('Closed !','player');}
 
                                 }
 
@@ -759,8 +751,6 @@ export function GameApp(props)
                             else if (currentObjectInFront.effect == 'KEY')
                             {
                                 AudioManage.play('coin')
-                                // console.log(currentObjectInFront.objectInfo.objectDesc.isImportant)
-                                // if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
                                 
                                 currentObjectInFront.objectInfo.isOnScene = false;
 
@@ -802,7 +792,7 @@ export function GameApp(props)
                             }
                             else if (currentObjectInFront.effect == 'SPEAR')
                             {
-                                AudioManage.play('grab');
+                                // AudioManage.play('grab');
 
                                 if(currentObjectInFront.objectInfo.objectDesc.isImportant){managePlayerKey()}
 
@@ -829,7 +819,7 @@ export function GameApp(props)
                             aKeyisPressed.current = true;
                             if(_appContext.actualGameScreen.current == 'HELP-SCREEN' || _appContext.actualGameScreen.current == 'STORY-SCREEN')
                             {
-                                // _appContext.setPause()
+                                
                                 _appContext.KeyBoardManageStory.current()
                             }
                             else
@@ -932,19 +922,15 @@ export function GameApp(props)
             _appContext.touchEventTouchEndFunc.current.down = ()=>{playerMoveUpEventHandler('ArrowDown')}
             _appContext.touchEventTouchEndFunc.current.turnRight = ()=>{playerMoveUpEventHandler('e')}
             _appContext.touchEventTouchEndFunc.current.turnLeft = ()=>{playerMoveUpEventHandler('a')}
-            // if(iselemOnScene)
-            // {
 
-                window.addEventListener('keydown',playerMovePressedEventHandlerCallB,true)
-                window.addEventListener('keyup',playerMoveUpEventHandlerCallB,true)
-            // }
-            // _appContext.GameScreenTransitionRef.current.style.display = 'none';
+            window.addEventListener('keydown',playerMovePressedEventHandlerCallB,true)
+            window.addEventListener('keyup',playerMoveUpEventHandlerCallB,true)
+
 
 
             return ()=>
             {
-                // scene.dispose();
-                // gl.dispose();
+                
                 window.removeEventListener('keydown',playerMovePressedEventHandlerCallB,true)
                 window.removeEventListener('keyup',playerMoveUpEventHandlerCallB,true)
             }
@@ -977,11 +963,9 @@ export function GameApp(props)
                             <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} />
                             </>
                         }
-                        {/* <PerspectiveCamera position={[playerPoseVar.x,0.8,playerPoseVar.z]} ref={camRef} makeDefault />
-                        <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} target={[playerPoseVar.x,0.8,playerPoseVar.z+2]} ref={orbitRef} /> */}
 
-                        {/* <axesHelper args={[15]} /> */}
-                        {/* <GroundModel /> */}
+                       
+                        {_appContext.devMode.current && <axesHelper args={[15]} /> }
                         {platformModelContainer.current}
                         {wallModelContainer.current}
                         {objectContainer.current}
@@ -1004,14 +988,12 @@ export function GameApp(props)
                                 <meshBasicMaterial color={'blue'} wireframe visible={false}/>
 
                             </mesh>
-                            {/* <SpearModel posX={0} posY={0} posZ={0} /> */}
-                            {/* <SpearModel _ref={(val)=>weaponRef.current.spear=val} owner={'owner'} posX={-0.1} posY={0.25} posZ={0.1} /> */}
-                            {/* <PlayerCursor x={0} y={0.15} z={2} /> */}
+                            
                             <PlayerCursor x={0} y={0.15} z={1} />
 
 
                         </mesh>
-                        {/* <EnemyComponent /> */}
+                        
                         <group
                                 ref={bulletGroupRef}
                                 visible={true}
@@ -1019,16 +1001,10 @@ export function GameApp(props)
                             {bulletContainer}
                         </group>
 
-                        {/* {mapBorderContainer} */}
+                       
                         {_appContext.devMode.current && <PlatformIndex />}
                         <fog attach={'fog'} args={[gameMapInfo.fogColor,gameMapInfo.fogNear,gameMapInfo.fogFar]} />
 
                 </gameAppContext.Provider>
             </>
 }
-
-//SIMULER UNE MARCHE A PIED EN CHANGEANT LE Y DE LA MAP
-
-//ON VA CACHER LES ARMES POUR LA V2
-
-//UN TIMER ENTRE CHAQUE TIRE

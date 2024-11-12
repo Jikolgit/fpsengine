@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useRef } from "react"
 import { gameAppContext } from "./GameApp"
 import { useFrame } from "@react-three/fiber";
 import { MobLifeBar } from "./GameUI";
-import { ItemType1Model, Dummy_1_model, EnemyBullet, Mob_1_model, ItemType2Model } from "./Game3DAssets";
+import { ItemType1Model, EnemyBullet, Mob_1_model, ItemType2Model } from "./Game3DAssets";
 import { appContext } from "../src/App";
 import { AudioManage } from "./audioComponents";
 export let mobContext = createContext(null)
@@ -47,9 +47,9 @@ export function Mob_2(props)
     }
     let startMobEffectCounter = ()=>
         {
-            mobEffectCounter --;
-            if(mobEffectCounter == 0)
-            {
+            // mobEffectCounter --;
+            // if(mobEffectCounter == 0)
+            // {
                 
                 enemyController.current('REMOVE-MOB');
                 bulletGroupRef.current.visible = false;
@@ -60,11 +60,11 @@ export function Mob_2(props)
                 if(props.hasObject)
                 {
                     itemController.value[0]('SHOW-ITEM')
-                    // keyRef.current.visible = true;
+                    
                     
                 }
-                mobDeadCallBack();
-            }
+                // mobDeadCallBack();
+           // }
         }
     for(let i =0; i< 10;i++)
     {
@@ -82,7 +82,7 @@ export function Mob_2(props)
             if(state == 'dead')
             {
                 mobState = 'Dead';
-                enemyController.current('PLAY-MOB-DEAD-ANIMATION',_numb)
+                enemyController.current('PLAY-MOB-DEAD-ANIMATION',()=>{_numb();startMobEffectCounter();})
                 // mobEffectCounterStart = true;
                 // mobDeadCallBack = _numb
                 
@@ -208,7 +208,7 @@ export function Mob_2(props)
                 }
                 else if(mobBulletInfo[index].bulletNextMove == 'GO-PLAYER')
                 {   
-                    // console.log('hit player')
+                    
                     AudioManage.play('playerhit')
                     mobShootAnimationOver.current = false;
                     mobBulletRef.current[index].material.visible = false;
@@ -241,7 +241,7 @@ export function Mob_2(props)
                     mobBulletRef.current[index].material.visible = false;
                     mobBulletRef.current[index].position.x = enemyPositionOnMap.x
                     mobBulletRef.current[index].position.z = enemyPositionOnMap.z
-                    // console.log(mobBulletRef.current[index].position.x+' et '+mobBulletRef.current[index].position.z)
+                   
                     mobBulletInfo[index] = {index:index,checkOnce:false,isShooted:false,bulletNextMove:'none',bulletDirection:'none',bulletDistance:2,
                         posX:enemyPositionOnMap.x,posZ:enemyPositionOnMap.z,count:0,countBeforeShootOver:false};
                     if(mobState=='Alive')
@@ -322,7 +322,14 @@ export function Mob_2(props)
                                 }
                                 else
                                 {
-                                    enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
+                                    if(props.mobCustomModel == 'none')
+                                    {
+                                        enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
+                                    }
+                                    else
+                                    {
+                                        mobShootAnimationOver.current = true;
+                                    }
                                     mobBulletInfo[i].countBeforeShootOver = true;
                                    
                                 }
@@ -415,7 +422,7 @@ export function Mob_2(props)
                     else
                     {
 
-                        // console.log(findResult.xPose+' et '+findResult.zPose)
+                       
                         checkMapPlatform();
                     }
                     
@@ -451,7 +458,7 @@ export function Mob_2(props)
 
                     distanceInscrementation -= 2;
                     getPlatformInfo();
-                    // console.log('dernier '+findResult.xPose+' et '+findResult.zPose)
+                   
                     distanceInscrementation = 0;
                     
                 }
@@ -515,6 +522,7 @@ export function Mob_2(props)
            
           _gameAppContext.mobUpdateFunc.current[props.mobObjectId]   = updateMobInfo;
         },[])
+    
     return(
             <>
             <mobContext.Provider
@@ -531,19 +539,38 @@ export function Mob_2(props)
                                         >
                                         </Mob_1_model>
             }
-            {props._attack && <Mob_1_model
-                                _context={mobContext}
-                                name="ENEMY-ACTIVE"
-                                x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
-                                >
-                            </Mob_1_model>
+            {props._attack && 
+                              <>
+                                   
+                                        <Mob_1_model
+                                        _context={mobContext}
+                                        name="ENEMY-ACTIVE"
+                                        x={enemyPositionOnMap.x} z={enemyPositionOnMap.z}
+                                        customModel={props.mobCustomModel} />
+                                    
+                              </>
+
             }
             {props.hasObject? 
                     <>
-                    {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
-                    :
-                    <ItemType2Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                    {props.itemCustomModel == 'none' ?
+                        
+                            <>
+                                {props.objectSkin == 'coin_item_1'? 
+                                
+                                <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                                :
+                                <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                                
+                                }
+                            </>
+                            :
+                            <>
+                                <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                            </>
+                        
                     }
+                    
                     </>
                     :null
             }

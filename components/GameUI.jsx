@@ -74,7 +74,7 @@ export function GameUI()
                 value={{setEnableTransitionScreen,setActualUi,nextScreen}}
                 >
                         {actualUi == 'TITLE-SCREEN' && <TitleScreen />}
-                        {actualUi == 'OPTION-SCREEN' && <OptionScreen />}
+                        
                         {actualUi == 'CREDIT-SCREEN' && <CreditScreen />}
                         {actualUi == 'PAUSE-SCREEN' && <PauseScreen />}
                         {actualUi == 'GAME_OVER-SCREEN' && <GameOverScreen />}
@@ -325,10 +325,6 @@ export function PauseScreen()
                 <div id="GLASS" className="absolute left-[0] top-[0] z-[2] w-full h-full "></div>
                 <img src='n_button/btnContinue.png' alt="Continuer" className="w-full h-full" />
             </div>
-            {/* <div onClick={()=>{_appContext.restartLevel() ;AudioManage.play('click');AudioManage.playAmbient('play')}} 
-                 className=" text-center mt-[35px] cursor-pointer w-[150px] h-[50px] mx-auto bg-blue-500 text-white ">
-                RESTART
-            </div> */}
             <div   onClick={()=>{_appContext.quitGame('NO-RESTART') ;AudioManage.play('click');AudioManage.playAmbient('stop')}} 
                 className=" relative text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto text-white ">
                 <div id="GLASS" className="absolute left-[0] top-[0] z-[2] w-full h-full "></div>
@@ -355,7 +351,7 @@ export function PauseScreen()
             <div
                 
             >
-                {/* {pauseScreenActive && pauseDisplay.current} */}
+               
                 {pauseDisplay.current}
             </div>
     )
@@ -449,10 +445,7 @@ export function MobLifeBar(props)
             
             lifeValue = (_life*100) / props.maxMobLife;
             mobLifeRef.current.style.width = lifeValue+'%';
-            // if(_life == 0)
-            // {
-            //     mobLifeContainerRef.current.style.display='none'
-            // }
+
         }
     _mobContext.lifeBarController.current = (args,params)=>
         {
@@ -535,7 +528,7 @@ export function GameNotif()
                     msgCounter.current ++;
                     if(msgCounter.current <200)
                     {
-                        // notifRef.current.innerText = msgCounter.current;
+                       
                         window.requestAnimationFrame(customCounter);
                     }
                     else
@@ -599,136 +592,95 @@ export function GameNotif()
 
 export function TitleScreen()
 {
-    let _appContext = useContext(appContext);
-    let [controllerVersion,setControllerVersion] = useState(2);
-    let [volumeIcon,setVolumeIcon] = useState('volume-high.svg');
-    let [lifeUpdateInfo,setIifeUpdateInfo] = useState({level:_appContext.playerLifeUpgradeCost.current.level,
-                                                       cost:_appContext.playerLifeUpgradeCost.current.value});
-    let [weaponUpdateInfo,setWeaponUpdateInfo] = useState({level:_appContext.playerWeaponUpgradeCost.current.level,
-                                                        cost:_appContext.playerWeaponUpgradeCost.current.value});
+    const AppContext = useContext(appContext);
+
     let switchVolume = ()=>
         { 
-             AudioManage.play('click')
-            _appContext.soundOn.current = _appContext.soundOn.current? false : true;
-            AudioManage.soundONOFF(_appContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
-            setVolumeIcon(c => c = _appContext.soundOn.current? 'volume-high.svg' : 'volume-off.svg');
+            AudioManage.play('click')
+            AppContext.soundOn.current = AppContext.soundOn.current? false : true;
+            AudioManage.soundONOFF(AppContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
+           
         }
-    // let upgradeLife = ()=>
-    //     {
-            
-    //         _appContext.upgradePlayerState('LIFE');
-    //         setIifeUpdateInfo({level:_appContext.playerLifeUpgradeCost.current.level,
-    //                            cost:_appContext.playerLifeUpgradeCost.current.value})
-    //     }
-    // let upgradeWeapon = ()=>
-    //     {
-            
-    //         _appContext.upgradePlayerState('WEAPON');
-    //         setWeaponUpdateInfo({level:_appContext.playerWeaponUpgradeCost.current.level,
-    //                             cost:_appContext.playerWeaponUpgradeCost.current.value})
-    //     }
+    let startGame = ()=>
+        {
+            AppContext.appController('START-GAME')
+        }
+    let toggleTouchController = ()=>
+        {
+            AppContext.gameControllerVisible.current = AppContext.gameControllerVisible.current? false : true;
+            AppContext.actionIconVisible.current = AppContext.actionIconVisible.current? false : true;
+        }
     return <div 
                 style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`absolute left-[0] top-[0] z-[2] w-full h-full select-none `}
             >
                     
                     <div className="relative mt-[10px] text-center text-[2rem] text-white ">
-                         DUNGEON QUEST
+                        3D DUNGEON FPS
                     </div>
                     
                      <div className=" text-center text-white  ">
                         <span className="text-[0.8rem] mr-[5px] ">
                             Score :
                         </span>
-                        <span className="text-[1.2rem]">{_appContext.playerStats.current.score}</span>
+                        <span className="text-[1.2rem]">{AppContext.playerStats.current.score}</span>
                      </div>
                      
                      <div className=" flex justify-center text-white ">
                         <div className="text-[0.8rem] mr-[5px] flex flex-col justify-center ">
                             <img src="coin.svg" alt="coin" className=" w-[20px] h-[20px]  " />
                         </div>
-                        <span className="text-[1.2rem]">{_appContext.playerStats.current.coinCollected}</span>
+                        <span className="text-[1.2rem]">{AppContext.playerStats.current.coinCollected}</span>
                      </div>
                      <div className="mt-[20px] ">
-                            { controllerVersion == 1 &&
-                            <>
-                                <div onClick={()=>{_appContext.appController('START-GAME')}}
-                                    className=" relative flex justify-center flex-col text-center mt-[20px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                    <img className="w-full h-full mx-auto " src="n_button/btnPlay.png" alt="play" />
-                                </div>
-                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'OPTION-SCREEN'})}}
-                                    className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                    <img className="w-full mx-auto " src="n_button/btnOption.png" alt="Option" />
-                                </div>
-                                <div onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'CREDIT-SCREEN'})}}
-                                    className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                    <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                    <img className="w-full mx-auto " src="n_button/btnCredit.png" alt="Credit" />
-                                </div>
-                            </>
-                            }
-                            {controllerVersion == 2 &&
-                                <>
-                                    <div className="w-full flex justify-center">
-                                        <ButtonTemplate1 icon={'play.svg'} btnfunction={()=>{_appContext.appController('START-GAME')}} />
-                                        <ToggleButtonTemplate1 icon={'volume-high.svg'} btnfunction={()=>{switchVolume()}} 
-                                        toggleValue={_appContext.soundOn.current} 
-                                         />
 
-                                    </div>
-                                    {/* <div className="w-full mt-[20px] flex justify-center">
-                                            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
-                                                <div onClick={upgradeWeapon}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
-                                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
-                                                    <span className="text-[0.7rem] ">Lvl:</span>
-                                                    <span className="text-[1.2rem] ">{weaponUpdateInfo.level}</span>
-                                                </div>
-                                                <img src="sword.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
-                                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
-                                                    {weaponUpdateInfo.cost}
-                                                </div>
-                                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
-                                            </div>
-                                            <div className="cursor-pointer relative mx-[10px] w-[80px] h-[110px] ">
-                                                <div onClick={upgradeLife}  id="GLASS" className="w-full h-full absolute z-[3] left-0 top-0"></div>
-                                                <div className="w-full absolute z-[2] top-[5px] text-center text-white ">
-                                                    <span className="text-[0.7rem] ">Lvl:</span>
-                                                    <span className="text-[1.2rem] ">{lifeUpdateInfo.level}</span>
-                                                </div>
-                                                <img src="heart.svg" alt="Return Button" className="absolute z-[2] block w-[40px] h-[40px] m-auto right-0 left-0 top-0 bottom-0" />
-                                                <div className="w-full absolute z-[2] bottom-[5px] text-center text-white ">
-                                                    {lifeUpdateInfo.cost}
-                                                </div>
-                                                <img src="btnTemplate.png" alt="Play Button back" className="block w-full h-full " />
-                                            </div>
-                                    </div> */}
-                                    <div className="w-full mt-[20px] flex justify-center">
-                                            <ToggleButtonTemplate1 icon={'gamepad.svg'} btnfunction={()=>
-                                                {_appContext.gameControllerVisible.current = _appContext.gameControllerVisible.current? false : true;
-                                                    _appContext.actionIconVisible.current = _appContext.actionIconVisible.current? false : true;
-                                                }}
-                                                toggleValue={_appContext.gameControllerVisible.current} 
-                                                 />
-                                            <ButtonTemplate1 icon={'apps.svg'} btnfunction={()=>{switchVolume()}} />
-                                        {/* <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
-                                            <div id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
-                                            <img src="gamepad.svg" alt="Enable Game Pad Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
-                                            <img src="btnTemplate.png" alt="Play Button back" className="block" />
-                                        </div>
-                                        <div className="cursor-pointer relative mx-[10px] w-[80px] h-[80px] ">
-                                            <div id="GLASS" className="w-full h-full absolute left-0 top-0"></div>
-                                            <img src="apps.svg" alt="More Game Button" className="absolute z-[2] w-[60px] m-auto right-0 left-0 top-0 bottom-0" />
-                                            <img src="btnTemplate.png" alt="Button back" className="block" />
-                                        </div> */}
-                                    </div>
-                                </>
-                            }
+
+                            <div className="w-full flex justify-center">
+                                <ButtonTemplate1 icon={'play.svg'} btnfunction={startGame} />
+                                <ToggleButtonTemplate1 icon={'volume-high.svg'} btnfunction={switchVolume} 
+                                toggleValue={AppContext.soundOn.current} 
+                                    />
+
+                            </div>
+                            
+                            <div className="w-full mt-[20px] flex justify-center">
+                                    <ToggleButtonTemplate1 icon={'gamepad.svg'} btnfunction={toggleTouchController}
+                                        toggleValue={AppContext.gameControllerVisible.current} 
+                                            />
+                                
+                            </div>
+                                
+                            
                             
                     </div>
                     
            </div>
+}
+export function BulletReloadIcon()
+{
+    const AppContext = useContext(appContext);
+    let [reload,setReload] = useState('grayscale-0')
+    useEffect(()=>
+        {   
+            AppContext.BulletReloadIconController.current = (args)=>
+            {
+                if(args == 'RELOAD-START')
+                {   
+                    setReload('grayscale');
+                }
+                else if(args == 'RELOAD-END')
+                {
+                    setReload('grayscale-0');
+                }
+            }
+        },[])
+    return(
+            <div className="w-[50px] h-[50px] absolute left-0 right-0 mx-auto top-[30px] z-[2] ">
+                <div className="w-full h-full absolute z-[2] left-0 top-0 "></div>
+                <img className={`w-full h-full ${reload} `} src="bullet_reload.png" />
+            </div>
+            
+    )
 }
 export function BlackScreenTransition(props)
 {
@@ -811,72 +763,7 @@ export function BlackScreenTransition(props)
             </>
     )
 }
-export function OptionScreen()
-{
-    let _appContext = useContext(appContext);
-    let [controlVisible,setControlVisible] = useState(_appContext.gameControllerVisible.current);
-    let [soundOn,setsoundOn] = useState(_appContext.soundOn.current);
-    let switchControl = ()=>
-        {   AudioManage.play('click')
-            _appContext.gameControllerVisible.current = _appContext.gameControllerVisible.current? false : true;
-            setControlVisible(_appContext.gameControllerVisible.current)
-        }
-    let switchVolume = ()=>
-        {   AudioManage.play('click')
-            _appContext.soundOn.current = _appContext.soundOn.current? false : true;
-            AudioManage.soundONOFF(_appContext.soundOn.current? 'ON_MENU' : 'OFF_MENU');
-            setsoundOn(_appContext.soundOn.current);
-        }
-    return <div
-                 style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
-                className={`absolute select-none left-[0] top-[0] z-[2] w-full h-full bg-black `}
-            >
-                    <div className="text-center text-[2rem] text-white">OPTION</div>
-                    {/* <div 
-                        className=" tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[150px] h-[50px] mx-auto bg-blue-500 text-white ">
-                        VOLUME
-                    </div> */}
-                    <div>
-                            <div 
-                                className=" mb-[10px] text-[1.2rem] tracking-[3px] flex justify-center flex-col text-center mt-[35px] w-[200px] mx-auto  text-white ">
-                                Volume
-                            </div>
-                            <div
-                                onClick={switchVolume}
-                                className={` relative cursor-pointer w-[90px] h-[30px] ${soundOn? 'bg-blue-900' : 'bg-red-900'} mx-auto `}
-                            >
-                                <div className={`absolute ${soundOn? 'right-[0]' : 'left-[0]'} w-[45px] h-[30px] h-full bg-white `} >
-                                        <img className="w-full h-full mx-auto " src="n_button/btnSwitch.png" alt="switch" />
-                                        <div className="absolute left-[0] top-[0] w-full h-full
-                                                        flex flex-col justify-center 
-                                                        text-white text-center">{_appContext.soundOn.current? 'ON' : 'OFF'}</div>
-                                </div>
-                            </div>
-                    </div>
-                    <div>
-                            <div 
-                                className=" mb-[10px] text-[1.2rem] tracking-[3px] flex justify-center flex-col text-center mt-[35px] w-[200px] mx-auto  text-white ">
-                                Afficher les touches
-                            </div>
-                            <div
-                                onClick={switchControl}
-                                className={` relative cursor-pointer w-[90px] h-[30px] ${controlVisible? 'bg-blue-900' : 'bg-red-900'} mx-auto `}
-                            >
-                                <div className={`absolute ${controlVisible? 'right-[0]' : 'left-[0]'} w-[45px] h-[30px] `} >
-                                        <img className="w-full h-full mx-auto " src="n_button/btnSwitch.png" alt="switch" />
-                                        <div className="absolute left-[0] top-[0] w-full h-full
-                                                        flex flex-col justify-center 
-                                                        text-white text-center">{_appContext.gameControllerVisible.current? 'ON' : 'OFF'}</div>
-                                </div>
-                            </div>
-                    </div>
-                    <div   onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}} 
-                        className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                        <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                        <img className="w-full mx-auto " src="n_button/btnBack.png" alt="back" />
-                    </div>
-           </div>
-}
+
 
 export function PlayerMoney()
 {
@@ -934,14 +821,7 @@ export function CreditScreen()
 export function GameOverScreen()
 {
     let _appContext = useContext(appContext);
-    let [showContent,setShowContent] = useState(false);
-    useEffect(()=>
-        {
-            _appContext.gameOverScreenFunc.current = ()=>
-            {
-                // setShowContent(true)
-            }
-        },[])
+
     return( <>
                             <div
                                 style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
@@ -968,32 +848,29 @@ export function GameOverScreen()
 export function GameEndingScreen()
 {
     let _appContext = useContext(appContext);
-    let [showContent,setShowContent] = useState(false);
-    useEffect(()=>
+
+    let mainMenu = ()=>
         {
-            _appContext.gameEndingScreenFunc.current = ()=>
-            {
-                // setShowContent(true)
-            }
-        },[])
+            _appContext.quitGame('RESTART-GAME-FINISHED')
+        }
     return( <>
-                                <div
-                                style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
-                                className={`text-white absolute select-none left-[0] top-[0] z-[5] w-full h-full bg-black`}
-                                >
-                                    <div className="text-center my-[20px] ">Fin du Chapitre 1</div>
-                                    <div className="text-center ">
-                                        <div>
-                                            Merci d'avoir Joué à Dahomey Legacy <br />La partie 2 arrive bientôt !
-                                        </div>
-                                        
-                                    </div>
-                                    <div   onClick={()=>{_appContext.quitGame('RESTART-GAME-FINISHED') }} 
-                                        className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
-                                        <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                        <img className="w-full mx-auto " src="n_button/btnQuit.png" alt="Quit" />
-                                    </div>
+                <div
+                style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                className={`text-white absolute select-none left-[0] top-[0] z-[5] w-full h-full bg-black`}
+                >
+                        <div className="text-center my-[20px] ">Thanks for playeing 3D Dungeon FPS</div>
+                        <div className="text-center ">
+                            <div>
+                                An update is coming soon !
                             </div>
+                            
+                        </div>
+                        <div   onClick={mainMenu} 
+                            className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
+                            <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
+                            <img className="w-full mx-auto " src="n_button/btnQuit.png" alt="Quit" />
+                        </div>
+                </div>
             
             </>
     )
@@ -1026,10 +903,9 @@ export function ToggleTouchScreen()
 }
 export function StoryScreen()
 {
-    let _gameUiContext = useContext(gameUIContext)
+
     let _appContext = useContext(appContext)
     let [storyScreenActive,setStoryScreenActive] = useState(false);
-    // let speech = useRef(speechTimeline[_appContext.level.current-1]);
     let speech = useRef(storyText.value);
     let speechTotalPart = useRef(speech.current.length);
     let speechPartCounter = useRef(1)
@@ -1052,10 +928,10 @@ export function StoryScreen()
         {   
             if(speechPartCounter.current == speechTotalPart.current)
             {
-                // _appContext.systemPause(false);
+               
                 _appContext.gamePause.current = false;
                 _appContext.GameUIController.current({arg1:'DIRECT',arg2:'NO-SCREEN'})
-                // setStoryScreenActive(c => c = false);
+               
             }
             else
             {
@@ -1139,14 +1015,14 @@ export function StoryScreen()
                                             </div>
                                         
                                             {speechPartCounter.current < speechTotalPart.current && 
-                                                <div onClick={nextPart} 
+                                                <div onClick={nextPart} //NEXT STORY
                                                 className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
                                                     <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
                                                 </div>
                                             }
                                             {speechPartCounter.current == speechTotalPart.current && 
-                                                <div onClick={removeStoryScreen} 
+                                                <div onClick={removeStoryScreen} //CLOSE STORY BUTTON
                                                 className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
                                                     <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
@@ -1349,14 +1225,3 @@ function ToggleButtonTemplate1(props)
             </div>
     )
 }
-//Z-INDEX
-// 1-  Canvas
-// 2- LifeBar, GameController, TitleScreen, OptionScreen, PlayerMoney, CreditScreen, ToggleTouchScreen
-// 3- PauseScreen
-// 4- PauseIcon
-// 5- GameOverScreen, GameEndingScreen, StoryScreen
-// 6-
-// 7-
-// 8- GameNotif
-// 9- GameScreenTransition
-// 10-BlackScreenTransition

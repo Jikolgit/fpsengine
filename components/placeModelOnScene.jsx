@@ -16,28 +16,33 @@ export function placeModelOnScene(gloBalObject)
             { 
                 let objectComponents=null;
                 if(gloBalObject.GameMap[i].objectDesc.skin =='coin_item_1')
-                {objectComponents =<ItemType1Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
-                skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose}  /> }
-                else if(gloBalObject.GameMap[i].objectDesc.skin =='dummy')
                 {
-                    objectComponents =<Mob_2 _mobSkin={gloBalObject.GameMap[i].objectDesc.skin} _attack={false} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} skin={gloBalObject.GameMap[i].objectDesc.skin} 
-                    mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  
-                    mobObjectId = {gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
-                }
+                    if(gloBalObject.GameMap[i].objectDesc.customModel == 'none')
+                    {
+                        objectComponents =<ItemType1Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose}  />
+                    }
+                    else
+                    {
+                        objectComponents =<ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        skin={gloBalObject.GameMap[i].objectDesc.skin} customModel={gloBalObject.GameMap[i].objectDesc.customModel} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose}  />
+                    }
+                 }
                 else
                 {
                     if(gloBalObject.GameMap[i].objectDesc.objectName=='box_item')
-                    {
+                    {   
                         objectComponents = <BoxItem controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
                         skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} 
                         hasChildObject={gloBalObject.GameMap[i].objectDesc.hasChildObject} childObjectSkin={gloBalObject.GameMap[i].objectDesc.childObjectSkin}
-                        childObjectValue={gloBalObject.GameMap[i].objectDesc.childObjectValue}
+                        childObjectValue={gloBalObject.GameMap[i].objectDesc.childObjectValue} customModel={gloBalObject.GameMap[i].objectDesc.customModel}
+                        childCustomModel = {gloBalObject.GameMap[i].objectDesc.childCustomModel}
                         />
                     }
                     else
                     {
                         objectComponents = <ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
-                        skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                        skin={gloBalObject.GameMap[i].objectDesc.skin} customModel={gloBalObject.GameMap[i].objectDesc.customModel} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     }
 
                 }
@@ -112,7 +117,8 @@ export function placeModelOnScene(gloBalObject)
                     ref={(val)=>{gloBalObject.objectRef.current[gloBalObject.GameMap[i].objectId] = val}}
                     >
                                 
-                            <Decor_model skin={gloBalObject.GameMap[i].objectDesc.skin} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                            <Decor_model skin={gloBalObject.GameMap[i].objectDesc.skin} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} 
+                                                customModel={gloBalObject.GameMap[i].objectDesc.customModel}/>
                     </group> : null;
                     gloBalObject.objectContainer.current[i] = arrElem
                     
@@ -166,6 +172,8 @@ export function placeModelOnScene(gloBalObject)
                         objectComponents = <Mob_2 mobDifficulty={gloBalObject.GameMap[i].objectDesc.mobDifficulty} _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
                         objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
                         objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
+                        mobCustomModel={gloBalObject.GameMap[i].objectDesc.mobCustomModel} bulletCustomModel={gloBalObject.GameMap[i].objectDesc.bulletCustomModel}
+                        itemCustomModel={gloBalObject.GameMap[i].objectDesc.itemCustomModel}
                         mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  
                         mobObjectId = {gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     }
@@ -174,6 +182,8 @@ export function placeModelOnScene(gloBalObject)
                         objectComponents = <Mob_3 mobDifficulty={gloBalObject.GameMap[i].objectDesc.mobDifficulty} _mobSkin={gloBalObject.GameMap[i].objectDesc.mobSkin} _attack={true} hasObject={gloBalObject.GameMap[i].objectDesc.hasObject} 
                         objectSkin={gloBalObject.GameMap[i].objectDesc.objectSkin} objectIsImportant={gloBalObject.GameMap[i].objectDesc.objectIsImportant}
                         objectValue = {gloBalObject.GameMap[i].objectDesc.objectValue}
+                        mobCustomModel={gloBalObject.GameMap[i].objectDesc.mobCustomModel} bulletCustomModel={gloBalObject.GameMap[i].objectDesc.bulletCustomModel}
+                        itemCustomModel={gloBalObject.GameMap[i].objectDesc.itemCustomModel}
                         mobLife={gloBalObject.GameMap[i].objectDesc.life} maxMobLife={structuredClone(gloBalObject.GameMap[i].objectDesc.life)}  
                         mobObjectId = {gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     }
@@ -191,7 +201,7 @@ export function placeModelOnScene(gloBalObject)
 
                 if(gloBalObject.GameMap[i].objectLimit && gloBalObject._appContext.setMapWall.current)
                 {
-                    gloBalObject.wallModelContainer.current[i] = <Decor_model key={i} skin={'wall'} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                    gloBalObject.wallModelContainer.current[i] = <Decor_model customModel='none' key={i} skin={'wall'} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     
                 }
             

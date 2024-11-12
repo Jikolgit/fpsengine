@@ -153,7 +153,7 @@ export function preparePlayerMove(objArg)
                         
                     updatePlayerPositionOnMap(objArg)
                     AudioManage.play('walk')
-                    // moveDirection = objArg.direction ;   
+                      
                     objArg.playerMoveIsActive.current = true
                     objArg.aKeyisPressed.current = true 
                     

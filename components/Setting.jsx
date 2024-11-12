@@ -1,17 +1,57 @@
-import { useContext } from "react";
+import * as THREE from 'three'
+import { useContext, useRef } from "react";
 import { appContext } from "../src/App";
-import { AddDecor, AddDoor, AddItem, AddMob, AddChildItem, SetMapDimension, UpdateLevelConfig, AddTimer, AddWall, AddBarrier, UpdateStroryScreen } from "./DefaultComponents";
+import { AddDecor, AddDoor, AddItem, AddMob, AddChildItem, SetMapDimension, UpdateLevelConfig, AddTimer, AddWall, AddBarrier, UpdateStroryScreen, UpdatePlayerStat } from "./DefaultComponents";
+import { useTexture } from "@react-three/drei";
+import { MobModelContext } from './Game3DAssets';
 
 // HERE YOU CAN SETUP YOUR LEVEL
 //
 export function Settings()
 {
     const AppContext = useContext(appContext);
+    let spriteTexture = new THREE.TextureLoader().load('../public/coin.svg')
+    let CustomhealModel = ()=>
+        {    
+            let mobModelContext = useContext(MobModelContext); 
+            let modelRef  = useRef(null);  
+            
+            mobModelContext.customMobController.current = (args)=>
+            {
+                if(args == 'REMOVE-MOB')
+                {
+                    modelRef.current.material.visible = false
+                }
+
+            }
+            return(
+                // HERE YOU CAN ADD YOUR CUTOM ENEMY MODEL
+                <mesh ref={modelRef} >
+                    <boxGeometry args={[1,1,1]} />
+                    <meshBasicMaterial color={'red'} transparent={true} />
+                </mesh>
+            )
+        }
+    let customModel2 = <sprite 
+                            position={[0,0.5,0]} scale={[0.4,0.4,1]}
+                        >
+                            <spriteMaterial map={spriteTexture}   />
+                            
+                        </sprite>
+    let customPlayerBulletModel = <mesh >
+                                            <boxGeometry args={[0.5,0.5,0.5]} />
+                                            <meshBasicMaterial color={'red'} />
+                                
+                            </mesh>
+    let customObjet = <mesh position={[0,0.5,0]}>
+                                 <sphereGeometry args={[0.2,10,10]} />
+                                 <meshBasicMaterial color={'blue'} />
+                        </mesh>
     return(
             <>
                     {AppContext.level.current == 1 &&
                         <>
-                            <UpdateLevelConfig playerPosition={22}    />
+                            <UpdateLevelConfig playerPosition={22}  />
 
                             <UpdateStroryScreen>
                                 <div>Go inside the dungeon and find the sacred treasure</div>
@@ -28,23 +68,32 @@ export function Settings()
                     {AppContext.level.current == 2 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} keyNumber={1}  />
+                            <UpdatePlayerStat bulletModel={customPlayerBulletModel} />
                             <UpdateStroryScreen>
                                 <div>Take the <span className="text-blue-500">key</span> to open the portal</div>
                             </UpdateStroryScreen>
                             <SetMapDimension width={7} height={15} addWallOnMap />
-                            <AddItem name="key_item" position={[45]} />
+                            <AddItem name="box_item" position={[45]} >
+                                <AddChildItem name="key_item" important />
+                            </AddItem>
+                            {/* <AddItem name="upgrade_shoot_power_item" position={[44]}    /> */}
+                            <AddDecor position={[44]} skin='tombstone'  />
+                            <AddItem name='coin_item' position={[46]}  />
                             <AddDoor position={[94]} />
                         </>
                     }
                     {AppContext.level.current == 3 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} mobToKill={2} />
-                            <UpdateStroryScreen>
+                            
+                            {/* <UpdateStroryScreen>
                                 <div>Shoot the <span className="text-red-500">Ghost</span> to open the portal</div>
-                            </UpdateStroryScreen>
+                            </UpdateStroryScreen> */}
                             <SetMapDimension width={7} height={15} addWallOnMap />
                             <AddMob position={[64]} life={2} type="2" />
-                            <AddMob position={[68]} life={2} type="2" />
+                            <AddMob position={[68]} life={1} type="2" >
+                                
+                            </AddMob>
                             <AddDoor position={[94]} />
                         </>
                     }

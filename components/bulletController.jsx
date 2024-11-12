@@ -12,6 +12,7 @@ export function moveBullet(gloBalObject)
             gloBalObject.weaponReload.time = 0;
             
             gloBalObject.weaponReload.start = false
+            gloBalObject._appContext.BulletReloadIconController.current('RELOAD-END')
         }
     }
     for(let i = 0;i<gloBalObject.bulletRef.current.length;i++)
@@ -129,10 +130,14 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                         {
                                             if(result.objectDesc.objectName == 'box_item')
                                             {   
+                                                if(!result.objectDesc.boxDestroyed)
+                                                {
+                                                
                                                 AudioManage.play('crate-impact')
                                                 result.objectDesc.objectLife -= gloBalObject._appContext.playerStats.current.shootPower;
                                                 if(result.objectDesc.objectLife <=0 )
                                                 {   
+                                                    
                                                     result.objectDesc.objectLife =0;
                                                     
                                                     gloBalObject.itemController.value[result.objectId]('Update-Item-Life',result.objectDesc.objectLife);
@@ -140,6 +145,7 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                     
                                                     let effectAfterItemDestruction = ()=>
                                                         {   
+                                                            result.objectDesc.boxDestroyed = true;
                                                             if(result.objectDesc.hasChildObject)
                                                             {
                                                                 gloBalObject.itemController.value[result.objectId]('SHOW-CHILD-ITEM');
@@ -163,20 +169,18 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                 }
                                                 
                                                 return "move-stop-explode";
+                                                    
+                                                }
+                                                else
+                                                {
+                                                    return "move-continue-none"
+                                                }
                                             }
                                             else
                                             {
                                                 return "move-continue-none"
                                             }
                                             
-                                            // if(result.objectDesc.objectName == 'wall_1')
-                                            // {
-                                            //     return "move-stop-explode";
-                                            // }
-                                            // else if(result.objectDesc.objectName == 'heal_item')
-                                            // {
-                                            //     return "move-continue-none"
-                                            // }
                                         }
                                         else if(result.objectType == 'decor')
                                         {
@@ -357,7 +361,7 @@ export function prepareNextBullet(gloBalObject)
             }
         }
     if(gloBalObject.showWeapon3DModel.value){gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].children[0].material.visible = true;}
-    // gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].children[0].material.visible = true;
+
     gloBalObject.bulletPositionOnMap[gloBalObject.nextBulletToShoot.value._index].x = gloBalObject.playerPositionOnMap.x;
     gloBalObject.bulletPositionOnMap[gloBalObject.nextBulletToShoot.value._index].z = gloBalObject.playerPositionOnMap.z;
     gloBalObject.bulletRef.current[gloBalObject.nextBulletToShoot.value._index].position.x = gloBalObject.playerPositionOnMap.x

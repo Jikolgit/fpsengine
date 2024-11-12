@@ -332,8 +332,17 @@ export function Mob_3(props)
                                 }
                                 else
                                 {   
-                                    enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
+                                    if(props.mobCustomModel == 'none')
+                                    {
+                                        enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
+                                    }
+                                    else
+                                    {
+                                        mobShootAnimationOver.current = true;
+                                    }
                                     mobBulletInfo[i].countBeforeShootOver = true;
+                                    // enemyController.current('PLAY-MOB-ATTACK-ANIMATION');
+                                    // mobBulletInfo[i].countBeforeShootOver = true;
                                     
                                 }
                         }
@@ -614,7 +623,7 @@ export function Mob_3(props)
             if(mobState=='Alive')
             {
                     if(nextPosIndex != currentMobPositionInfo.id)
-                    {
+                    {      
                         GameMap[nextPosIndex].hasEnemy = true
                         GameMap[nextPosIndex].isOnScene = true
                         GameMap[nextPosIndex].object = true
@@ -768,6 +777,9 @@ export function Mob_3(props)
         {
             
             // checkIfPlayerIsOnMobArea();
+            GameMap[GameMap.find(getIndexPosition).id].objectDesc.itemCustomModel = 'none'
+            GameMap[GameMap.find(getIndexPosition).id].objectDesc.mobCustomModel = 'none'
+            GameMap[GameMap.find(getIndexPosition).id].objectDesc.bulletCustomModel = 'none'
             _appContext.mobCallBackAfterPlayerMove.current = ()=>
                 {
                     if(!locatePlayer)
@@ -804,16 +816,25 @@ export function Mob_3(props)
                                         _context={mobContext}
                                         name="ENEMY-ACTIVE"
                                         x={mobPositionOnMap.x} z={mobPositionOnMap.z}
+                                        customModel={props.mobCustomModel}
                                         >
                                     </Mob_1_model>
                     }
                     {props.hasObject? 
                             <>
-                            {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
-                            :
-                            <ItemType2Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
-                            }
+                                {props.itemCustomModel == 'none' ?
+                                    <>
+                                    {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
+                                    :
+                                    <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
+                                    }
+                                    </>
+                                    :
+                                    <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
+                                }
                             </>
+                            
+                            
                             :null
                     }
                     {_appContext.devMode.current && <MobLifeBar _context={mobContext} x={mobPositionOnMap.x} z={mobPositionOnMap.z} maxMobLife={props.maxMobLife} mobLife={props.mobLife} />}

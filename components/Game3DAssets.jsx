@@ -13,8 +13,9 @@ import { gameAppContext } from './GameApp';
 import { CustomCounter } from './utils';
 import vertex from './vertex.glsl'
 import frags from './frags.glsl'
-import halosphere from './halosphere.glsl'
+import { createContext } from 'react';
 
+export const MobModelContext = createContext();
 function prepareTexture(texture)
 {
   const _texture = useTexture(texture);
@@ -40,61 +41,13 @@ export function GroundModel(props) {
     </group>
   )
 }
-// export function SpearModelOnMap(props) {
-//   let _appContext = useContext(appContext)
-//   const { nodes, materials } = useGLTF('/model.glb');
-//   let passedTime = 0 ;
-//   let modelRef = useRef(null)
-//   let _texture = prepareTexture('gametexture.jpg');
-//   let mat = new THREE.MeshBasicMaterial({map:_texture,visible:props._visible,wireframe:_appContext.devMode.current? true : false});
-//   let visibleStatut;
-
-//   useFrame(()=>
-//     {
-//       if(!_appContext.gamePause.current)
-//       {
-//         passedTime += 1/40;
-//         modelRef.current.position.y += Math.sin(passedTime)/400;
-//         if(props.name == 'triangle'){modelRef.current.rotation.y += (0.1/4);}
-//         else if(props.name == 'torus'){modelRef.current.rotation.z += (0.1/4);}
-        
-//       }
-      
-//     })
-//   return (
-//       <>
-//       {/* <mesh ref={modelRef}
-//             rotation={[0,0,Math.PI*0.1]} 
-//             geometry={nodes.spear_1.geometry} material={mat} position={[props.posX,props.posY,props.posZ]} /> */}
-//       {/* <mesh ref={modelRef}>
-//             <boxGeometry args={[1,1,1]} />
-//             <meshBasicMaterial color={'yellow'} wireframe />
-//       </mesh> */}
-//       {props.name == 'triangle' && <mesh ref={modelRef} geometry={nodes.playerBullet_1.geometry}>
-//             <meshBasicMaterial color={'yellow'} wireframe />
-//       </mesh>}
-//       {props.name == 'torus' && <mesh position={[0,0.5,0]} ref={modelRef} geometry={nodes.playerBullet_2.geometry} rotation={[Math.PI*0.5,0,0]}>
-//             <meshBasicMaterial color={'yellow'} />
-//       </mesh>}
-//       <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'red'} _speed={1} _number={30} x={props.posX} z={props.posZ} />
-//       </>
-      
-//   )
-// }
 export function BulletModel(props) {
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let modelRef = useRef(null)
   let _texture = prepareTexture('txtglobal1.jpg');
-  // let mat = new THREE.MeshBasicMaterial({map:_texture,visible:props._visible,wireframe:_appContext.devMode.current? true : false});
   let mat = new THREE.MeshBasicMaterial({color:'yellow',visible:props._visible,wireframe:true});
-  let spear2HeadMat = new THREE.MeshBasicMaterial({color:'blue',side:THREE.BackSide,transparent:true,opacity:0.1});
-  let visibleStatut;
 
-  useFrame(()=>
-    {
-      // modelRef.current.rotation.x += 0.05
-    })
   useEffect(()=>
     { 
       props.controller.bulletModelController.value[props.controller.index] = (args)=>
@@ -102,7 +55,7 @@ export function BulletModel(props) {
           if(args == 'SHOW-BULLET')
           {
             modelRef.current.children[0].material.visible = true;
-            // modelRef.current.children[1].material.visible = true;
+          
           }
           else if(args == 'HIDE-BULLET')
           {
@@ -112,29 +65,21 @@ export function BulletModel(props) {
     },[])
   return (
       <>
-      {/* <mesh ref={modelRef}
-            
-            rotation={[Math.PI*0.5,0,0]} 
-            geometry={nodes.spear_1.geometry} material={mat} position={[props.posX,props.posY,props.posZ]} /> */}
-      {/* <mesh ref={modelRef} material={mat}>
-            <boxGeometry args={[0.5,0.5,0.5]} position={[props.posX,props.posY,props.posZ]}/>
-            
-      </mesh> */}
-      <group ref={modelRef} position={[props.posX,props.posY,props.posZ]}
-      >
-              <mesh scale={1} 
-              rotation={[Math.PI*0.5,Math.PI*0.2,0]}  
-              material={mat} geometry={nodes.nArrow.geometry} >
-                    <meshBasicMaterial map={_texture} visible={props._visible} />
-              </mesh>
-              {/* <mesh scale={1.5} material={mat} geometry={nodes.playerBullet_1.geometry}  >
-                    <meshBasicMaterial color={'red'} wireframe visible={true} />
-              </mesh> */}
-      </group>
-      
-      {/* <mesh ref={modelRef} geometry={nodes.spear_2.geometry} material={mat} position={[props.posX-0.1,props.posY,props.posZ+0.2]} rotation={[Math.PI*0.5,0,0]}>
-        <mesh visible={false} geometry={nodes.spear_2_head.geometry} material={spear2HeadMat} position={[0, 0.79, 0.001]} scale={1.227} />
-      </mesh> */}
+
+            <group ref={modelRef} position={[props.posX,props.posY,props.posZ]}
+            >
+                    {_appContext.playerStats.current.bulletModel =='default'?
+                      <mesh scale={1} 
+                      rotation={[Math.PI*0.5,Math.PI*0.2,0]}  
+                      material={mat} geometry={nodes.nArrow.geometry} >
+                            <meshBasicMaterial map={_texture} visible={props._visible} />
+                      </mesh>
+                      :
+                      _appContext.playerStats.current.bulletModel
+                    }
+
+            </group>
+
       </>
       
   )
@@ -149,114 +94,33 @@ export function PlayerCursor(props)
         </sprite>
   )
 }
-export function Dummy_1_model(props) {
-  let _mobContext = useContext(mobContext)
-  const { nodes, materials } = useGLTF('/model.glb');
-  let _appContext = useContext(appContext)
-  let _texture = prepareTexture('gametexture.jpg');
 
-  let modelRef = useRef(null);
-  let mobHitManager = {startEffect:false,timer:10,effectCount:0}
-  const mat1 = new THREE.MeshMatcapMaterial({color:'white'})
-  let mat = new THREE.MeshBasicMaterial({color:'red',wireframe:true});
-  let visibleStatut;
-
-  useFrame((clock)=>
-    {
-      if(!_appContext.gamePause.current)
-      {
-        // modelRef.current.rotation.y += (1/250);
-        
-        if(mobHitManager.startEffect)
-        {
-          mobHitManager.timer--;
-          if(mobHitManager.timer == 0)
-          {
-            mobHitManager.effectCount ++;
-            mobHitManager.timer = 10;
-            
-            if(mobHitManager.effectCount<7)
-            {
-              modelRef.current.children[0].visible = modelRef.current.children[0].visible? false : true;
-            }
-            else
-            {
-              mobHitManager.effectCount = 0;
-              mobHitManager.startEffect = false;
-              modelRef.current.children[0].visible = false;
-            }
-            
-          }
-        }
-      }
-      
-    })
-  useEffect(()=>
-    {
-      _mobContext.enemyFunc.current = (args)=>
-        {
-          if(args == 'REMOVE-MOB')
-          {
-            modelRef.current.material.visible = false;
-          }
-          else if(args == 'MOB-TOUCHED')
-          {
-            // modelRef.current.children[0].visible = false;
-            // mobHitManager = {startEffect:false,timer:10,effectCount:0}
-            // mobHitManager.startEffect = true
-          }
-        }
-    },[])
-  return (
-
-    <>
-    {/* <mesh ref={modelRef} geometry={nodes.pmob_0.geometry} material={mat} position={[props.x,0.1,props.z]}/> */}
-    <mesh geometry={nodes.nmob1.geometry} position={[props.x,0.8,props.z]} >
-        <meshMatcapMaterial color={'black'} />
-        <mesh geometry={nodes.nmob1head.geometry}>
-                <meshMatcapMaterial color={'white'} />
-        </mesh>
-        <mesh geometry={nodes.nmob1horn.geometry} >
-                <meshMatcapMaterial color={'blue'} />
-        </mesh>
-    </mesh>
-    
-    <mesh position={[props.x,0.1,props.z]} visible={false}
-    >
-        <boxGeometry args={[2,2,2]}  />
-        <meshBasicMaterial wireframe color={'red'} />
-        <BulletCollisionEffect />
-    </mesh>
-    </>
-    // <mesh ref={modelRef} geometry={nodes.dummy_1.geometry} material={mat} position={[props.x,0.1,props.z]}>
-    //       <mesh geometry={nodes.dummy_1.geometry} visible={false} scale={1}>
-    //           <meshBasicMaterial color={'red'}  />
-    //       </mesh>
-    // </mesh>
-            
-      
-  )
-}
 export function Decor_model(props) {
   const { nodes, materials } = useGLTF('/model.glb');
   let _appContext = useContext(appContext)
   let _texture = prepareTexture(_appContext.levelInfo.current.mapTexture);
   let _texture2 = prepareTexture('txtglobal1.jpg');
-  const mat = new THREE.MeshMatcapMaterial({color:'white'})
-  const mat2 = new THREE.MeshMatcapMaterial({color:'green'})
   const mat3 = new THREE.MeshMatcapMaterial({map:_texture})
   const mat4 = new THREE.MeshMatcapMaterial({map:_texture2})
+  
   return (
 
-    // <mesh  geometry={nodes.tree.geometry} material={mat} position={[props.x,0,props.z]} />
+   
     <>
-    {props.skin == 'tree' && <mesh geometry={nodes.pdecor_1.geometry} material={mat} position={[props.x,0,props.z]}>
-        <mesh geometry={nodes.pdecor_1_leaf.geometry} material={mat2} />
-    </mesh>}
-    {props.skin == 'wall' && <mesh geometry={nodes.nWall.geometry} material={mat3} position={[props.x,0,props.z]}/>}
-    {props.skin == 'tombstone' && <mesh geometry={nodes.ndecor1.geometry} material={mat4} position={[props.x,0,props.z]}/>}
-    {props.skin == 'lampadaire' && <mesh geometry={nodes.ndecor2.geometry} material={mat4} position={[props.x,0,props.z]}/>}
-        
+    {props.customModel != 'none'? 
+      <>
+          <group position={[props.x,0.5,props.z]} >
+          {props.customModel}
+          </group>
+      </>
+      :
+      <>
+
+          {props.skin == 'wall' && <mesh geometry={nodes.nWall.geometry} material={mat3} position={[props.x,0,props.z]}/>}
+          {props.skin == 'tombstone' && <mesh geometry={nodes.ndecor1.geometry} material={mat4} position={[props.x,0,props.z]}/>}
+          {props.skin == 'lampadaire' && <mesh geometry={nodes.ndecor2.geometry} material={mat4} position={[props.x,0,props.z]}/>}
+      </>
+    }
     </>      
       
   )
@@ -283,7 +147,6 @@ export function WallModel(props)
       } 
     },[])
   return(
-    // <mesh ref={wallRef} geometry={nodes.wall_1.geometry} material={mat} position={[props.x,0,props.z]} />
     <mesh ref={wallRef} geometry={nodes.nWall.geometry} material={mat} position={[props.x,0,props.z]} />
   )
 }
@@ -372,7 +235,7 @@ export function ItemType2Model(props) {
           }
       } 
     },[])
-
+  
   return (
       <>
       <group
@@ -380,71 +243,127 @@ export function ItemType2Model(props) {
             visible={props._visible}
             position={[props.x,0,props.z]}
       >
-          {/* {props.skin == "heal_item_1" && <mesh ref={itemRef}  geometry={nodes.healthBox.geometry} material={containerMat} position={[props.x,0.1,props.z]}>
-          <mesh geometry={nodes.health_1.geometry} material={mat} position={[-0.004, 0.5, 0.043]} rotation={[0.585, 0, 0]} />
-            
-          </mesh>} */}
-          {props.skin == "heal_item_1" && <mesh ref={itemRef} scale={0.5} geometry={nodes.pheal_1.geometry} material={healmat} position={[0,0.1,0]} />}
-          {props.skin == "heal_item_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={0} z={0} />}
-          {props.skin == "key_1" && <mesh ref={itemRef} scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[0,0.8,0]} />}
-          {props.skin == "key_1" && <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />}
-          {props.skin == "box_1" && <mesh ref={itemRef} scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[0,0.8,0]} />}
+          {props.skin == "coin_item_1" && <>
+                                    <group ref={itemRef} >
+                                          {props.customModel}
+                                    </group>
+                                    <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={0} z={0} />
+                                </>}
+          {props.skin == "heal_item_1" && <>
+                                              <group ref={itemRef} >
+                                                  {props.customModel!='none'?
+                                                    <>
+                                                          {props.customModel}
+                                                    </>
+                                                    :
+                                                    <>
+                                                          <mesh  scale={0.5} geometry={nodes.pheal_1.geometry} material={healmat} position={[0,0.1,0]} />
+                                                    </>
+                                                  }
+                                              </group>
+                                              <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={0} z={0} />
+                                          </>}
+          {props.skin == "key_1" && <>
+                                        <group ref={itemRef}>
+                                            {props.customModel!='none'?
+                                              <>
+                                                {props.customModel}
+                                              </>
+                                              :
+                                              <>
+                                                <mesh scale={0.5} rotation={[0,0,Math.PI*0.2]} geometry={nodes.key_1.geometry} material={mat} position={[0,0.8,0]} />
+                                              </>
+                                            }
+                                        </group>
+                                        <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
+                                    </>
+          }
+          
+          {props.skin == "box_1" && <group  ref={itemRef}>
+                                            
+                                            {props.customModel!='none'?
+                                              <>
+                                                {props.customModel}
+                                              </>
+                                              :
+                                              <>
+                                                <mesh scale={1} geometry={nodes.crate_1.geometry} material={mat} position={[0,0.8,0]} /> 
+                                              </>
+                                            } 
+                                    </group>
+          }
           {props.skin == "upgrade_shoot_speed_item" && 
                                             <>
-                                            <mesh
-                                                ref={itemRef}
+                                            <group ref={itemRef}>
+
+                                            {props.customModel!='none'?
+                                              <>
+                                                {props.customModel}
+                                              </>
+                                              :
+                                              <>
+                                                <mesh
+                                                
                                                 position={[0,0.5,0]}
                                                 >
                                                     <sphereGeometry args={[0.2,10,10]} />
                                                     <meshMatcapMaterial color={'blue'} />
-                                          </mesh> 
+                                                </mesh> 
+                                              </>
+                                            }
+
+                                          
+                                          </group>
                                           <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                           </>
           }
           {props.skin == "upgrade_shoot_power_item" && <>
-                                            <mesh
-                                                ref={itemRef}
-                                                position={[0,0.5,0]}
-                                                >
-                                                    <sphereGeometry args={[0.2,10,10]} />
-                                                    <meshMatcapMaterial color={'red'} />
-                                          </mesh> 
-                                          <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
-                                          </>
+                                                        <group ref={itemRef}>
+                                                        
+                                                              {props.customModel!='none'?
+                                                                <>
+                                                                  {props.customModel}
+                                                                </>
+                                                                :
+                                                                <>
+                                                                  <mesh
+                                                                    
+                                                                    position={[0,0.5,0]}
+                                                                    >
+                                                                        <sphereGeometry args={[0.2,10,10]} />
+                                                                        <meshMatcapMaterial color={'red'} />
+                                                                  </mesh> 
+                                                                </>
+                                                              }
+                                                      </group>
+                                                      <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
+                                                      </>
           }
           {props.skin == "upgrade_life_item" && <>
-                                            <mesh
-                                                ref={itemRef}
-                                                position={[0,0.5,0]}
-                                                >
-                                                    <sphereGeometry args={[0.2,10,10]} />
-                                                    <meshMatcapMaterial color={'green'} />
-                                          </mesh> 
+                                            <group ref={itemRef}>
+
+                                                      {props.customModel!='none'?
+                                                        <>
+                                                          {props.customModel}
+                                                        </>
+                                                        :
+                                                        <>
+                                                          <mesh
+                                                
+                                                                position={[0,0.5,0]}
+                                                                >
+                                                                    <sphereGeometry args={[0.2,10,10]} />
+                                                                    <meshMatcapMaterial color={'green'} />
+                                                          </mesh> 
+                                                        </>
+                                                      }
+                                            
+                                            
+                                          </group>
                                           <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                           </>
           }
-          {/* {props.skin == "triangle" && 
-                      <mesh
-                          position={[0,0.5,0]}
-                      >
-                          <boxGeometry args={[1,0.5]} />
-
-                          <meshBasicMaterial color={'blue'} visible={false} />
-                          <SpearModelOnMap name={props.skin} _visible={true} posX={0} posY={0} posZ={0} />
-                          
-                      </mesh>
-          }
-          {props.skin == "torus" && 
-                      <mesh
-                          position={[0,0.5,0]}
-                      >
-                          <boxGeometry args={[1,0.5]} />
-
-                          <meshBasicMaterial color={'blue'} visible={false} />
-                          <SpearModelOnMap name={props.skin} _visible={true} posX={0} posY={0} posZ={0} />
-                          
-                      </mesh>
-          } */}
+          
           {props.skin == "wall_1" && <mesh ref={itemRef}  geometry={nodes.wall_1.geometry} material={mat} position={[0,0,0]}/>}
       </group>
       
@@ -551,7 +470,7 @@ function CustomParticle(props)
                 pointRef.current.children[i].material.visible = false;
                 pointRef.current.children[i].position.y = 0;
               }
-              // console.log(pointRef.current.children[i].position.y)
+              
             }
             else
             {
@@ -561,7 +480,7 @@ function CustomParticle(props)
                 particlesInfo[i].start = true;
               }
             }
-            // pointRef.current.children[i].material.rotation += 0.01;
+            
           }
       }
       
@@ -581,13 +500,10 @@ export function ExitDoor_model(props)
 {
   const { nodes, materials } = useGLTF('/model.glb');
   let texturemat = prepareTexture('gametexture.jpg');
-  let visibleStatut;
-  let passedTime = 0;
+
   let faceRef = useRef(null)
   let mat_0 = new THREE.MeshBasicMaterial({map:texturemat});
-//   let mat = new THREE.ShaderMaterial({transparent:true ,fog:false,vertexShader:vertex,fragmentShader:frags,side:THREE.DoubleSide
-//     ,uniforms:{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}
-// })
+
 let mat = new THREE.ShaderMaterial( {
   uniforms: THREE.UniformsUtils.merge( [
       THREE.UniformsLib[ 'fog' ],{utime:{value:0.2},uColor:{value:new THREE.Vector3(1,0,0)}}] ),
@@ -626,10 +542,7 @@ let mat = new THREE.ShaderMaterial( {
             <mesh geometry={nodes.door_1_face3.geometry} material={mat} position={[-0.748, 1.018, 0.005]} rotation={[-Math.PI, 0, Math.PI / 2]} scale={[0.862, 1, 0.75]} />
             <mesh geometry={nodes.door_1_face4.geometry} material={mat} position={[0, 1.018, 0.754]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
     </mesh>
-    // <mesh rotation={[Math.PI*0.5,0,0]} position={[props.x,1,props.z]} material={mat}>
-    //       <boxGeometry args={[2,2,2]} />
-    //       <meshBasicMaterial color={'red'} wireframe={true} />
-    // </mesh>
+
     
   )
 }
@@ -639,16 +552,12 @@ export function Mob_1_model(props) {
   const group = React.useRef()
   const { nodes, materials, animations } = useGLTF('/model.glb')
   const { mixer,actions } = useAnimations(animations, group)
-
+  
   let _appContext = useContext(appContext);
   let _mobContext = useContext(props._context);
-
-  let _texture = prepareTexture('gametexture.jpg');
-  // let mat = new THREE.MeshBasicMaterial({map:_texture});
   const mat = new THREE.MeshMatcapMaterial({color:'red',transparent:true})
   let modelRef = useRef(null);
   let mobHitManager = {startEffect:false,timer:10,effectCount:0}
-  let visibleStatut;
   let passedTime = 0;
   let mobShakeFromLeft = false;
   let mobInitialPos = 0;
@@ -656,7 +565,8 @@ export function Mob_1_model(props) {
   let explodeParticleController = useRef(null); 
   let shakeOrientation = useRef('FRONT-BACK');
   let animationManager = useRef({start:false});
-  let handRef = useRef(null)
+  let handRef = useRef(null);
+  let customMobController = useRef(null);
   let shakeBrick = ()=>
     { 
       let value = mobShakeFromLeft? -0.2 : 0.2;
@@ -738,28 +648,24 @@ export function Mob_1_model(props) {
         actions.m_mob1attack4?.play();
         actions.m_mob1attack5?.play();
       }
-      let mobDeadAnime = ()=>
-      {
-        animationManager.current.start = true;
-        actions.m_mob1dead1?.play();
-        actions.m_mob1dead2?.play();
-        actions.m_mob1dead3?.play();
-        actions.m_mob1dead4?.play();
-        actions.m_mob1dead5?.play();
-      }
+
   useEffect(()=>
     {
-      actions.m_mob1attack1?.setLoop(THREE.LoopOnce,1);
-      actions.m_mob1attack2?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1attack3?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1attack4?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1attack5?.setLoop(THREE.LoopOnce,1)
+      if(props.customModel == 'none')
+      {
+        actions.m_mob1attack1?.setLoop(THREE.LoopOnce,1);
+        actions.m_mob1attack2?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1attack3?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1attack4?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1attack5?.setLoop(THREE.LoopOnce,1)
+  
+        actions.m_mob1dead1?.setLoop(THREE.LoopOnce,1);
+        actions.m_mob1dead2?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1dead3?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1dead4?.setLoop(THREE.LoopOnce,1)
+        actions.m_mob1dead5?.setLoop(THREE.LoopOnce,1)
+      }
 
-      actions.m_mob1dead1?.setLoop(THREE.LoopOnce,1);
-      actions.m_mob1dead2?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1dead3?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1dead4?.setLoop(THREE.LoopOnce,1)
-      actions.m_mob1dead5?.setLoop(THREE.LoopOnce,1)
 
       mixer.addEventListener('finished', function( e ) 
       {
@@ -842,25 +748,43 @@ export function Mob_1_model(props) {
           }
           else if(args == 'PLAY-MOB-ATTACK-ANIMATION')
           {
-            mobAttackAnime()
+            if(props.customModel == 'none')
+            {
+              mobAttackAnime()
+            }
+          
           }
           else if(args == 'PLAY-MOB-DEAD-ANIMATION')
           { 
-            let customCounter = new CustomCounter(5,0,()=>
-              {
-                 handRef.current.material.opacity -=0.1;
-                 if(handRef.current.material.opacity<=0)
-                 {
-                  modelRef.current.visible = false;
-                  params()
-                  return true
-                }
-                 else
-                 {
-                  return false
-                 }
-              },null)
-              customCounter.start();
+            
+            if(props.customModel == 'none')
+            {
+                let customCounter = new CustomCounter(5,0,()=>
+                  {
+                    
+                      handRef.current.material.opacity -=0.1;
+                      if(handRef.current.material.opacity<=0)
+                        {
+                            modelRef.current.visible = false;
+                            params()
+                            return true
+                        }
+                      else
+                      {
+                            return false
+                      }
+                    
+                    
+                  },null)
+                  customCounter.start();
+            }
+            else
+            {
+              customMobController.current('REMOVE-MOB');
+              params();
+            }
+            
+            
           }
         }
     },[])
@@ -868,45 +792,43 @@ export function Mob_1_model(props) {
   return (
 
         
-          // <mesh ref={modelRef} geometry={nodes.mob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[-Math.PI, 0, -Math.PI]}>
-          //       <mesh geometry={nodes.mob_1.geometry} visible={false} scale={1}>
-          //           <meshBasicMaterial color={'red'}  />
-          //      </mesh>
-          // </mesh>
-          <>
-              {/* <mesh ref={modelRef} geometry={nodes.pmob_1.geometry} material={mat} position={[props.x,0.1,props.z]} rotation={[0,Math.PI, 0]} /> */}
-              <group ref={group} {...props} dispose={null}>
-              <mesh ref={modelRef} position={[props.x,0.8,props.z]} rotation={[0,Math.PI, 0]} >
-                      <boxGeometry args={[2,2,2]} />
-                      <meshBasicMaterial color={'red'} visible={false} wireframe />
-                      <MobHitParticleEffect controller={explodeParticleController} x={0.5} z={0.5} />
-                      {/* MOB MODEL */}
 
-                      <mesh name="nmob1" geometry={nodes.nmob1.geometry} material={new THREE.MeshMatcapMaterial({color:'black'})} >
-                        <mesh ref={handRef} name="nmob1_hand_l" geometry={nodes.nmob1_hand_l.geometry} material={mat} position={[0.639, -0.473, -0.066]} />
-                        <mesh name="nmob1_hand_r" geometry={nodes.nmob1_hand_r.geometry} material={mat} position={[-0.639, -0.494, 0]} />
-                        <mesh name="nmob1head" geometry={nodes.nmob1head.geometry} material={new THREE.MeshMatcapMaterial({color:'white'})} />
-                        <mesh name="nmob1horn" geometry={nodes.nmob1horn.geometry} material={mat} />
-                      </mesh>
-                      {/* <mesh  geometry={nodes.nmob1.geometry}   >
-                          <meshMatcapMaterial color={'black'} />
-                          <mesh geometry={nodes.nmob1head.geometry}>
-                                  <meshMatcapMaterial color={'white'} />
-                          </mesh>
-                          <mesh geometry={nodes.nmob1horn.geometry} >
-                                  {props.name == 'ENEMY' && <meshMatcapMaterial color={'blue'} />}
-                                  {props.name == 'ENEMY-ACTIVE' && <meshMatcapMaterial color={'red'} />}
-                          </mesh>
-                      </mesh> */}
-              </mesh>
-              
-              <mesh position={[props.x,0.1,props.z]} visible={false}
-              >
-                  <boxGeometry args={[2,2,2]}  />
-                  <meshBasicMaterial wireframe color={'red'} />
-                  <BulletCollisionEffect />
-              </mesh>
-              </group>
+          <>  <MobModelContext.Provider value={{customMobController}}>
+                    <group ref={group} {...props} dispose={null}>
+                    <mesh ref={modelRef} position={[props.x,0.8,props.z]} rotation={[0,Math.PI, 0]} >
+                            <boxGeometry args={[2,2,2]} />
+                            <meshBasicMaterial color={'red'} visible={false} wireframe />
+                            <MobHitParticleEffect controller={explodeParticleController} x={0.5} z={0.5} />
+                            {/* MOB MODEL */}
+                            {props.customModel == 'none'?
+                              <>
+                                  <mesh name="nmob1" geometry={nodes.nmob1.geometry} material={new THREE.MeshMatcapMaterial({color:'black'})} >
+                                    <mesh ref={handRef} name="nmob1_hand_l" geometry={nodes.nmob1_hand_l.geometry} material={mat} position={[0.639, -0.473, -0.066]} />
+                                    <mesh name="nmob1_hand_r" geometry={nodes.nmob1_hand_r.geometry} material={mat} position={[-0.639, -0.494, 0]} />
+                                    <mesh name="nmob1head" geometry={nodes.nmob1head.geometry} material={new THREE.MeshMatcapMaterial({color:'white'})} />
+                                    <mesh name="nmob1horn" geometry={nodes.nmob1horn.geometry} material={mat} />
+                                  </mesh>
+                              </>
+                              :
+                              <>
+                              <group ref={handRef}>
+                                  {props.customModel}
+                              </group>
+                              
+                              </>
+                            }
+                            
+
+                    </mesh>
+                    
+                    <mesh position={[props.x,0.1,props.z]} visible={false}
+                    >
+                        <boxGeometry args={[2,2,2]}  />
+                        <meshBasicMaterial wireframe color={'red'} />
+                        <BulletCollisionEffect />
+                    </mesh>
+                    </group>
+              </MobModelContext.Provider>
           </>
          
             
@@ -923,7 +845,6 @@ function MobHitParticleEffect(props)
   let ref4 = useRef(null)
   let explodeSeepd = 0.03
   let explodeStart = useRef(false);
-  // alphaMap={paticleTexture} depthWrite={true}
   let spriteMat = <spriteMaterial color={'red'} alphaMap={paticleTexture} depthWrite={true}  />;
   useFrame(()=>
     {
@@ -1069,17 +990,15 @@ export function Barier_Model(props)
     },[])
   
   return(     <>
-              {/* <mesh ref={modelRef} geometry={nodes.barier.geometry} scale={0.6} material={mat} position={[props.x,0,props.z]} rotation={[-Math.PI, 1.484, -Math.PI]} /> */}
-              {/* <mesh ref={modelRef} geometry={nodes.nbarrier.geometry} material={new THREE.MeshBasicMaterial({color:'red'})} position={[props.x,0,props.z]} /> */}
-              <mesh ref={modelRef} name="nbarrier" geometry={nodes.nbarrier.geometry} material={mat} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]} >
-                <mesh ref={planeRef} name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={mat2} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
-              </mesh>
-              <group
-                    ref={particleGroupRef}
-                    visible={false}
-              >
-                  <CustomParticle _skin={'smoke_06.png'} _size={1.5} _color={'white'} _speed={3} _number={10} x={props.x} z={props.z} />
-              </group>
+                    <mesh ref={modelRef} name="nbarrier" geometry={nodes.nbarrier.geometry} material={mat} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]} >
+                      <mesh ref={planeRef} name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={mat2} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
+                    </mesh>
+                    <group
+                          ref={particleGroupRef}
+                          visible={false}
+                    >
+                        <CustomParticle _skin={'smoke_06.png'} _size={1.5} _color={'white'} _speed={3} _number={10} x={props.x} z={props.z} />
+                    </group>
               
               </>
   )
@@ -1108,7 +1027,6 @@ export function EnemyBullet(props)
 
 export function BulletCollisionEffect(props)
 {
-  let paticleTexture = useTexture(`particleRes/star_07.png`);
   return(
     <>
     <sprite 
