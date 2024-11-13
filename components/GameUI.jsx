@@ -247,7 +247,7 @@ export function ActionIcon()
 {
     let _appContext = useContext(appContext);
     let [actionIconVisible,setActionIconVisible] = useState(_appContext.actionIconVisible.current);
-    let [actionIcon,setActionIcon] = useState('spear_1_icon.png');
+    let [actionIcon,setActionIcon] = useState('');
     _appContext.actionIconController.current = (args)=>
         {
             if(args == 'HIDE-SHOW')
@@ -268,7 +268,7 @@ export function ActionIcon()
         <>
             {actionIconVisible &&
                 <div className=" border-[5px] border-gray-500 bg-black w-[60px] h-[60px] absolute z-[2] left-0 right-0 bottom-[10px] mx-auto ">
-                    {/* <img src={actionIcon} alt="icon" className="w-full h-full" /> */}
+                    
                             {actionIcon == 'INTERACT' && <svg fill="none" stroke="#d2d1d1" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 3.75c-.405 0-.777.345-.75.75l.375 10.125a.375.375 0 1 0 .75 0L12.75 4.5c.028-.405-.344-.75-.75-.75Z" />
                             <path d="M12 20.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" />
@@ -294,7 +294,7 @@ export function PauseIcon()
             className=" w-[50px] h-[50px]  cursor-pointer z-[2]
                         absolute bottom-[10px] right-[10px] flex flex-col justify-center"
         >
-            <img className="w-full mx-auto " src="n_button/btnPause.png" alt="PauseButton" />
+            <img className="w-full mx-auto " src="btnTemplate.png" alt="PauseButton" />
             <svg
                 className="block absolute left-[0] right-[0] m-auto top-[0] bottom-[0] w-[40px] h-[40px]   " 
              fill="none" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -323,12 +323,12 @@ export function PauseScreen()
             <div onClick={()=>{_appContext.setPause(false)}} 
                  className=" relative text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto text-white ">
                 <div id="GLASS" className="absolute left-[0] top-[0] z-[2] w-full h-full "></div>
-                <img src='n_button/btnContinue.png' alt="Continuer" className="w-full h-full" />
+                <img src='resumeButton.jpg' alt="Continuer" className="w-full h-full" />
             </div>
             <div   onClick={()=>{_appContext.quitGame('NO-RESTART') ;AudioManage.play('click');AudioManage.playAmbient('stop')}} 
                 className=" relative text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto text-white ">
                 <div id="GLASS" className="absolute left-[0] top-[0] z-[2] w-full h-full "></div>
-                <img src='n_button/btnQuit.png' alt="Quitter" className="w-full h-full" />
+                <img src='quitButton.jpg' alt="Quitter" className="w-full h-full" />
             </div>
         </div>
         <ToggleTouchScreen />
@@ -793,7 +793,7 @@ export function CreditScreen()
     let _appContext = useContext(appContext);
 
     return( <div
-                style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`text-white absolute select-none left-[0] top-[0] z-[2] w-full h-full bg-black`}
                 >
                     <div className="text-center my-[20px] text-[2rem] ">A propos</div>
@@ -812,7 +812,7 @@ export function CreditScreen()
                     <div   onClick={()=>{_appContext.GameUIController.current({arg1:'SWITCH-TO',arg2:'TITLE-SCREEN'})}} 
                         className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
                         <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                        <img className="w-full mx-auto " src="n_button/btnBack.png" alt="retour" />
+                        <img className="w-full mx-auto " src="menuButton.jpg" alt="retour" />
                     </div>
             </div>
     )
@@ -824,20 +824,20 @@ export function GameOverScreen()
 
     return( <>
                             <div
-                                style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                                style={{backgroundImage:`url("gameBack.jpg")`}}
                                 className={`text-white absolute select-none left-[0] top-[0] z-[5] w-full h-full bg-black`}
                                 >
-                                    <div className="text-center my-[20px] ">Partie terminée</div>
+                                    <div className="text-center my-[20px] ">GAME OVER</div>
                                     <div className="text-center ">
                                         <div>
-                                            Vous vous êtes évanoui dans la forêt
+                                            You get knocked out
                                         </div>
                                         
                                     </div>
                                     <div   onClick={()=>{_appContext.quitGame('RESTART-GAME-OVER') }} 
                                         className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
                                         <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                        <img className="w-full mx-auto " src="n_button/btnQuit.png" alt="Quit" />
+                                        <img className="w-full mx-auto " src="menuButton.jpg" alt="Quit" />
                                         
                                     </div>
                             </div>
@@ -855,7 +855,7 @@ export function GameEndingScreen()
         }
     return( <>
                 <div
-                style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                style={{backgroundImage:`url("gameBack.jpg")`}}
                 className={`text-white absolute select-none left-[0] top-[0] z-[5] w-full h-full bg-black`}
                 >
                         <div className="text-center my-[20px] ">Thanks for playeing 3D Dungeon FPS</div>
@@ -868,7 +868,7 @@ export function GameEndingScreen()
                         <div   onClick={mainMenu} 
                             className=" relative flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[50px] mx-auto ">
                             <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                            <img className="w-full mx-auto " src="n_button/btnQuit.png" alt="Quit" />
+                            <img className="w-full mx-auto " src="menuButton.jpg" alt="Quit" />
                         </div>
                 </div>
             
@@ -1018,14 +1018,14 @@ export function StoryScreen()
                                                 <div onClick={nextPart} //NEXT STORY
                                                 className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                                    <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
+                                                    <img className="w-full mx-auto " src="nextButton.jpg" alt="continue" />
                                                 </div>
                                             }
                                             {speechPartCounter.current == speechTotalPart.current && 
                                                 <div onClick={removeStoryScreen} //CLOSE STORY BUTTON
                                                 className=" relative tracking-[3px] flex justify-center flex-col text-center mt-[35px] cursor-pointer w-[200px] h-[25px] mx-auto text-white ">
                                                     <div id="GLASS" className="absolute left-[0] top-[0] w-full h-full z-[2] "></div>
-                                                    <img className="w-full mx-auto " src="n_button/btnContinue.png" alt="continue" />
+                                                    <img className="w-full mx-auto " src="nextButton.jpg" alt="continue" />
                                                 </div>
                                             }
                                             
@@ -1136,7 +1136,7 @@ export function UpgradePlayerScreen()
     return(
             <>
                 <div
-                    style={{backgroundImage:`url("gameButton/gameBack.jpg")`}}
+                    style={{backgroundImage:`url("gameBack.jpg")`}}
                     className={`absolute select-none left-[0] top-[0] z-[2] w-full h-full bg-black `} 
                 >
                         <div className="text-center text-[1.5rem] text-white">Upgrade State</div>

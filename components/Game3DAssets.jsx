@@ -155,7 +155,7 @@ export function ItemType2Model(props) {
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let textureSrc;
-  if(props.skin == 'wall_1'){textureSrc = 'gametexture.jpg'}
+  if(props.skin == 'wall_1'){textureSrc = 'txtglobal1.jpg'}
   else if(props.skin == 'key_1' || props.skin == 'box_1'){textureSrc = 'txtglobal1.jpg'}
   else{textureSrc = 'texture2.jpg'}
   let _texture = prepareTexture(textureSrc);
@@ -499,7 +499,7 @@ function CustomParticle(props)
 export function ExitDoor_model(props)
 {
   const { nodes, materials } = useGLTF('/model.glb');
-  let texturemat = prepareTexture('gametexture.jpg');
+  let texturemat = prepareTexture('txtglobal1.jpg');
 
   let faceRef = useRef(null)
   let mat_0 = new THREE.MeshBasicMaterial({map:texturemat});
@@ -938,25 +938,33 @@ export function Barier_Model(props)
   let particleGroupRef = useRef(null)
   let modelRef = useRef(null);
   let planeRef = useRef(null);
-  let barrierVisible = useRef(true);
+
   let modelFunc = (args)=>
       {
           if(args == "hide")
           { 
-            if(barrierVisible.current)
-            {
-              barrierVisible.current = false;
+
+            
               particleGroupRef.current.visible = true;
               let customCounter = new CustomCounter(100,0,()=>
                 {
-                   modelRef.current.material.visible = false;
-                   planeRef.current.material.visible = false;
+                   
+                    if(props.customModel == 'none')
+                    {
+                      modelRef.current.material.visible = false;
+                      planeRef.current.material.visible = false;
+                    }
+                    else
+                    {
+                      modelRef.current.visible = false;
+                    }
+                   
                    particleGroupRef.current.visible = false;
                    return true;
                 },null);
               
               customCounter.start();
-            }
+            
 
             
           }
@@ -971,7 +979,12 @@ export function Barier_Model(props)
       side:THREE.DoubleSide
     } );
   useFrame((clock)=>{
-    planeRef.current.material.uniforms.utime.value += 0.02;
+
+    if (props.customModel == 'none')
+    {
+      planeRef.current.material.uniforms.utime.value += 0.02;
+    }  
+      
 
   })
   useEffect(()=>
@@ -990,9 +1003,16 @@ export function Barier_Model(props)
     },[])
   
   return(     <>
-                    <mesh ref={modelRef} name="nbarrier" geometry={nodes.nbarrier.geometry} material={mat} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]} >
-                      <mesh ref={planeRef} name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={mat2} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
-                    </mesh>
+                     {props.customModel == 'none'?
+                      <mesh ref={modelRef} name="nbarrier" geometry={nodes.nbarrier.geometry} material={mat} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]} >
+                          <mesh ref={planeRef} name="nbarrierplane" geometry={nodes.nbarrierplane.geometry} material={mat2} position={[0.008, 0.912, 0]} rotation={[Math.PI / 2, 0, 0]} />
+                      </mesh>
+                      :
+                      <group ref={modelRef} position={[props.x,0,props.z]} rotation={[0,(props.orientation == 'FRONT'?0:Math.PI*0.5),0]}>
+                        {props.customModel}
+                      </group>
+                     }
+                    
                     <group
                           ref={particleGroupRef}
                           visible={false}

@@ -69,8 +69,6 @@ export class CustomCounter
 
 
 
-//UTIL
-
 export function getCookieFunc(name) {
     const cookieName = name + "=";
     const cookies = document.cookie.split(';');
@@ -97,28 +95,11 @@ export function getCookieFunc(name) {
   }
   
   
-//   export function checkLogin(callBack)
-//   {
-//     let userUid = getCookieFunc('uid');
-   
-//     if(userUid != 'empty')
-//     { 
-      
-//        db_getUserInfo(userUid,callBack);
-//     }
-//     else
-//     {
-//       callBack(false);
-//     }
-//   }
-  
   
   export function encryptData(_dataToEncrypt)
   {
-              const secretKey = "dwarrior1503";
+              const secretKey = "yourSecureKey";
   
-              // Chiffrer la valeur du niveau
-              
               const encryptedSave = cryptoJs.AES.encrypt(_dataToEncrypt, secretKey).toString();
               
               setCookieFunc('DW_SAVE',encryptedSave,5)
@@ -128,9 +109,8 @@ export function getCookieFunc(name) {
   
   export function decryptData(_encryptedData)
   {
-              const secretKey = "dwarrior1503";
+              const secretKey = "yourSecureKey";
   
-              // Déchiffrer la valeur du niveau
               const decryptedLevel = cryptoJs.AES.decrypt(_encryptedData, secretKey).toString(cryptoJs.enc.Utf8);
               return decryptedLevel;
   }

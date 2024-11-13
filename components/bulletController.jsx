@@ -216,8 +216,14 @@ function checkifBulletCanMoveNextPlatform(bulletIndex,direction,gloBalObject)
                                                     
                                                     gloBalObject._appContext.ScoreVueController.current('INCREASE',100);
                                                     gloBalObject._appContext.playerStats.current.mobKilled ++;
-                                                    gloBalObject.checkBarierCondition();
-                                                    gloBalObject.checkWinCondition();
+                                                    
+                                                    if(result.objectDesc.isImportant)
+                                                    {
+                                                        gloBalObject._appContext.playerStats.current.importantMobKilled ++;
+                                                        gloBalObject.checkBarierCondition();
+                                                        gloBalObject.checkWinCondition();
+                                                    }
+                                                   
                                                 }
                                                 else
                                                 {

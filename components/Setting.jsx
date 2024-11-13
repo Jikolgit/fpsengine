@@ -39,23 +39,27 @@ export function Settings()
                             
                         </sprite>
     let customPlayerBulletModel = <mesh >
-                                            <boxGeometry args={[0.5,0.5,0.5]} />
+                                            <boxGeometry args={[0.5,1,0.5]} />
                                             <meshBasicMaterial color={'red'} />
                                 
                             </mesh>
     let customObjet = <mesh position={[0,0.5,0]}>
-                                 <sphereGeometry args={[0.2,10,10]} />
-                                 <meshBasicMaterial color={'blue'} />
+                                 <planeGeometry args={[1,1,2]} />
+                                 <meshBasicMaterial color={'blue'} side={THREE.DoubleSide} />
                         </mesh>
     return(
             <>
                     {AppContext.level.current == 1 &&
                         <>
-                            <UpdateLevelConfig playerPosition={22}  />
+                            <UpdateLevelConfig playerPosition={22}   />
 
                             <UpdateStroryScreen>
-                                <div>Go inside the dungeon and find the sacred treasure</div>
-                                <div>Go to the portal to enter the dungeon</div>
+                                <div>
+                                    Go inside the dungeon and find the sacred treasure
+                                </div>
+                                <div>
+                                    Go to the portal to enter the dungeon
+                                </div>
                             </UpdateStroryScreen>
                             <SetMapDimension width={15} height={15} addWallOnMap />
                             <AddDecor position={[71,168,32]} skin="tombstone" />
@@ -69,16 +73,15 @@ export function Settings()
                         <>
                             <UpdateLevelConfig playerPosition={10} keyNumber={1}  />
                             <UpdatePlayerStat bulletModel={customPlayerBulletModel} />
+                            <SetMapDimension width={7} height={15} addWallOnMap />
                             <UpdateStroryScreen>
                                 <div>Take the <span className="text-blue-500">key</span> to open the portal</div>
                             </UpdateStroryScreen>
-                            <SetMapDimension width={7} height={15} addWallOnMap />
-                            <AddItem name="box_item" position={[45]} >
-                                <AddChildItem name="key_item" important />
-                            </AddItem>
-                            {/* <AddItem name="upgrade_shoot_power_item" position={[44]}    /> */}
-                            <AddDecor position={[44]} skin='tombstone'  />
-                            <AddItem name='coin_item' position={[46]}  />
+                            
+                            
+                                <AddItem position={[66]} name="key_item" />
+                    
+
                             <AddDoor position={[94]} />
                         </>
                     }
@@ -86,24 +89,24 @@ export function Settings()
                         <>
                             <UpdateLevelConfig playerPosition={10} mobToKill={2} />
                             
-                            {/* <UpdateStroryScreen>
+                            <UpdateStroryScreen>
                                 <div>Shoot the <span className="text-red-500">Ghost</span> to open the portal</div>
-                            </UpdateStroryScreen> */}
-                            <SetMapDimension width={7} height={15} addWallOnMap />
-                            <AddMob position={[64]} life={2} type="2" />
-                            <AddMob position={[68]} life={1} type="2" >
-                                
-                            </AddMob>
+                            </UpdateStroryScreen>
+                            
+                            <AddMob position={[64]} life={2} type="2" important />
+                            <AddMob position={[68]} life={1} type="2"  important />
+
+                            
                             <AddDoor position={[94]} />
                         </>
                     }
                     {AppContext.level.current == 4 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} mobToKill={3}  />
-                            <SetMapDimension width={7} height={15} addWallOnMap />
+                            
                            
-                            <AddMob position={[52,60,58]} active type="2" important>
-                                    <AddItem name="coin_item" value={5} />
+                            <AddMob position={[52,60,58]} type="2" important>
+                                    <AddChildItem name="coin_item" value={5} />
                             </AddMob>
                             <AddDoor position={[94]} />
                         </>
@@ -111,7 +114,7 @@ export function Settings()
                     {AppContext.level.current == 5 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} keyNumber={2}  />
-                            <SetMapDimension width={7} height={15} addWallOnMap />
+                            
                             <UpdateStroryScreen>
                                 <div>Destroy the <span className="text-yellow-500">box</span> to find the keys</div>
                             </UpdateStroryScreen>
@@ -127,7 +130,7 @@ export function Settings()
                     {AppContext.level.current == 6 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} />
-                            <SetMapDimension width={7} height={15} addWallOnMap />
+                            
                             <UpdateStroryScreen>
                                 <div>Get the <span className="text-blue-500">sphere</span> to level up !</div>
                             </UpdateStroryScreen>
@@ -141,7 +144,7 @@ export function Settings()
                     {AppContext.level.current == 7 &&
                         <>
                             <UpdateLevelConfig playerPosition={10} keyNumber={1} />
-                            <SetMapDimension width={7} height={15} addWallOnMap />
+                            
 
                             <AddMob position={[45]} type="2" >
                                     <AddChildItem name="key_item" important />
@@ -154,9 +157,12 @@ export function Settings()
                     {AppContext.level.current == 8 &&
                         <>
                             <UpdateLevelConfig playerPosition={9} mobToKill={3} />
-                            <SetMapDimension width={7} height={15} addWallOnMap />
+                            
 
-                            <AddMob position={[38,46,54,44,50]} type="2">
+                            <AddMob position={[38,46]} type="2">
+                                    <AddItem name="coin_item" value={5} />
+                            </AddMob>
+                            <AddMob position={[54,44,50]} important type="2">
                                     <AddItem name="coin_item" value={5} />
                             </AddMob>
                             <AddDoor position={[94]} />
@@ -175,10 +181,10 @@ export function Settings()
                             <AddItem name="box_item" position={[196]} >
                                     <AddItem name="upgrade_life_item" />
                             </AddItem>
-                            <AddMob position={[116,152]} type="3" life={5} difficulty="medium">
+                            <AddMob position={[116,152]} type="3" life={5} difficulty="medium" important>
                                 <AddChildItem name="heal_item"  />
                             </AddMob>
-                            <AddMob position={[152]} type="3" life={5} difficulty="medium" />
+                            <AddMob position={[152]} type="3" life={5} difficulty="medium" important />
                             <AddDoor position={[202]} />
                         </>
                     }
@@ -193,7 +199,7 @@ export function Settings()
                             <AddWall position={[354,379,404,429,454,479,504,529,554,579,458,483,508,533,558,583]} />
 
                             <AddWall position={[307,305,282,280,257,255,232,231,230]} />
-                            <AddMob position={[417,388,355,281,397]} type="2" life={5} difficulty="medium" />
+                            <AddMob position={[417,388,355,281,397]} type="2" life={5} difficulty="medium" important />
                             <AddItem name="box_item" life={2} position={[256]}>
                                     <AddChildItem name="upgrade_shoot_power_item" />
                             </AddItem>
@@ -208,14 +214,14 @@ export function Settings()
                                     <AddChildItem name="upgrade_life_item"  />
                             </AddItem>
                             <AddItem name="box_item" position={[42]} life={2}  >
-                                    <AddChildItem name="key_item" important  />
+                                    <AddChildItem name="key_item"  />
                             </AddItem>
                             <AddItem name="box_item" position={[37]} life={3} />
                             <AddItem name="box_item" position={[16]} life={2}  >
                                     <AddChildItem name="upgrade_shoot_speed_item"  />
                             </AddItem>
                             <AddItem name="box_item" position={[257]} life={2}  >
-                                    <AddChildItem name="key_item" important  />
+                                    <AddChildItem name="key_item"  />
                             </AddItem>
                             <AddMob position={[125,211,77]} type="3" life={6} >
                                     <AddChildItem name="coin_item" value={15} />
@@ -230,7 +236,7 @@ export function Settings()
                             <SetMapDimension width={20} height={20} addWallOnMap />
                             <AddItem position={[67,203,234,145]} name="box_item" />
                             <AddItem name="box_item" position={[178]}>
-                                <AddChildItem name="key_item" important />
+                                <AddChildItem name="key_item" />
                             </AddItem>
 
                             <AddDecor skin="lampadaire" position={[136,83,243,316]} />

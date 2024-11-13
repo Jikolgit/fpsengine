@@ -68,16 +68,16 @@ export class AudioManage{
    static play(audio){
       if(audioOn)
       {
-        if(audio=='shoot'){hitAudio.play()} // ici
-        else if(audio=='hit'){shootAudio.play()} // ici
-        else if(audio=='walk'){walkAudio.play()} //ici
-        else if(audio=='playerhit'){playerhitAudio.play()} // ici
-        else if(audio=='click'){clickAudio.play()} // ici
-        else if(audio=='click-Error'){uiErrorAudio.play()} // ici
-        else if(audio=='heal'){heal.play()} // ici
+        if(audio=='shoot'){hitAudio.play()} 
+        else if(audio=='hit'){shootAudio.play()} 
+        else if(audio=='walk'){walkAudio.play()} 
+        else if(audio=='playerhit'){playerhitAudio.play()} 
+        else if(audio=='click'){clickAudio.play()} 
+        else if(audio=='click-Error'){uiErrorAudio.play()} 
+        else if(audio=='heal'){heal.play()} 
         else if(audio=='grab'){grabWeapon.play()}
-        else if(audio=='coin'){takeCoin.play()} // ici
-        else if(audio=='crate-impact'){crateimpactAudio.play()} // ici
+        else if(audio=='coin'){takeCoin.play()} 
+        else if(audio=='crate-impact'){crateimpactAudio.play()} 
       }
 
     }

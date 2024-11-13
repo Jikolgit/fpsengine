@@ -3,7 +3,7 @@ import { Barier_Model, ItemType1Model, ExitDoor_model, ItemType2Model, Decor_mod
 import { Mob_2 } from "./mob_2";
 import { Mob_3 } from "./mob_3";
 
-export function placeModelOnScene(gloBalObject)
+export function placeModelOnScene(gloBalObject) 
 {
     for(let i =0;i<gloBalObject.GameMap.length;i++)
         {
@@ -134,7 +134,7 @@ export function placeModelOnScene(gloBalObject)
                     ref={(val)=>{gloBalObject.objectRef.current[gloBalObject.GameMap[i].objectId] = val}}
                     >
                                 
-                            <Barier_Model orientation={gloBalObject.GameMap[i].objectDesc.orientation} refID={gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
+                            <Barier_Model customModel={gloBalObject.GameMap[i].objectDesc.customModel} orientation={gloBalObject.GameMap[i].objectDesc.orientation} refID={gloBalObject.GameMap[i].objectId} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     </group> : null;
                     gloBalObject.barierModelIndexArr.value.push({objectId:gloBalObject.GameMap[i].objectId,modelController:null});
                     gloBalObject.objectContainer.current[i] = arrElem

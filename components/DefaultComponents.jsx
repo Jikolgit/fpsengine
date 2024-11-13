@@ -105,7 +105,7 @@ export function AddItem({position,name,value,important,life,children,customModel
               if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
               if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
               if(hasChildObject == 'upgrade_shoot_speed_item'){childObjectSkin =  'upgrade_shoot_speed_item';childObjectIsImportant = children[0].props.important? children[0].props.important : false;}
-              if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children[0].props.important===children[0].props.important? (children[0].props.important==true?true:false) : (children[0].props.important==false?false:true);}
+              if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = true;}
             }
             else
             {
@@ -125,7 +125,7 @@ export function AddItem({position,name,value,important,life,children,customModel
                 if(hasChildObject == 'coin_item'){childObjectSkin = 'coin_item_1';childObjectIsImportant = children.props.important? children.props.important : false;}
                 if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children.props.important? children.props.important : false;}
                 if(hasChildObject == 'upgrade_shoot_power_item'){childObjectSkin =  'upgrade_shoot_power_item';childObjectIsImportant = children.props.important? children.props.important : false;}
-                if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = children.props.important===children.props.important? (children.props.important==true?true:false) : (children.props.important==false?false:true)}
+                if(hasChildObject == 'key_item'){childObjectSkin = 'key_1';childObjectIsImportant = true}
               }
               else
               {
@@ -419,10 +419,10 @@ export function SetMapDimension({width,height,addWallOnMap})
 
 /**
  * 
- * @param {{position:number[],mobToKill:number,keyToCollect:number,orientation:string}} param0 
+ * @param {{position:number[],mobToKill:number,keyToCollect:number,orientation:string,customModel:JSX.Element}} param0 
  * @returns 
  */
-export function AddBarrier({position,orientation,mobToKill,keyToCollect})
+export function AddBarrier({position,orientation,mobToKill,keyToCollect,customModel})
 {
   let _appContext = useContext(appContext)
   let objectDetailArr = []
@@ -431,7 +431,7 @@ export function AddBarrier({position,orientation,mobToKill,keyToCollect})
   {
 
       objectDetailArr[i] = {position:position[i],objectName:'barier',skin:'barier_1',mobToKill:mobToKill?mobToKill:(mobToKill==0?0:1),
-        keyToCollect:keyToCollect?keyToCollect:0,orientation:orientation?orientation:'FRONT'}
+        keyToCollect:keyToCollect?keyToCollect:0,orientation:orientation?orientation:'FRONT',customModel:customModel?customModel:'none'}
     
   }
   for(let i =0;i<(_appContext.mapWidth.current*_appContext.mapHeight.current);i++)

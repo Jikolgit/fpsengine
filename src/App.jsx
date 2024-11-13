@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { GameApp } from '../components/GameApp'
-import { createLevel, createObject } from '../components/gameMap'
+import { createLevel } from '../components/gameMap'
 import { Canvas } from '@react-three/fiber';
 import {  GameController,  GameNotif,   GameUI, LifeBar,  PauseIcon,  ActionIcon, PlayerMoney,    ScreenHalo, GameTimer, ScoreVue, LevelUi, BulletReloadIcon } from '../components/GameUI';
 import { AudioManage } from '../components/audioComponents';
@@ -9,13 +9,12 @@ import { decryptData, deleteCookie, encryptData, getCookieFunc } from '../compon
 import { Settings } from '../components/Setting';
 import { storyText } from '../components/gameStory';
 
-//MODELISER BOULE DE FEU
+
 export let appContext = createContext(null)
 function App() {
 
   let devMode = useRef(false);
-  let helpMode = useRef(true);
-  let level = useRef(3);
+  let level = useRef(1);
   let mapHeight = useRef(19);
   let mapWidth = useRef(16);
   let playerPosition = useRef(5);
@@ -47,8 +46,8 @@ function App() {
   let healItemModel = useRef(false);
   let [gameVueActive,setGameVueActive] = useState(false);
   let [gameUIVueActive,setGameUIVueActive] = useState(false);
-  let actualGameScreen = useRef('TITLE-SCREEN'); //GAME-SCREEN TITLE-SCREEN HELP-SCREEN  STORY-SCREEN PAUSE-SCREEN GAME-OVER-SCREEN pour le clavier
-  let [screen,setScreen] = useState('TITLE'); //GAME LOADING-SCREEN TITLE OPTION CREDIT GAME-OVER
+  let actualGameScreen = useRef('TITLE-SCREEN'); 
+  let [screen,setScreen] = useState('TITLE'); 
 
 
   let touchEventMFunc = useRef({left:null,right:null,up:null,down:null,center:null,turnLeft:null,turnRight:null});
@@ -57,7 +56,7 @@ function App() {
   let GameLoadingScreenRef = useRef(null);
   let playerLifeUpgradeCost = useRef({value:20,level:1});
   let playerWeaponUpgradeCost = useRef({value:20,level:1});
-  let playerStats = useRef({bulletModel:'default',score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,coinCollected:0,showWeapon:false});
+  let playerStats = useRef({bulletModel:'default',score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,importantMobKilled:0,coinCollected:0,showWeapon:false});
   let levelInfo = useRef({mapTexture:'ntxt4.jpg',_KeyNumber:0,_MobToKillNumber:0,timerSecond:0,timerMinute:0,fogColor:'#000000',fogNear:3,fogFar:20,finalLevel:false});
   let saveDataOrder = useRef([level.current,playerStats.current.coinCollected,playerStats.current.score,playerStats.current.life,playerStats.current.maxLife,
     playerStats.current.shootInterval,playerStats.current.shootPower,playerLifeUpgradeCost.current.value,playerLifeUpgradeCost.current.level,
@@ -94,8 +93,6 @@ function App() {
       else
       {
         let saveString = decryptData(save);
-        let levelValueArr=[] ,playerLifeValueArr =[] ,playerCoinValueArr=[] ;
-        let levelValue,playerLifeValue,playerCoinValue;
         let saveStep =0;
         let saveData = '';
         for(let i =0;i<saveString.length;i++)
@@ -176,7 +173,7 @@ function App() {
         AudioManage.playAmbient('play');
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
-        // setGameVueActive(c => c = true);
+        
         
 
         
@@ -310,7 +307,7 @@ function App() {
     <>
       <appContext.Provider
         value={{playerLifeContainerRef,playerMoneyContainerRef,touchEventMFunc,playerStats,devMode,gamePause,PauseScreenController,setPause,HelpScreenFunc,
-                actualGameScreen,helpMode,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
+                actualGameScreen,gameControllerFunc,gameControllerVisible,setScreen,quitGame,gameOverScreenFunc,setGameOver,gameEndingScreenFunc,
                 touchEventTouchEndFunc,actionButtonRef,level,GameLoadingScreenRef,nextLevel,gameMap,levelInfo,lifeBarFunc,gameNotifFunc,
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
@@ -318,7 +315,7 @@ function App() {
                 playerPosition,setMapWall,mobCallBackAfterPlayerMove,healItemModel,BulletReloadIconController}}
       >
           <div 
-              // style={{backgroundColor:levelInfo.current.fogColor}}
+             
               className={`bg-black font-times absolute max-w-[700px] left-[0] right-[0] mx-auto  w-full font-times
                           md1:h-[100%] md1:max-h-[700px] h-[500px] select-none `}
           >
@@ -349,15 +346,3 @@ function App() {
 
 
 export default App
-
-//CAPACITE QUI FAIT QU'on AVERTI DU DANGER PAR DES FLECHES A L'ECRAN
-// FAIRE DES UI POUR JEUX AVEC DES COULEUR CHANGEABLE
-//CREER UNE FONCTION POUR
-//-AJOUTER FACILEMENT DES NIVEAUX***************************************************************OK
-//* LES OBJET PEUVENT AGIR DE 3 FACON SOIT AVEC LENVIRONNEMENT SOIT LE JOUEUR SOIT LES 2
-//-CHANGER FACILEMENT LES MODELES ET LES TEXTURES
-//-CHANGER FACILEMENT LES PARAMETRES COMME
-//*VITESSE DE DEPLACEMENT**************************************************OK
-//*NOMBRE DE TIRE POSSIBLE PAR MINUTE
-//*FAIRE CLIGNOTER LES BOUTON DE LECRAN QUAND ON CLIQUE SUR LE CLAVIER
-//*FAIRE DES ASSET DE DEMO UTILISABLE

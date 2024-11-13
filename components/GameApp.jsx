@@ -92,7 +92,7 @@ export function GameApp(props)
             else
             {
                 // PLAYER MUST KILL ALL THE MOB IN THE AREA BEFORE GOING TO THE NEXT LEVEL
-                if(_appContext.playerStats.current.mobKilled == gameMapInfo._MobToKillNumber )
+                if(_appContext.playerStats.current.importantMobKilled == gameMapInfo._MobToKillNumber )
                     {
                       
                         openExitDoor();
@@ -115,17 +115,17 @@ export function GameApp(props)
                     {
                         if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect != 0)
                         {
-                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == gameMapInfo._KeyNumber){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
+                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == _appContext.playerStats.current.keyCollectedr){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
                         }
                         else if(GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill != 0)
                         {   
-                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == _appContext.playerStats.current.mobKilled){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
+                            if(GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == _appContext.playerStats.current.importantMobKilled){GameMap[barierMapIndexArr.value[i]].isOnScene = false;barierModelIndexArr.value[i].modelController("hide");}
                         }
                     }
                     else if(conditions == 2)
                     {
-                        if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect == gameMapInfo._KeyNumber &&
-                            GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill == gameMapInfo._MobToKillNumber
+                        if(GameMap[barierMapIndexArr.value[i]].objectDesc.keyToCollect ==  _appContext.playerStats.current.keyCollected &&
+                            GameMap[barierMapIndexArr.value[i]].objectDesc.mobToKill ==  _appContext.playerStats.current.importantMobKilled
                             )
                         {
                             GameMap[barierMapIndexArr.value[i]].isOnScene = false;
