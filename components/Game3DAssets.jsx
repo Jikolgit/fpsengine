@@ -27,7 +27,6 @@ function prepareTexture(texture)
   return _texture;
 }
 export function GroundModel(props) {
-  // 3D ASSET OF THE GROUND
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let _texture = prepareTexture(_appContext.levelInfo.current.mapTexture);
@@ -36,7 +35,6 @@ export function GroundModel(props) {
   let mat2 = new THREE.MeshBasicMaterial({map:_texture})
   return (
     <group {...props} dispose={null}>
-      {/* <mesh geometry={nodes.dground.geometry} material={mat} /> */}
       <mesh geometry={nodes.planeGround.geometry} material={mat2} position={[props.x, 0, props.z]} />
     </group>
   )
@@ -155,10 +153,8 @@ export function ItemType2Model(props) {
   let _appContext = useContext(appContext)
   const { nodes, materials } = useGLTF('/model.glb');
   let textureSrc;
-  if(props.skin == 'wall_1'){textureSrc = 'txtglobal1.jpg'}
-  else if(props.skin == 'key_1' || props.skin == 'box_1'){textureSrc = 'txtglobal1.jpg'}
-  else{textureSrc = 'texture2.jpg'}
-  let _texture = prepareTexture(textureSrc);
+
+  let _texture = prepareTexture('txtglobal1.jpg');
   let itemRef = useRef(null);
   let itemGroupRef = useRef(null)
   let containerMat = new THREE.MeshBasicMaterial({visible:false});
@@ -172,11 +168,11 @@ export function ItemType2Model(props) {
   {
     if(!_appContext.gamePause.current)
     {
-      if(props.skin == 'heal_item_1' || props.skin == 'key_1' || props.skin == 'box_1' )
+      if(props.objectName == 'heal_item' || props.objectName == 'key_item' || props.objectName == 'box_item' )
       {
         itemRef.current.rotation.y += (1/30);
       }
-      else if(props.skin == 'shoot-power' || props.skin == 'shoot-speed')
+      else if(props.objectName == 'upgrade_life_item' || props.objectName == 'upgrade_shoot_speed_item' || props.objectName == 'upgrade_shoot_power_item')
       {
         passedTime += 1/40;
         itemRef.current.position.y += Math.sin(passedTime)/400;
@@ -263,7 +259,7 @@ export function ItemType2Model(props) {
                                               </group>
                                               <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'green'} _speed={1} _number={30} x={0} z={0} />
                                           </>}
-          {props.skin == "key_1" && <>
+          {props.skin == "key_1" && <>  
                                         <group ref={itemRef}>
                                             {props.customModel!='none'?
                                               <>
@@ -278,7 +274,21 @@ export function ItemType2Model(props) {
                                         <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
                                     </>
           }
-          
+          {props.skin == "key_2" && <>  
+                                        <group ref={itemRef}>
+                                            {props.customModel!='none'?
+                                              <>
+                                                {props.customModel}
+                                              </>
+                                              :
+                                              <>
+                                                <mesh scale={0.5} rotation={[Math.PI*0.5,0,Math.PI*0.2]} name="key2" geometry={nodes.key2.geometry} material={mat} position={[0,0.5, 0]} />
+                                              </>
+                                            }
+                                        </group>
+                                        <CustomParticle _skin={'star_07.png'} _size={0.5} _color={'white'} _speed={1} _number={30} x={0} z={0} />
+                                    </>
+          }
           {props.skin == "box_1" && <group  ref={itemRef}>
                                             
                                             {props.customModel!='none'?
@@ -536,11 +546,17 @@ let mat = new THREE.ShaderMaterial( {
     },[])
   return(
     
-    <mesh geometry={nodes.door_1.geometry} material={mat_0} position={[props.x,0,props.z]}>
-            <mesh ref={faceRef} geometry={nodes.door_1_face1.geometry} material={mat} position={[0, 1.018, -0.746]} rotation={[-Math.PI / 2, 0, 0]} scale={[0.746, 1, 0.892]} />
-            <mesh geometry={nodes.door_1_face2.geometry} material={mat} position={[0.752, 1.018, 0.005]} rotation={[0, 0, -Math.PI / 2]} scale={[0.862, 1, 0.75]} />
-            <mesh geometry={nodes.door_1_face3.geometry} material={mat} position={[-0.748, 1.018, 0.005]} rotation={[-Math.PI, 0, Math.PI / 2]} scale={[0.862, 1, 0.75]} />
-            <mesh geometry={nodes.door_1_face4.geometry} material={mat} position={[0, 1.018, 0.754]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
+    // <mesh geometry={nodes.door_1.geometry} material={mat_0} position={[props.x,0,props.z]}>
+    //         <mesh ref={faceRef} geometry={nodes.door_1_face1.geometry} material={mat} position={[0, 1.018, -0.746]} rotation={[-Math.PI / 2, 0, 0]} scale={[0.746, 1, 0.892]} />
+    //         <mesh geometry={nodes.door_1_face2.geometry} material={mat} position={[0.752, 1.018, 0.005]} rotation={[0, 0, -Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+    //         <mesh geometry={nodes.door_1_face3.geometry} material={mat} position={[-0.748, 1.018, 0.005]} rotation={[-Math.PI, 0, Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+    //         <mesh geometry={nodes.door_1_face4.geometry} material={mat} position={[0, 1.018, 0.754]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
+    // </mesh>
+    <mesh name="ndoor" geometry={nodes.ndoor.geometry} material={mat_0} position={[props.x,0,props.z]}>
+            <mesh ref={faceRef} name="door_1_face1" geometry={nodes.door_1_face1.geometry} material={mat} position={[-0.01, 1.132, -0.693]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
+            <mesh name="door_1_face2" geometry={nodes.door_1_face2.geometry} material={mat} position={[0.705, 1.137, 0.008]} rotation={[0, 0, -Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+            <mesh name="door_1_face3" geometry={nodes.door_1_face3.geometry} material={mat} position={[-0.72, 1.119, 0.024]} rotation={[-Math.PI, 0, Math.PI / 2]} scale={[0.862, 1, 0.75]} />
+            <mesh name="door_1_face4" geometry={nodes.door_1_face4.geometry} material={mat} position={[-0.008, 1.138, 0.736]} rotation={[-Math.PI / 2, Math.PI / 2, 0]} scale={[0.862, 1, 0.761]} />
     </mesh>
 
     

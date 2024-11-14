@@ -44,7 +44,7 @@ export function BoxItem(props)
     return(
             <>
                 <group>
-                        <ItemType2Model controller={{itemController:parentItemController,index:0}} 
+                        <ItemType2Model objectName={props.objectName} controller={{itemController:parentItemController,index:0}} 
                         skin={props.skin} x={props.x} z={props.z} _visible={true} customModel={props.customModel}
                         />
                         {props.hasChildObject?
@@ -53,7 +53,7 @@ export function BoxItem(props)
                                 <ItemType1Model controller={{itemController:childItemController,index:0}} 
                                 skin={props.childObjectSkin} x={props.x} z={props.z} _visible={false} />
                                 :
-                                <ItemType2Model controller={{itemController:childItemController,index:0}} 
+                                <ItemType2Model objectName={props.hasChildObject} controller={{itemController:childItemController,index:0}} 
                                 skin={props.childObjectSkin} x={props.x} z={props.z} _visible={false} customModel={props.childCustomModel}
                                 />
                             }

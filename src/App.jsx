@@ -82,6 +82,8 @@ function App() {
   let deleteGameSave = ()=>
     {
       deleteCookie('DW_SAVE')
+      level.current = 1;
+      playerStats.current = {bulletModel:'default',score:0,life:5,maxLife:5,moveSpeed:0.1,shootInterval:50,shootPower:1,keyCollected:0,mobKilled:0,importantMobKilled:0,coinCollected:0,showWeapon:false}
     }
   let findGameSave = ()=>
     {
@@ -216,7 +218,6 @@ function App() {
       {
 
       }
-      saveGame()
       gamePause.current = false;
       setGameVueActive(false)
       GameUIController.current({arg1:'DIRECT',arg2:'TITLE-SCREEN'})
@@ -292,12 +293,8 @@ function App() {
         
 
       }
-      // findGameSave();
-    useEffect(()=>
-      {
-        // saveGame(saveDataOrder.current)
-        
-      },[])
+      findGameSave();
+    
     useEffect(() => {
 
       document.addEventListener('visibilitychange',manageVisibility,true)
@@ -312,7 +309,7 @@ function App() {
                 soundOn,StoryScreenController,startGame,KeyBoardManageStory,systemPause,backMenu,appController,gameUIVueActive,setGameUIVueActive,
                 GameUIController,setGameVueActive,mapWidth,mapHeight,actionIconVisible,actionIconController,ScreenHaloCOntroller,toggleActionIcon,
                 BlackScreenTransitionController,transitionBetweenScreen,ScoreVueController,playerLifeUpgradeCost,playerWeaponUpgradeCost,upgradePlayerState,
-                playerPosition,setMapWall,mobCallBackAfterPlayerMove,healItemModel,BulletReloadIconController}}
+                playerPosition,setMapWall,mobCallBackAfterPlayerMove,healItemModel,BulletReloadIconController,deleteGameSave}}
       >
           <div 
              

@@ -24,7 +24,7 @@ export function placeModelOnScene(gloBalObject)
                     }
                     else
                     {
-                        objectComponents =<ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        objectComponents =<ItemType2Model objectName={gloBalObject.GameMap[i].objectDesc.objectName} controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
                         skin={gloBalObject.GameMap[i].objectDesc.skin} customModel={gloBalObject.GameMap[i].objectDesc.customModel} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose}  />
                     }
                  }
@@ -32,7 +32,7 @@ export function placeModelOnScene(gloBalObject)
                 {
                     if(gloBalObject.GameMap[i].objectDesc.objectName=='box_item')
                     {   
-                        objectComponents = <BoxItem controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        objectComponents = <BoxItem objectName={gloBalObject.GameMap[i].objectDesc.objectName} controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
                         skin={gloBalObject.GameMap[i].objectDesc.skin} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} 
                         hasChildObject={gloBalObject.GameMap[i].objectDesc.hasChildObject} childObjectSkin={gloBalObject.GameMap[i].objectDesc.childObjectSkin}
                         childObjectValue={gloBalObject.GameMap[i].objectDesc.childObjectValue} customModel={gloBalObject.GameMap[i].objectDesc.customModel}
@@ -41,7 +41,7 @@ export function placeModelOnScene(gloBalObject)
                     }
                     else
                     {
-                        objectComponents = <ItemType2Model controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
+                        objectComponents = <ItemType2Model objectName={gloBalObject.GameMap[i].objectDesc.objectName} controller={{itemController:gloBalObject.itemController,index:gloBalObject.GameMap[i].objectId}} 
                         skin={gloBalObject.GameMap[i].objectDesc.skin} customModel={gloBalObject.GameMap[i].objectDesc.customModel} visible={true} x={gloBalObject.GameMap[i].xPose} z={gloBalObject.GameMap[i].zPose} />
                     }
 

@@ -560,13 +560,13 @@ export function Mob_2(props)
                                 
                                 <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
                                 :
-                                <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                                <ItemType2Model objectName={props.hasObject} customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
                                 
                                 }
                             </>
                             :
                             <>
-                                <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
+                                <ItemType2Model objectName={props.hasObject} customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={enemyPositionOnMap.x} z={enemyPositionOnMap.z} />
                             </>
                         
                     }

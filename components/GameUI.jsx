@@ -426,7 +426,7 @@ export function GameLoadingScreen()
                <div
                     className="absolute right-[10px] bottom-[10px] text-white text-[2rem] "
                >
-               CHARGEMENT...
+               Loading...
                </div>
             </div>
     )
@@ -593,7 +593,8 @@ export function GameNotif()
 export function TitleScreen()
 {
     const AppContext = useContext(appContext);
-
+    let [scoreValue,setScoreValue] = useState(AppContext.playerStats.current.score);
+    let [coinValue,setCoinValue] = useState(AppContext.playerStats.current.coinCollected);
     let switchVolume = ()=>
         { 
             AudioManage.play('click')
@@ -604,6 +605,13 @@ export function TitleScreen()
     let startGame = ()=>
         {
             AppContext.appController('START-GAME')
+        }
+    let deleteSave = ()=>
+        {
+            AudioManage.play('click')
+            AppContext.deleteGameSave();
+            setScoreValue(AppContext.playerStats.current.score)
+            setCoinValue(AppContext.playerStats.current.coinCollected)
         }
     let toggleTouchController = ()=>
         {
@@ -623,14 +631,14 @@ export function TitleScreen()
                         <span className="text-[0.8rem] mr-[5px] ">
                             Score :
                         </span>
-                        <span className="text-[1.2rem]">{AppContext.playerStats.current.score}</span>
+                        <span className="text-[1.2rem]">{scoreValue}</span>
                      </div>
                      
                      <div className=" flex justify-center text-white ">
                         <div className="text-[0.8rem] mr-[5px] flex flex-col justify-center ">
                             <img src="coin.svg" alt="coin" className=" w-[20px] h-[20px]  " />
                         </div>
-                        <span className="text-[1.2rem]">{AppContext.playerStats.current.coinCollected}</span>
+                        <span className="text-[1.2rem]">{coinValue}</span>
                      </div>
                      <div className="mt-[20px] ">
 
@@ -646,7 +654,8 @@ export function TitleScreen()
                             <div className="w-full mt-[20px] flex justify-center">
                                     <ToggleButtonTemplate1 icon={'gamepad.svg'} btnfunction={toggleTouchController}
                                         toggleValue={AppContext.gameControllerVisible.current} 
-                                            />
+                                    />
+                                    <ButtonTemplate1 icon={'deleteSave.png'} btnfunction={deleteSave} />
                                 
                             </div>
                                 

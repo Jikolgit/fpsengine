@@ -826,11 +826,11 @@ export function Mob_3(props)
                                     <>
                                     {props.objectSkin == 'coin_item_1'? <ItemType1Model controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
                                     :
-                                    <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
+                                    <ItemType2Model objectName={props.hasObject}l customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
                                     }
                                     </>
                                     :
-                                    <ItemType2Model customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
+                                    <ItemType2Model objectName={props.hasObject} customModel = {props.itemCustomModel} controller={{itemController,index:0}} skin={props.objectSkin} _visible={false} x={mobPositionOnMap.x} z={mobPositionOnMap.z} />
                                 }
                             </>
                             

@@ -75,7 +75,6 @@ export class AudioManage{
         else if(audio=='click'){clickAudio.play()} 
         else if(audio=='click-Error'){uiErrorAudio.play()} 
         else if(audio=='heal'){heal.play()} 
-        else if(audio=='grab'){grabWeapon.play()}
         else if(audio=='coin'){takeCoin.play()} 
         else if(audio=='crate-impact'){crateimpactAudio.play()} 
       }
