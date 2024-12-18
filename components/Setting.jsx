@@ -244,7 +244,7 @@ export function Settings()
                                 <div>Good luck !</div>
                             </UpdateStroryScreen>
 
-                            <AddMob type="3" position={[150,270,207,213,76,63,303,316]} life={5} />
+                            <AddMob type="3" position={[150,270,207,213,76,63,303,316]} important life={5} />
 
                             <AddItem name="heal_item" value={2} position={[89]} />
 

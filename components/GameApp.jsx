@@ -894,7 +894,7 @@ export function GameApp(props)
     useEffect(()=>
         {
 
-
+          
             prepareNextBullet(gloBalObject);
             _appContext.playerStats.current.keyCollected = 0
             _appContext.playerStats.current.mobKilled = 0

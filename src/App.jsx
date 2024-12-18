@@ -14,7 +14,7 @@ export let appContext = createContext(null)
 function App() {
 
   let devMode = useRef(false);
-  let level = useRef(1);
+  let level = useRef(6);
   let mapHeight = useRef(19);
   let mapWidth = useRef(16);
   let playerPosition = useRef(5);
@@ -184,6 +184,8 @@ function App() {
       {
         storyText.value = ['none']
         level.current ++;
+        playerStats.current.importantMobKilled = 0;
+        playerStats.current.keyCollected = 0;
         if(!transitionBetweenScreen.current){ setGameVueActive(c => c = false);}
         actualGameScreen.current = 'LOADING-SCREEN'
         GameUIController.current({arg1:'SWITCH-TO',arg2:'LOADING-SCREEN'});
